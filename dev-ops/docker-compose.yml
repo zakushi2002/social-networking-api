@@ -1,0 +1,23 @@
+#
+# Copyright IBM Corp All Rights Reserved
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+version: '2'
+networks:
+  default_network:
+    external: true
+    name: server_network
+    
+services:
+  {SERVICE_NAME}:
+    container_name: {CONTAINER_NAME}
+    image: {CONTAINER_IMAGE}:1.0
+    restart: always
+    mem_limit: 1500m
+    environment:
+      - SPRING_PROFILES_ACTIVE={PROFILES_ACTIVE}
+    networks:
+        - default_network
+    ports:
+      - "192.168.0.10:{PORT}:8888"
