@@ -1,7 +1,6 @@
 package com.social.networking.api.model;
 
 import com.social.networking.api.model.audit.Auditable;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;

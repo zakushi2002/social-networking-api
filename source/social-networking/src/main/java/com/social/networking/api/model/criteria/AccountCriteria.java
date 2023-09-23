@@ -17,7 +17,7 @@ public class AccountCriteria implements Serializable {
     private String email;
     private String fullName;
     private Long groupId;
-    private Boolean isSuperAdmin = false;
+    private Boolean isSuperAdmin;
 
     public Specification<Account> getSpecification() {
         return new Specification<Account>() {

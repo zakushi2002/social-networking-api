@@ -18,14 +18,14 @@ public class CustomAuthenticationKeyGenerator implements AuthenticationKeyGenera
 
     private static final String SCOPE = "scope";
 
-    private static final String EMAIL = "email";
+    private static final String USERNAME = "username";
 
     @Override
     public String extractKey(OAuth2Authentication authentication) {
         Map<String, String> values = new LinkedHashMap<>();
         OAuth2Request authorizationRequest = authentication.getOAuth2Request();
         if (!authentication.isClientOnly()) {
-            values.put(EMAIL, authentication.getName());
+            values.put(USERNAME, authentication.getName());
         }
         values.put(CLIENT_ID, authorizationRequest.getClientId());
         if (authorizationRequest.getScope() != null) {

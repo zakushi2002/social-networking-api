@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,9 @@ import java.util.List;
 public class GroupCriteria implements Serializable {
     private Long id;
     private String name;
+    @NotNull(message = "kind cannot be null!")
     private Integer kind;
-    private Boolean isSystemRole = false;
+    private Boolean isSystemRole;
 
     public Specification<Group> getSpecification() {
         return new Specification<Group>() {
@@ -32,12 +34,11 @@ public class GroupCriteria implements Serializable {
                 if (getName() != null) {
                     predicates.add(cb.like(cb.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
                 }
-                if (getKind() != null) {
-                    predicates.add(cb.equal(root.get("kind"), getKind()));
-                }
                 if (getIsSystemRole() != null) {
                     predicates.add(cb.equal(root.get("isSystemRole"), getIsSystemRole()));
                 }
+                predicates.add(cb.equal(root.get("kind"), getKind()));
+                query.orderBy(cb.desc(root.get("createdDate")));
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };

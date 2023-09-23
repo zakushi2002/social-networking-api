@@ -38,8 +38,8 @@ public class UserServiceImpl implements UserDetailsService {
     private AccountRepository accountRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
-        Account user = accountRepository.findAccountByEmail(username);
+    public UserDetails loadUserByUsername(String userId) {
+        Account user = accountRepository.findAccountByEmail(userId);
         if (user == null) {
             log.error("Invalid email or password!");
             throw new UsernameNotFoundException("Invalid email or password!");
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserDetailsService {
         return tokenServices.createAccessToken(auth);
     }
 
-    public SocialNetworkingJwt getAddInfoFromToken() {
+    public SocialNetworkingJwt getAdditionalInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             OAuth2AuthenticationDetails oauthDetails =

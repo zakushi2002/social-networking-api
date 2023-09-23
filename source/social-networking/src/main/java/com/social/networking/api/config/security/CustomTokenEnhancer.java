@@ -1,6 +1,7 @@
 package com.social.networking.api.config.security;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.model.TablePrefix;
 import com.social.networking.api.view.dto.AccountForTokenDto;
 import com.social.networking.api.utils.ZipUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class CustomTokenEnhancer implements TokenEnhancer {
 
         if (a != null) {
             Long accountId = a.getId();
-            String kind = a.getKind()+"";//token kind
+            String kind = a.getKind() + "";//token kind
             String permission = "<>";//empty string
             Integer userKind = a.getKind(); //loại user là admin hay là gì
             Long orderId = -1L;
@@ -43,13 +44,13 @@ public class CustomTokenEnhancer implements TokenEnhancer {
             additionalInfo.put("user_kind", a.getKind());
             additionalInfo.put("grant_type", SocialNetworkingConstant.GRANT_TYPE_PASSWORD);
             String DELIM = "|";
-            String additionalInfoStr = ZipUtils.zipString(accountId+DELIM
-                    +kind+DELIM
-                    +permission+DELIM
-                    +userKind+DELIM
-                    +email+DELIM
-                    +orderId+DELIM
-                    +isSuperAdmin+DELIM) ;
+            String additionalInfoStr = ZipUtils.zipString(accountId + DELIM
+                    + kind + DELIM
+                    + permission + DELIM
+                    + userKind + DELIM
+                    + email + DELIM
+                    + orderId + DELIM
+                    + isSuperAdmin);
             additionalInfo.put("additional_info", additionalInfoStr);
         }
 
@@ -59,11 +60,11 @@ public class CustomTokenEnhancer implements TokenEnhancer {
 
     public AccountForTokenDto getAccountByEmail(String email) {
         try {
-            String query = "SELECT id, kind, email, full_name, is_super_admin " +
-                    "FROM db_social_networking_account WHERE email = ? and status = 1 limit 1";
+            String query = "SELECT id, kind, email, full_name, is_super_admin FROM " + TablePrefix.PREFIX_TABLE +
+                    "account WHERE email = ? and status = 1 limit 1";
             log.debug(query);
-            List<AccountForTokenDto> dto = jdbcTemplate.query(query, new Object[]{email},  new BeanPropertyRowMapper<>(AccountForTokenDto.class));
-            if (dto.size() > 0)return dto.get(0);
+            List<AccountForTokenDto> dto = jdbcTemplate.query(query, new Object[]{email}, new BeanPropertyRowMapper<>(AccountForTokenDto.class));
+            if (dto.size() > 0) return dto.get(0);
             return null;
         } catch (Exception e) {
             e.printStackTrace();

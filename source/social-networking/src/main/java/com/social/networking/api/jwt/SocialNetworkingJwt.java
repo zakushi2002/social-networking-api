@@ -36,15 +36,17 @@ public class SocialNetworkingJwt implements Serializable {
     public static SocialNetworkingJwt decode(String input) {
         SocialNetworkingJwt result = null;
         try {
-            String[] items = ZipUtils.unzipString(input).split(DELIM, 5);
-            if (items.length >= 4) {
+            String[] items = ZipUtils.unzipString(input).split(DELIM, 7);
+            if (items.length >= 6) {
                 result = new SocialNetworkingJwt();
                 result.setAccountId(parserLong(items[0]));
                 result.setKind(checkString(items[1]));
-                result.setUserKind(parserInt(items[2]));
-                result.setOrderId(parserLong(items[3]));
-                if (items.length > 4) {
-                    result.setIsSuperAdmin(checkBoolean(items[4]));
+                result.setPermission(checkString(items[2]));
+                result.setUserKind(parserInt(items[3]));
+                result.setEmail(checkString(items[4]));
+                result.setOrderId(parserLong(items[5]));
+                if (items.length > 6) {
+                    result.setIsSuperAdmin(checkBoolean(items[6]));
                 }
             }
         } catch (Exception e) {

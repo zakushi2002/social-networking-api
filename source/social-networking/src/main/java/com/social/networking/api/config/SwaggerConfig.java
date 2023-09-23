@@ -27,7 +27,7 @@ public class SwaggerConfig {
                 .consumes(consumesAndProduces)
                 .produces(consumesAndProduces)
                 .useDefaultResponseMessages(false)
-                .select().apis(RequestHandlerSelectors.basePackage("com.social.networking.controller"))
+                .select().apis(RequestHandlerSelectors.basePackage("com.social.networking.api.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }

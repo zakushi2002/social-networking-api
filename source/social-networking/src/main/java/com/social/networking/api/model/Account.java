@@ -33,6 +33,7 @@ public class Account extends Auditable<String> {
     @JoinColumn(name = "group_id")
     private Group group;
     private Date lastLogin;
+    @Column(name = "avatar_path", columnDefinition = "LONGTEXT")
     private String avatarPath;
     @Column(name = "reset_pwd_code")
     private String resetPwdCode;

@@ -35,7 +35,14 @@ import java.io.IOException;
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Value("${social.networking.signing.key}")
+    private String signingKey;
+    @Autowired
     private JwtAccessTokenConverter jwtAccessTokenConverter;
+    @Autowired
+    private TokenStore tokenStore;
 
     @Autowired
     JsonToUrlEncodedAuthenticationFilter jsonFilter;
