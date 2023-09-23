@@ -1,0 +1,191 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="TOAN (generated)" id="1695400755902-1">
+        <createTable tableName="db_social_networking_account">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_accountPK"/>
+            </column>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="full_name" type="VARCHAR(255)"/>
+            <column name="kind" type="INT"/>
+            <column name="group_id" type="BIGINT"/>
+            <column name="avatar_path" type="LONGTEXT"/>
+            <column name="is_super_admin" type="BIT"/>
+            <column name="last_login" type="datetime"/>
+            <column name="attempt_forget_pwd" type="INT"/>
+            <column name="attempt_login" type="INT"/>
+            <column name="reset_pwd_code" type="VARCHAR(255)"/>
+            <column name="reset_pwd_time" type="datetime"/>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1695400755902-2">
+        <createTable tableName="db_social_networking_group">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_groupPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="kind" type="INT"/>
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="is_system_role" type="BIT"/>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1695400755902-3">
+        <createTable tableName="db_social_networking_permission">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_permissionPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="action" type="VARCHAR(255)"/>
+            <column name="name_group" type="VARCHAR(255)"/>
+            <column name="permission_code" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="show_menu" type="BIT"/>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1695400755902-4">
+        <createTable tableName="db_social_networking_permission_group">
+            <column name="group_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Authentication" id="1688988515879-13">
+        <createTable tableName="oauth_access_token">
+            <column name="token_id" type="VARCHAR(255)"/>
+            <column name="token" type="LONGBLOB"/>
+            <column name="authentication_id" type="VARCHAR(255)"/>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="client_id" type="VARCHAR(255)"/>
+            <column name="authentication" type="LONGBLOB"/>
+            <column name="refresh_token" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1688988515879-14">
+        <createTable tableName="oauth_approvals">
+            <column name="userId" type="VARCHAR(255)"/>
+            <column name="clientId" type="VARCHAR(255)"/>
+            <column name="scope" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(10)"/>
+            <column name="expiresAt" type="timestamp"/>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="lastModifiedAt" type="timestamp"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1688988515879-15">
+        <createTable tableName="oauth_client_details">
+            <column name="client_id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="resource_ids" type="VARCHAR(255)"/>
+            <column name="client_secret" type="VARCHAR(255)"/>
+            <column name="scope" type="VARCHAR(255)"/>
+            <column name="authorized_grant_types" type="VARCHAR(255)"/>
+            <column name="web_server_redirect_uri" type="VARCHAR(255)"/>
+            <column name="authorities" type="VARCHAR(255)"/>
+            <column name="access_token_validity" type="INT"/>
+            <column name="refresh_token_validity" type="INT"/>
+            <column name="additional_information" type="VARCHAR(4096)"/>
+            <column name="autoapprove" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1688988515879-16">
+        <createTable tableName="oauth_client_token">
+            <column name="token_id" type="VARCHAR(255)"/>
+            <column name="token" type="LONGBLOB"/>
+            <column name="authentication_id" type="VARCHAR(255)"/>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="client_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1688988515879-17">
+        <createTable tableName="oauth_code">
+            <column name="code" type="VARCHAR(255)"/>
+            <column name="authentication" type="LONGBLOB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1688988515879-18">
+        <createTable tableName="oauth_refresh_token">
+            <column name="token_id" type="VARCHAR(255)"/>
+            <column name="token" type="LONGBLOB"/>
+            <column name="authentication" type="LONGBLOB"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1695400755902-5">
+        <addUniqueConstraint columnNames="name" constraintName="UC_DB_SOCIAL_NETWORKING_GROUPNAME_COL"
+                             tableName="db_social_networking_group"/>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1695400755902-6">
+        <addUniqueConstraint columnNames="name" constraintName="UC_DB_SOCIAL_NETWORKING_PERMISSIONNAME_COL"
+                             tableName="db_social_networking_permission"/>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1695400755902-7">
+        <addUniqueConstraint columnNames="permission_code"
+                             constraintName="UC_DB_SOCIAL_NETWORKING_PERMISSIONPERMISSION_CODE_COL"
+                             tableName="db_social_networking_permission"/>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1695400755902-8">
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="db_social_networking_account"
+                                 constraintName="FK49bvfua7qd4v7q4p7fi54wj3k" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_group" validate="true"/>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1695400755902-9">
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="db_social_networking_permission_group"
+                                 constraintName="FKkyo29cicik47yrpx6b4647iba" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_group" validate="true"/>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1695400755902-10">
+        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="db_social_networking_permission_group"
+                                 constraintName="FKn1md4o49ejp7r5bo655j8cf8i" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_permission" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

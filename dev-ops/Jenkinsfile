@@ -1,0 +1,175 @@
+_BUILD_NUMBER = env.BUILD_NUMBER
+_BRANCH_NAME = env.BRANCH_NAME
+
+TIMEZONE = "GMT+7"
+APP_BOOT_TIME_SECOND = 30
+SLACK_CHANNEL_NAME = "G015NGG1013"
+
+TARTGET_FOLDER_DEPLOY="/opt/deploy/social-networking"
+JAR_NAME = "social-networking-api-0.0.1.jar"
+
+
+APP_NAME = "social-networking-api"
+
+// Dev env
+PORT_DEV=6033
+
+
+BUILD_FOLER="dev-ops"
+
+
+
+//node("slave-gcp") {
+node{
+    try {
+        if (_BRANCH_NAME.matches("dev")) {
+            notifyBuild("STARTED", SLACK_CHANNEL_NAME)
+        }
+
+        stage ("Checkout source") {
+            checkout scm
+        }
+
+        buildMaster()
+
+        
+        currentBuild.result = "SUCCESS"
+    } catch (e) {
+        currentBuild.result = "FAILURE"
+        throw e
+    } finally {
+        if (_BRANCH_NAME.matches("dev")) {
+            def time = formatMilisecondTime(currentBuild.timeInMillis, TIMEZONE)
+            def duration = durationFormat(currentBuild.duration)
+            def buildDetail = "\n————————————————————" +
+                              "\n*Build Time:* ${time}" +
+                              "\n*Duration:* ${duration}" +
+                              "\n*Change Log (DESC):*\n${getChangeLog()}"
+
+            sleep(APP_BOOT_TIME_SECOND)
+            notifyBuild(currentBuild.result, SLACK_CHANNEL_NAME, buildDetail)
+        }
+    }
+
+}
+
+def buildMaster(){
+    if (_BRANCH_NAME.matches("dev")) {
+
+        stage ("Build source") {
+            withEnv( ["PATH+MAVEN=/usr/local/src/apache-maven/bin"] ) {
+                sh """
+                    cp -r source/social-networking-api/* dev-ops/
+                    cd dev-ops
+                    cp config/* src/main/resources/
+                    mvn clean package -Dmaven.test.skip
+                """
+            }
+        }
+
+        stage("Upload to remote") {
+            sh """
+                sudo mkdir -p ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev
+            """
+            
+            try {
+                sh """
+                    sudo docker-compose -f ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/docker-compose.yml down
+                """
+            } catch (e) {
+
+            }
+
+            sh """
+                sudo docker rmi -f ${APP_NAME}-dev:1.0
+                sudo rm -rf ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/*
+
+                sudo cp ./${BUILD_FOLER}/target/${JAR_NAME} ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/
+                sudo cp ./${BUILD_FOLER}/docker-compose.yml ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/
+                sudo cp ./${BUILD_FOLER}/Dockerfile ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/
+
+
+                sudo sed -i 's/{CONTAINER_NAME}/${APP_NAME}-dev/g' ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/docker-compose.yml
+                sudo sed -i 's/{CONTAINER_IMAGE}/${APP_NAME}-dev/g' ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/docker-compose.yml
+                sudo sed -i 's/{PROFILES_ACTIVE}/dev/g' ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/docker-compose.yml
+                sudo sed -i 's/{PORT}/${PORT_DEV}/g' ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/docker-compose.yml
+                sudo sed -i 's/{SERVICE_NAME}/${APP_NAME}-dev/g' ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/docker-compose.yml
+
+                sudo sed -i 's/{JAR_FILE}/${JAR_NAME}/g' ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/Dockerfile
+                sudo sed -i 's/{PROFILES_ACTIVE}/dev/g' ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/Dockerfile
+                sudo docker build -t ${APP_NAME}-dev:1.0 -f ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/Dockerfile ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/
+
+            """
+        }
+
+        stage ("Deploy") {
+            sh """
+                sudo docker-compose -f ${TARTGET_FOLDER_DEPLOY}/${APP_NAME}-dev/docker-compose.yml up -d
+            """
+        }
+
+    }
+}
+
+// ================================
+// HELPER FUNCTION
+// ================================
+
+def notifyEnv(String message = "",String channelName) {
+    def colorName = "good"
+    def emoji = ":white_check_mark:"
+    
+    def text = "${emoji} ${message}"
+    slackSend (channel: channelName, failOnError: true, color: colorName, message: text)
+}
+
+def notifyBuild(String buildStatus, String channelName, String message = "") {
+    def colorName = ""
+    def emoji = ""
+    if (buildStatus == "STARTED") {
+        colorName = "#2196f3"
+        emoji = ":fast_forward:"
+    } else if (buildStatus == "SUCCESS") {
+        colorName = "good"
+        emoji = ":white_check_mark:"
+    } else {
+        colorName = "#dc3545"
+        emoji = ":x:"
+    }
+
+    def text = "${emoji} ${buildStatus}: Job <${env.BUILD_URL}/console|${env.JOB_NAME} - build ${env.BUILD_NUMBER}>"
+    if (!message.isEmpty()) {
+        // concat a Combining Grapheme Joiner character U+034F before special character to prevent markdown formatting
+        // [char] => U+034F [char]
+        // reference: https://en.wikipedia.org/wiki/Combining_Grapheme_Joiner
+        text += message.replaceAll("`", "͏`")
+    }
+
+    slackSend (channel: channelName, failOnError: true, color: colorName, message: text)
+}
+
+def getChangeLog() {
+    def changeLogSets = currentBuild.changeSets
+    if (changeLogSets.isEmpty()) {
+        return "    (No changes)"
+    }
+
+    def text = ""
+    for (int i = changeLogSets.size() - 1; i >= 0; i--) {
+        for (def entry in changeLogSets[i].items) {
+            text += ":white_small_square: ${entry.author} - ${entry.msg}\n"
+        }
+    }
+    return text
+}
+
+def formatMilisecondTime(timeInMillis, timeZone) {
+    return new Date(timeInMillis).format("MMM dd, yyyy HH:mm:ss", TimeZone.getTimeZone(timeZone))
+}
+
+def durationFormat(long milisecond) {
+    def min = milisecond.intdiv(1000).intdiv(60)
+    def sec = milisecond.intdiv(1000) % 60
+    def result = (min > 0 ? "${min}m " : "") + (sec > 0 ? "${sec}s" : "")
+    return result
+}
