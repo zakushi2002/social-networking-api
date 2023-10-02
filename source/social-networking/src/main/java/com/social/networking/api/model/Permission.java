@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = TablePrefix.PREFIX_TABLE + "permission")
@@ -26,4 +27,6 @@ public class Permission extends Auditable<String> {
     private String nameGroup;
     @Column(name = "permission_code", unique = true)
     private String permissionCode;
+    @ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)
+    private List<Group> groups;
 }

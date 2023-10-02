@@ -18,7 +18,6 @@ public class LogInterceptor implements HandlerInterceptor {
                              Object handler) {
         if (DispatcherType.REQUEST.name().equals(request.getDispatcherType().name())
                 && request.getMethod().equals(HttpMethod.GET.name())) {
-
         }
         long startTime = System.currentTimeMillis();
         request.setAttribute("startTime", startTime);
@@ -37,7 +36,6 @@ public class LogInterceptor implements HandlerInterceptor {
 
         if (ex != null) {
             log.error("afterCompletion>> " + ex.getMessage());
-
         }
     }
 

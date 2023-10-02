@@ -1,13 +1,16 @@
 package com.social.networking.api.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
-public class ThreadConfig {
+@Slf4j
+public class ThreadConfig implements AsyncConfigurer {
     @Value("${thread.pool.size:10}")
     private Integer threadPoolSize;
     @Value("${thread.pool.queue.size:100}")

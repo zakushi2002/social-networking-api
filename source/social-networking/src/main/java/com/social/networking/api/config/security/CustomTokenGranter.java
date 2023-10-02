@@ -38,7 +38,7 @@ public class CustomTokenGranter extends AbstractTokenGranter {
         String password = tokenRequest.getRequestParameters().get("password");
 
         try {
-            return userService.getAccessTokenForMultipleTenancies(client, email, password, this.getTokenServices());
+            return userService.getAccessTokenForMultipleTenancies(client, tokenRequest, email, password, this.getTokenServices());
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
             throw new InvalidTokenException("Account invalid");
