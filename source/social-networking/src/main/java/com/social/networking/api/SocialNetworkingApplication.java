@@ -22,6 +22,7 @@ import java.util.TimeZone;
 public class SocialNetworkingApplication {
     /**
      * This method is used to get the current auditor of the application.
+     *
      * @return AuditorAware<String>
      */
     @Bean

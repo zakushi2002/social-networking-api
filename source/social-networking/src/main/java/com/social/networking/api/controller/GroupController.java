@@ -14,11 +14,13 @@ import com.social.networking.api.view.form.group.CreateGroupForm;
 import com.social.networking.api.view.form.group.UpdateGroupForm;
 import com.social.networking.api.view.mapper.GroupMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -43,6 +45,7 @@ public class GroupController extends BaseController {
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('GR_C')")
+    @Transactional
     public ApiMessageDto<String> createGroup(@Valid @RequestBody CreateGroupForm createGroupForm, BindingResult bindingResult) {
         if (!isSuperAdmin()) {
             throw new UnauthorizationException("Not allowed create.");
@@ -90,8 +93,12 @@ public class GroupController extends BaseController {
             apiMessageDto.setMessage("Group name is exist");
             return apiMessageDto;
         }
-        group.setName(updateGroupForm.getName());
-        group.setDescription(updateGroupForm.getDescription());
+        if (StringUtils.isNoneBlank(updateGroupForm.getName())) {
+            group.setName(updateGroupForm.getName());
+        }
+        if (StringUtils.isNoneBlank(updateGroupForm.getDescription())) {
+            group.setDescription(updateGroupForm.getDescription());
+        }
         List<Permission> permissionList = new ArrayList<>();
         for (long permissionId : updateGroupForm.getPermissions()) {
             Permission permission = permissionRepository.findById(permissionId).orElse(null);

@@ -1,6 +1,10 @@
 package com.social.networking.api.constant;
 
+import com.social.networking.api.utils.ConfigurationService;
+
 public class SocialNetworkingConstant {
+    public static final String ROOT_DIRECTORY = ConfigurationService.getInstance().getString("file.upload-dir","/tmp/upload");
+
     /**
      * Date format constant
      */
@@ -26,6 +30,35 @@ public class SocialNetworkingConstant {
     public static final Integer STATUS_PENDING = 0;
     public static final Integer STATUS_LOCK = -1;
     public static final Integer STATUS_DELETE = -2;
+
+    /**
+     * Post kind constant
+     */
+    public static final Integer POST_KIND_NORMAL = 1;
+    public static final Integer POST_KIND_FORUM = 2;
+
+    /**
+     * Privacy constant
+     */
+    public static final Integer PRIVACY_PUBLIC = 1;
+    public static final Integer PRIVACY_PRIVATE = 2;
+
+    /**
+     * Comment depth constant
+     */
+    public static final Integer COMMENT_DEPTH_LEVEL_1 = 1;
+    public static final Integer COMMENT_DEPTH_LEVEL_2 = 2;
+    public static final Integer COMMENT_DEPTH_LEVEL_3 = 3;
+
+    /**
+     * Reaction kind constant
+     */
+    public static final Integer REACTION_KIND_LOVE = 1;
+    public static final Integer REACTION_KIND_LIKE = 2;
+    public static final Integer REACTION_KIND_HAHA = 3;
+    public static final Integer REACTION_KIND_WOW = 4;
+    public static final Integer REACTION_KIND_SAD = 5;
+    public static final Integer REACTION_KIND_ANGRY = 6;
 
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");

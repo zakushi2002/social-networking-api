@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,7 @@ public class AccountController extends BaseController {
 
     @PostMapping(value = "/create-admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ACC_C_AD')")
+    @Transactional
     public ApiResponse<String> createAdmin(@Valid @RequestBody CreateAdminForm createAdminForm, BindingResult bindingResult) {
         ApiResponse<String> apiMessageDto = new ApiResponse<>();
         Account account = accountRepository.findAccountByEmail(createAdminForm.getEmail());
@@ -74,6 +76,7 @@ public class AccountController extends BaseController {
 
     @PutMapping(value = "/update-admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ACC_U_AD')")
+    @Transactional
     public ApiResponse<String> updateAdmin(@Valid @RequestBody UpdateAdminForm updateAdminForm, BindingResult bindingResult) {
         ApiResponse<String> apiMessageDto = new ApiResponse<>();
         Account account = accountRepository.findById(updateAdminForm.getId()).orElse(null);
@@ -118,6 +121,7 @@ public class AccountController extends BaseController {
 
     @DeleteMapping(value = "/delete-admin/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ACC_D_AD')")
+    @Transactional
     public ApiResponse<String> deleteAdmin(@PathVariable("id") Long id) {
         if (!isSuperAdmin()) {
             throw new UnauthorizationException("Not allowed to delete.");
@@ -162,6 +166,7 @@ public class AccountController extends BaseController {
     }
 
     @PutMapping(value = "/update-admin-profile", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
     public ApiResponse<String> updateProfileAdmin(@Valid @RequestBody UpdateAdminProfileForm updateAdminProfileForm, BindingResult bindingResult) {
         ApiResponse<String> apiMessageDto = new ApiResponse<>();
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
