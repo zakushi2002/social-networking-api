@@ -16,6 +16,10 @@ public class ExpertProfileCriteria implements Serializable {
     private String email;
     private String fullName;
     private String phone;
+    private String hospital;
+    private String hospitalRole;
+    private Integer academicDegree;
+    private String department;
     private Integer status;
 
     public Specification<ExpertProfile> getSpecification() {
@@ -40,6 +44,18 @@ public class ExpertProfileCriteria implements Serializable {
                 }
                 if (getPhone() != null) {
                     predicates.add(cb.like(cb.lower(root.get("phone")), "%" + getPhone().toLowerCase() + "%"));
+                }
+                if (getHospital() != null) {
+                    predicates.add(cb.like(cb.lower(root.get("hospital")), "%" + getHospital().toLowerCase() + "%"));
+                }
+                if (getHospitalRole() != null) {
+                    predicates.add(cb.like(cb.lower(root.get("hospitalRole")), "%" + getHospitalRole().toLowerCase() + "%"));
+                }
+                if (getAcademicDegree() != null) {
+                    predicates.add(cb.equal(root.get("academicDegree"), getAcademicDegree()));
+                }
+                if (getDepartment() != null) {
+                    predicates.add(cb.like(cb.lower(root.get("department")), "%" + getDepartment().toLowerCase() + "%"));
                 }
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
