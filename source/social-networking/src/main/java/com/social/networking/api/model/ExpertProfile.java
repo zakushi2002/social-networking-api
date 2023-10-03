@@ -25,11 +25,18 @@ public class ExpertProfile extends Auditable<String> {
     private Account account;
     private Date dob;
     private String phone;
-    private String hospital;
-    private String hospitalRole;
-    private Integer academicDegree;
-    @Column(columnDefinition = "TEXT")
-    private String department;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hospital_id")
+    private Category hospital;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hospital_role_id")
+    private Category hospitalRole;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "academic_degree_id")
+    private Category academicDegree;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Category department;
     @Column(columnDefinition = "LONGTEXT")
     private String bio;
 }

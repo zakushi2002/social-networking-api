@@ -6,9 +6,7 @@ import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Group;
 import com.social.networking.api.model.UserProfile;
 import com.social.networking.api.model.criteria.UserProfileCriteria;
-import com.social.networking.api.repository.AccountRepository;
-import com.social.networking.api.repository.GroupRepository;
-import com.social.networking.api.repository.UserProfileRepository;
+import com.social.networking.api.repository.*;
 import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
@@ -48,6 +46,14 @@ public class UserProfileController extends BaseController {
     UserProfileRepository userProfileRepository;
     @Autowired
     UserProfileMapper userProfileMapper;
+    @Autowired
+    PostReactionRepository postReactionRepository;
+    @Autowired
+    CommentReactionRepository commentReactionRepository;
+    @Autowired
+    CommentRepository commentRepository;
+    @Autowired
+    PostRepository postRepository;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -176,6 +182,10 @@ public class UserProfileController extends BaseController {
             apiMessageDto.setMessage("User account not found");
             return apiMessageDto;
         }
+        postReactionRepository.deleteAllByAccountId(id);
+        commentReactionRepository.deleteAllByAccountId(id);
+        commentRepository.deleteAllByAccountId(id);
+        postRepository.deleteAllByAccountId(id);
         userProfileRepository.deleteById(id);
         accountRepository.deleteById(id);
         apiMessageDto.setMessage("Delete user account success");

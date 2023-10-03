@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface CommentReactionRepository extends JpaRepository<CommentReaction, Long>, JpaSpecificationExecutor<CommentReaction> {
     Optional<CommentReaction> findByCommentIdAndAccountIdAndKind(Long commentId, Long accountId, Integer kind);
+    void deleteAllByAccountId(Long accountId);
 }

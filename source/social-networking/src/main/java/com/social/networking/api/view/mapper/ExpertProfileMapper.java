@@ -11,15 +11,11 @@ import java.util.List;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {GroupMapper.class})
+        uses = {GroupMapper.class, CategoryMapper.class})
 public interface ExpertProfileMapper {
     @Mapping(source = "dateOfBirth", target = "dob")
     @Mapping(source = "phone", target = "phone")
     @Mapping(source = "bio", target = "bio")
-    @Mapping(source = "hospital", target = "hospital")
-    @Mapping(source = "hospitalRole", target = "hospitalRole")
-    @Mapping(source = "academicDegree", target = "academicDegree")
-    @Mapping(source = "department", target = "department")
     @BeanMapping(ignoreByDefault = true)
     ExpertProfile fromCreateExpertAccountFormToEntity(CreateExpertAccountForm createExpertAccountForm);
 
@@ -32,10 +28,10 @@ public interface ExpertProfileMapper {
     @Mapping(source = "dob", target = "dateOfBirth")
     @Mapping(source = "phone", target = "phone")
     @Mapping(source = "bio", target = "bio")
-    @Mapping(source = "hospital", target = "hospital")
-    @Mapping(source = "hospitalRole", target = "hospitalRole")
-    @Mapping(source = "academicDegree", target = "academicDegree")
-    @Mapping(source = "department", target = "department")
+    @Mapping(source = "hospital", target = "hospital", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "hospitalRole", target = "hospitalRole", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "academicDegree", target = "academicDegree", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "department", target = "department", qualifiedByName = "fromEntityToShortDto")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToDtoForClient")
     ExpertProfileDto fromEntityToDtoForClient(ExpertProfile expertProfile);
@@ -53,10 +49,10 @@ public interface ExpertProfileMapper {
     @Mapping(source = "dob", target = "dateOfBirth")
     @Mapping(source = "phone", target = "phone")
     @Mapping(source = "bio", target = "bio")
-    @Mapping(source = "hospital", target = "hospital")
-    @Mapping(source = "hospitalRole", target = "hospitalRole")
-    @Mapping(source = "academicDegree", target = "academicDegree")
-    @Mapping(source = "department", target = "department")
+    @Mapping(source = "hospital", target = "hospital", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "hospitalRole", target = "hospitalRole", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "academicDegree", target = "academicDegree", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "department", target = "department", qualifiedByName = "fromEntityToShortDto")
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "modifiedDate", target = "modifiedDate")
     @Mapping(source = "status", target = "status")
@@ -72,10 +68,6 @@ public interface ExpertProfileMapper {
     @Mapping(source = "dateOfBirth", target = "dob")
     @Mapping(source = "phone", target = "phone")
     @Mapping(source = "bio", target = "bio")
-    @Mapping(source = "hospital", target = "hospital")
-    @Mapping(source = "hospitalRole", target = "hospitalRole")
-    @Mapping(source = "academicDegree", target = "academicDegree")
-    @Mapping(source = "department", target = "department")
     @BeanMapping(ignoreByDefault = true)
     void mappingUpdateExpertAccountFormToEntity(UpdateExpertAccountForm updateExpertAccountForm, @MappingTarget ExpertProfile expertProfile);
 }
