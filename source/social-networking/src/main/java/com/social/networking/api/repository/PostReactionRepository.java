@@ -8,5 +8,4 @@ import java.util.Optional;
 
 public interface PostReactionRepository extends JpaRepository<PostReaction, Long>, JpaSpecificationExecutor<PostReaction> {
     Optional<PostReaction> findByPostIdAndAccountIdAndKind(Long postId, Long accountId, Integer kind);
-    void deleteAllByAccountId(Long accountId);
 }

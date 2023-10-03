@@ -62,4 +62,23 @@ public interface PostMapper {
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToAutoCompleteDto")
     PostDto fromEntityToAutoCompleteDto(Post post);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "content", target = "content")
+    @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
+    @Mapping(source = "kind", target = "kind")
+    @Mapping(source = "postReactions", target = "postReactions", qualifiedByName = "fromEntitiesToPostReactionDtoShortList")
+    @Mapping(source = "createdDate", target = "createdDate")
+    @Mapping(source = "modifiedDate", target = "modifiedDate")
+    @Mapping(source = "status", target = "status")
+    @BeanMapping(ignoreByDefault = true)
+    @Named("fromEntityToPostDtoForBookmark")
+    PostDto fromEntityToPostDtoForBookmark(Post post);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
+    @Mapping(source = "kind", target = "kind")
+    @BeanMapping(ignoreByDefault = true)
+    @Named("fromEntityToPostDtoForBookmarkAdmin")
+    PostDto fromEntityToPostDtoForBookmarkAdmin(Post post);
 }

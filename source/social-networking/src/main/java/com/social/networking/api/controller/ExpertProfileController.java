@@ -50,12 +50,6 @@ public class ExpertProfileController extends BaseController {
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
-    PostReactionRepository postReactionRepository;
-    @Autowired
-    CommentReactionRepository commentReactionRepository;
-    @Autowired
-    CommentRepository commentRepository;
-    @Autowired
     PostRepository postRepository;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -251,9 +245,6 @@ public class ExpertProfileController extends BaseController {
             apiMessageDto.setMessage("Expert profile not found");
             return apiMessageDto;
         }
-        postReactionRepository.deleteAllByAccountId(id);
-        commentReactionRepository.deleteAllByAccountId(id);
-        commentRepository.deleteAllByAccountId(id);
         postRepository.deleteAllByAccountId(id);
         expertProfileRepository.deleteById(id);
         accountRepository.deleteById(id);

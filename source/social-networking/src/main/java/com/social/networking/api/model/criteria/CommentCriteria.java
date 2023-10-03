@@ -1,5 +1,6 @@
 package com.social.networking.api.model.criteria;
 
+import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.model.Post;
 import com.social.networking.api.model.Comment;
 import lombok.Data;
@@ -40,6 +41,7 @@ public class CommentCriteria implements Serializable {
                 if (getPostId() != null) {
                     Join<Post, Comment> join = root.join("post", JoinType.INNER);
                     predicates.add(cb.equal(join.get("id"), getPostId()));
+                    predicates.add(cb.equal(join.get("status"), SocialNetworkingConstant.STATUS_ACTIVE));
                 }
                 if (getStatus() != null) {
                     predicates.add(cb.equal(root.get("status"), getStatus()));

@@ -46,7 +46,7 @@
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696350615645-5">
         <addColumn tableName="db_social_networking_expert_profile">
-            <column name="academic_degree_id" type="bigint" afterColumn="hospital_role_id" />
+            <column name="academic_degree_id" type="bigint" afterColumn="hospital_role_id"/>
         </addColumn>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696350615645-6">

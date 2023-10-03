@@ -20,6 +20,7 @@ public class GroupCriteria implements Serializable {
     @NotNull(message = "kind cannot be null!")
     private Integer kind;
     private Boolean isSystemRole;
+    private Integer status;
 
     public Specification<Group> getSpecification() {
         return new Specification<Group>() {
@@ -36,6 +37,9 @@ public class GroupCriteria implements Serializable {
                 }
                 if (getIsSystemRole() != null) {
                     predicates.add(cb.equal(root.get("isSystemRole"), getIsSystemRole()));
+                }
+                if (getStatus() != null) {
+                    predicates.add(cb.equal(root.get("status"), getStatus()));
                 }
                 predicates.add(cb.equal(root.get("kind"), getKind()));
                 query.orderBy(cb.desc(root.get("createdDate")));

@@ -1,6 +1,7 @@
 package com.social.networking.api.model.criteria;
 
 import com.social.networking.api.model.Account;
+import com.social.networking.api.model.Category;
 import com.social.networking.api.model.ExpertProfile;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,10 +17,10 @@ public class ExpertProfileCriteria implements Serializable {
     private String email;
     private String fullName;
     private String phone;
-    private String hospital;
-    private String hospitalRole;
-    private Integer academicDegree;
-    private String department;
+    private Long hospitalId;
+    private Long hospitalRoleId;
+    private Long academicDegreeId;
+    private Long departmentId;
     private Integer status;
 
     public Specification<ExpertProfile> getSpecification() {
@@ -45,17 +46,21 @@ public class ExpertProfileCriteria implements Serializable {
                 if (getPhone() != null) {
                     predicates.add(cb.like(cb.lower(root.get("phone")), "%" + getPhone().toLowerCase() + "%"));
                 }
-                if (getHospital() != null) {
-                    predicates.add(cb.like(cb.lower(root.get("hospital")), "%" + getHospital().toLowerCase() + "%"));
+                if (getHospitalId() != null) {
+                    Join<ExpertProfile, Category> hospital = root.join("hospital", JoinType.INNER);
+                    predicates.add(cb.equal(hospital.get("id"), getHospitalId()));
                 }
-                if (getHospitalRole() != null) {
-                    predicates.add(cb.like(cb.lower(root.get("hospitalRole")), "%" + getHospitalRole().toLowerCase() + "%"));
+                if (getHospitalRoleId() != null) {
+                    Join<ExpertProfile, Category> hospitalRole = root.join("hospitalRole", JoinType.INNER);
+                    predicates.add(cb.equal(hospitalRole.get("id"), getHospitalRoleId()));
                 }
-                if (getAcademicDegree() != null) {
-                    predicates.add(cb.equal(root.get("academicDegree"), getAcademicDegree()));
+                if (getAcademicDegreeId() != null) {
+                    Join<ExpertProfile, Category> academicDegree = root.join("academicDegree", JoinType.INNER);
+                    predicates.add(cb.equal(academicDegree.get("id"), getAcademicDegreeId()));
                 }
-                if (getDepartment() != null) {
-                    predicates.add(cb.like(cb.lower(root.get("department")), "%" + getDepartment().toLowerCase() + "%"));
+                if (getDepartmentId() != null) {
+                    Join<ExpertProfile, Category> department = root.join("department", JoinType.INNER);
+                    predicates.add(cb.equal(department.get("id"), getDepartmentId()));
                 }
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
