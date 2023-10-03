@@ -3,12 +3,11 @@ package com.social.networking.api.controller;
 import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.exception.UnauthorizationException;
 import com.social.networking.api.model.Account;
+import com.social.networking.api.model.Category;
 import com.social.networking.api.model.ExpertProfile;
 import com.social.networking.api.model.Group;
 import com.social.networking.api.model.criteria.ExpertProfileCriteria;
-import com.social.networking.api.repository.AccountRepository;
-import com.social.networking.api.repository.ExpertProfileRepository;
-import com.social.networking.api.repository.GroupRepository;
+import com.social.networking.api.repository.*;
 import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
@@ -48,12 +47,22 @@ public class ExpertProfileController extends BaseController {
     ExpertProfileRepository expertProfileRepository;
     @Autowired
     ExpertProfileMapper expertProfileMapper;
+    @Autowired
+    CategoryRepository categoryRepository;
+    @Autowired
+    PostReactionRepository postReactionRepository;
+    @Autowired
+    CommentReactionRepository commentReactionRepository;
+    @Autowired
+    CommentRepository commentRepository;
+    @Autowired
+    PostRepository postRepository;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EXP_C')")
     @Transactional
     public ApiMessageDto<Long> registerExpert(@Valid @RequestBody CreateExpertAccountForm createExpertAccountForm, BindingResult bindingResult) {
-        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto();
+        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(createExpertAccountForm.getEmail());
         if (account != null) {
             apiMessageDto.setResult(false);
@@ -68,6 +77,34 @@ public class ExpertProfileController extends BaseController {
             apiMessageDto.setMessage("Group not found");
             return apiMessageDto;
         }
+        Category hospital = categoryRepository.findById(createExpertAccountForm.getHospitalId()).orElse(null);
+        if (hospital == null || !hospital.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_HOSPITAL)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Hospital not found or not category kind hospital");
+            return apiMessageDto;
+        }
+        Category hospitalRole = categoryRepository.findById(createExpertAccountForm.getHospitalRoleId()).orElse(null);
+        if (hospitalRole == null || !hospitalRole.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_HOSPITAL_ROLE)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Hospital role not found or not category kind hospital role");
+            return apiMessageDto;
+        }
+        Category academicDegree = categoryRepository.findById(createExpertAccountForm.getAcademicDegreeId()).orElse(null);
+        if (academicDegree == null || !academicDegree.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_ACADEMIC_DEGREE)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Academic degree not found or not category kind academic degree");
+            return apiMessageDto;
+        }
+        Category department = categoryRepository.findById(createExpertAccountForm.getDepartmentId()).orElse(null);
+        if (department == null || !department.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_DEPARTMENT)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Department not found or not category kind department");
+            return apiMessageDto;
+        }
         account = accountMapper.fromCreateExpertAccountFormToEntity(createExpertAccountForm);
         account.setGroup(group);
         account.setPassword(passwordEncoder.encode(createExpertAccountForm.getPassword()));
@@ -77,8 +114,13 @@ public class ExpertProfileController extends BaseController {
         }
         accountRepository.save(account);
         ExpertProfile expertProfile = expertProfileMapper.fromCreateExpertAccountFormToEntity(createExpertAccountForm);
+        expertProfile.setHospital(hospital);
+        expertProfile.setHospitalRole(hospitalRole);
+        expertProfile.setAcademicDegree(academicDegree);
+        expertProfile.setDepartment(department);
         expertProfile.setAccount(account);
         expertProfileRepository.save(expertProfile);
+        apiMessageDto.setData(expertProfile.getId());
         apiMessageDto.setMessage("Register expert success");
         return apiMessageDto;
     }
@@ -125,16 +167,44 @@ public class ExpertProfileController extends BaseController {
             apiMessageDto.setMessage("Expert profile not found");
             return apiMessageDto;
         }
+        if (!passwordEncoder.matches(updateExpertAccountForm.getOldPassword(), expertProfile.getAccount().getPassword())) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_WRONG_PASSWORD);
+            apiMessageDto.setMessage("Old password is wrong");
+            return apiMessageDto;
+        }
         if (updateExpertAccountForm.getPhone() != null && updateExpertAccountForm.getPhone().trim().isEmpty()) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.EXPERT_PROFILE_ERROR_PHONE_EMPTY);
             apiMessageDto.setMessage("Phone is empty");
             return apiMessageDto;
         }
-        if (!passwordEncoder.matches(updateExpertAccountForm.getOldPassword(), expertProfile.getAccount().getPassword())) {
+        Category hospital = categoryRepository.findById(updateExpertAccountForm.getHospitalId()).orElse(null);
+        if (hospital == null || !hospital.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_HOSPITAL)) {
             apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_WRONG_PASSWORD);
-            apiMessageDto.setMessage("Old password is wrong");
+            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Hospital not found or not category kind hospital");
+            return apiMessageDto;
+        }
+        Category hospitalRole = categoryRepository.findById(updateExpertAccountForm.getHospitalRoleId()).orElse(null);
+        if (hospitalRole == null || !hospitalRole.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_HOSPITAL_ROLE)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Hospital role not found or not category kind hospital role");
+            return apiMessageDto;
+        }
+        Category academicDegree = categoryRepository.findById(updateExpertAccountForm.getAcademicDegreeId()).orElse(null);
+        if (academicDegree == null || !academicDegree.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_ACADEMIC_DEGREE)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Academic degree not found or not category kind academic degree");
+            return apiMessageDto;
+        }
+        Category department = categoryRepository.findById(updateExpertAccountForm.getDepartmentId()).orElse(null);
+        if (department == null || !department.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_DEPARTMENT)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Department not found or not category kind department");
             return apiMessageDto;
         }
         if (StringUtils.isNoneBlank(updateExpertAccountForm.getNewPassword())) {
@@ -145,6 +215,10 @@ public class ExpertProfileController extends BaseController {
         }
         accountRepository.save(expertProfile.getAccount());
         expertProfileMapper.mappingUpdateExpertAccountFormToEntity(updateExpertAccountForm, expertProfile);
+        expertProfile.setHospital(hospital);
+        expertProfile.setHospitalRole(hospitalRole);
+        expertProfile.setAcademicDegree(academicDegree);
+        expertProfile.setDepartment(department);
         expertProfileRepository.save(expertProfile);
         apiMessageDto.setData(expertProfile.getId());
         apiMessageDto.setMessage("Update expert profile success");
@@ -177,6 +251,10 @@ public class ExpertProfileController extends BaseController {
             apiMessageDto.setMessage("Expert profile not found");
             return apiMessageDto;
         }
+        postReactionRepository.deleteAllByAccountId(id);
+        commentReactionRepository.deleteAllByAccountId(id);
+        commentRepository.deleteAllByAccountId(id);
+        postRepository.deleteAllByAccountId(id);
         expertProfileRepository.deleteById(id);
         accountRepository.deleteById(id);
         apiMessageDto.setMessage("Delete expert account success");

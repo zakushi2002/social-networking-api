@@ -25,7 +25,7 @@ import java.util.Arrays;
 
 @Service
 @Slf4j
-public class SocialNetworkingApiSerivce {
+public class SocialNetworkingApiService {
     static final String[] UPLOAD_TYPES = new String[]{"LOGO", "AVATAR", "IMAGE", "DOCUMENT"};
     @Autowired
     RestTemplate restTemplate;

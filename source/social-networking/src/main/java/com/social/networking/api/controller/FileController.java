@@ -1,6 +1,6 @@
 package com.social.networking.api.controller;
 
-import com.social.networking.api.service.SocialNetworkingApiSerivce;
+import com.social.networking.api.service.SocialNetworkingApiService;
 import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.UploadFileDto;
 import com.social.networking.api.view.form.UploadFileForm;
@@ -27,11 +27,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class FileController {
     @Autowired
-    SocialNetworkingApiSerivce socialNetworkingApiSerivce;
+    SocialNetworkingApiService socialNetworkingApiService;
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiMessageDto<UploadFileDto> upload(@Valid UploadFileForm uploadFileForm, BindingResult bindingResult) {
-        ApiMessageDto<UploadFileDto> apiMessageDto = socialNetworkingApiSerivce.storeFile(uploadFileForm);
+        ApiMessageDto<UploadFileDto> apiMessageDto = socialNetworkingApiService.storeFile(uploadFileForm);
         apiMessageDto.setResult(true);
         return apiMessageDto;
     }
@@ -39,7 +39,7 @@ public class FileController {
     @GetMapping("/download/{folder}/{fileName:.+}")
     @Cacheable("images")
     public ResponseEntity<Resource> downloadFile(@PathVariable String folder, @PathVariable String fileName, HttpServletRequest request) throws FileNotFoundException {
-        Resource resource = socialNetworkingApiSerivce.loadFileAsResource(folder, fileName);
+        Resource resource = socialNetworkingApiService.loadFileAsResource(folder, fileName);
         String contentType = null;
         try {
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());

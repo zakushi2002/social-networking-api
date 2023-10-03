@@ -21,18 +21,18 @@ public class UpdateExpertAccountForm {
     @ApiModelProperty(name = "phone")
     @Size(min = 10, max = 11, message = "phone must be at least 10 characters and at most 11 characters")
     private String phone;
-    @ApiModelProperty(name = "hospital", required = true)
-    @NotEmpty(message = "hospital cannot be empty!")
-    private String hospital;
-    @ApiModelProperty(name = "hospitalRole", required = true)
-    @NotEmpty(message = "hospitalRole cannot be empty!")
-    private String hospitalRole;
-    @ApiModelProperty(name = "academicDegree", required = true)
-    @NotNull(message = "academicDegree cannot be null!")
-    private Integer academicDegree;
-    @ApiModelProperty(name = "department", required = true)
-    @NotEmpty(message = "department cannot be empty!")
-    private String department;
+    @ApiModelProperty(name = "hospitalId", required = true)
+    @NotNull(message = "hospitalId cannot be null!")
+    private Long hospitalId;
+    @ApiModelProperty(name = "hospitalRoleId", required = true)
+    @NotNull(message = "hospitalRoleId cannot be null!")
+    private Long hospitalRoleId;
+    @ApiModelProperty(name = "academicDegreeId", required = true)
+    @NotNull(message = "academicDegreeId cannot be null!")
+    private Long academicDegreeId;
+    @ApiModelProperty(name = "departmentId", required = true)
+    @NotNull(message = "departmentId cannot be null!")
+    private Long departmentId;
     @ApiModelProperty(name = "bio")
     private String bio;
     @ApiModelProperty(name = "newPassword")

@@ -60,6 +60,14 @@ public class SocialNetworkingConstant {
     public static final Integer REACTION_KIND_SAD = 5;
     public static final Integer REACTION_KIND_ANGRY = 6;
 
+    /**
+     * Category kind constant
+     */
+    public static final Integer CATEGORY_KIND_HOSPITAL = 1;
+    public static final Integer CATEGORY_KIND_HOSPITAL_ROLE = 2;
+    public static final Integer CATEGORY_KIND_DEPARTMENT = 3;
+    public static final Integer CATEGORY_KIND_ACADEMIC_DEGREE = 4;
+
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");
     }

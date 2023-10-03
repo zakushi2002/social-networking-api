@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpecificationExecutor<Comment> {
     Page<Comment> findByPostId(Long postId, Pageable pageable);
+    void deleteAllByAccountId(Long accountId);
 }

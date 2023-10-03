@@ -1,6 +1,7 @@
 package com.social.networking.api.view.dto.profile.expert;
 
 import com.social.networking.api.view.dto.InfoAdminDto;
+import com.social.networking.api.view.dto.category.CategoryDto;
 import com.social.networking.api.view.dto.group.GroupDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,13 +25,13 @@ public class ExpertProfileDto extends InfoAdminDto {
     @ApiModelProperty(name = "phone")
     private String phone;
     @ApiModelProperty(name = "hospital")
-    private String hospital;
+    private CategoryDto hospital;
     @ApiModelProperty(name = "hospitalRole")
-    private String hospitalRole;
+    private CategoryDto hospitalRole;
     @ApiModelProperty(name = "academicDegree")
-    private Integer academicDegree;
+    private CategoryDto academicDegree;
     @ApiModelProperty(name = "department")
-    private String department;
+    private CategoryDto department;
     @ApiModelProperty(name = "bio")
     private String bio;
 }

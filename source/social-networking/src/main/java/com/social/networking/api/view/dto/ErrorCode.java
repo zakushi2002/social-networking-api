@@ -61,5 +61,9 @@ public class ErrorCode {
     public static final String COMMENT_REACTION_ERROR_NOT_OWNER = "ERROR-REACTION-004";
     public static final String COMMENT_REACTION_ERROR_NOT_FOUND = "ERROR-REACTION-005";
 
-
+    /**
+     * Category error code
+     */
+    public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-000";
+    public static final String CATEGORY_ERROR_NAME_EXIST_IN_KIND = "ERROR-CATEGORY-001";
 }
