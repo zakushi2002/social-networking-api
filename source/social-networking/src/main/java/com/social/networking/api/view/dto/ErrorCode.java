@@ -66,4 +66,10 @@ public class ErrorCode {
      */
     public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-000";
     public static final String CATEGORY_ERROR_NAME_EXIST_IN_KIND = "ERROR-CATEGORY-001";
+
+    /**
+     * Bookmark error code
+     */
+    public static final String BOOKMARK_ERROR_EXIST = "ERROR-BOOKMARK-000";
+    public static final String BOOKMARK_ERROR_NOT_FOUND = "ERROR-BOOKMARK-001";
 }

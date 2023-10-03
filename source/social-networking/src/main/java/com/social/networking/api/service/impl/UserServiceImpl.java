@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("Invalid email or password!");
         }
         boolean enabled = true;
-        if (user.getStatus() != 1) {
+        if (!Objects.equals(user.getStatus(), SocialNetworkingConstant.STATUS_ACTIVE)) {
             log.error("User had been locked");
             enabled = false;
         }

@@ -1,21 +1,24 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.model.Account;
+import com.social.networking.api.model.Bookmark;
 import com.social.networking.api.model.Post;
 import com.social.networking.api.model.PostReaction;
+import com.social.networking.api.model.criteria.BookmarkCriteria;
 import com.social.networking.api.model.criteria.PostCriteria;
 import com.social.networking.api.model.criteria.PostReactionCriteria;
-import com.social.networking.api.repository.AccountRepository;
-import com.social.networking.api.repository.PostReactionRepository;
-import com.social.networking.api.repository.PostRepository;
+import com.social.networking.api.repository.*;
 import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.post.PostDto;
+import com.social.networking.api.view.dto.post.bookmark.BookmarkDto;
 import com.social.networking.api.view.dto.reaction.PostReactionDto;
 import com.social.networking.api.view.form.post.CreatePostForm;
 import com.social.networking.api.view.form.post.UpdatePostForm;
+import com.social.networking.api.view.form.post.bookmark.CreateBookmarkForm;
 import com.social.networking.api.view.form.reaction.post.ReactPostForm;
+import com.social.networking.api.view.mapper.BookmarkMapper;
 import com.social.networking.api.view.mapper.PostMapper;
 import com.social.networking.api.view.mapper.ReactionMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +48,10 @@ public class PostController extends BaseController {
     ReactionMapper reactionMapper;
     @Autowired
     PostReactionRepository postReactionRepository;
+    @Autowired
+    BookmarkRepository bookmarkRepository;
+    @Autowired
+    BookmarkMapper bookmarkMapper;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -207,6 +214,77 @@ public class PostController extends BaseController {
         ResponseListDto<PostReactionDto> responseListDto = new ResponseListDto(reactionMapper.fromEntitiesToPostReactionDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("Get list post reaction success");
+        return apiMessageDto;
+    }
+
+    @PostMapping(value = "/add-bookmark", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('BOOKMARK_C')")
+    @Transactional
+    public ApiMessageDto<Long> addBookmark(@Valid @RequestBody CreateBookmarkForm createBookmarkForm, BindingResult bindingResult) {
+        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
+        Post post = postRepository.findById(createBookmarkForm.getPostId()).orElse(null);
+        if (post == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Post is not exist");
+            return apiMessageDto;
+        }
+        Account account = accountRepository.findById(getCurrentUser()).orElse(null);
+        if (account == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Account is not exist");
+            return apiMessageDto;
+        }
+        Bookmark bookmark = bookmarkRepository.findFirstByAccountIdAndPostId(getCurrentUser(), createBookmarkForm.getPostId()).orElse(null);
+        if (bookmark != null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.BOOKMARK_ERROR_EXIST);
+            apiMessageDto.setMessage("Bookmark is exist");
+            return apiMessageDto;
+        }
+        bookmark = new Bookmark();
+        bookmark.setAccount(account);
+        bookmark.setPost(post);
+        bookmarkRepository.save(bookmark);
+        apiMessageDto.setMessage("Add bookmark successfully");
+        apiMessageDto.setData(bookmark.getId());
+        return apiMessageDto;
+    }
+
+    @DeleteMapping(value = "/remove-bookmark/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('BOOKMARK_D')")
+    @Transactional
+    public ApiMessageDto<Long> removeBookmark(@PathVariable("id") Long id) {
+        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
+        Bookmark bookmark = bookmarkRepository.findById(id).orElse(null);
+        if (bookmark == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.BOOKMARK_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Bookmark is not exist");
+            return apiMessageDto;
+        }
+        if (!bookmark.getAccount().getId().equals(getCurrentUser())) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.BOOKMARK_ERROR_EXIST);
+            apiMessageDto.setMessage("Bookmark is not owner");
+            return apiMessageDto;
+        }
+        bookmarkRepository.deleteById(id);
+        apiMessageDto.setMessage("Remove bookmark successfully");
+        apiMessageDto.setData(id);
+        return apiMessageDto;
+    }
+
+    @GetMapping(value = "/list-bookmark", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('BOOKMARK_L')")
+    public ApiMessageDto<ResponseListDto<BookmarkDto>> listBookmark(BookmarkCriteria bookmarkCriteria, Pageable pageable) {
+        ApiMessageDto<ResponseListDto<BookmarkDto>> apiMessageDto = new ApiMessageDto<>();
+        bookmarkCriteria.setAccountId(getCurrentUser());
+        Page<Bookmark> page = bookmarkRepository.findAll(bookmarkCriteria.getSpecification(), pageable);
+        ResponseListDto<BookmarkDto> responseListDto = new ResponseListDto(bookmarkMapper.fromEntitiesToBookmarkDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
+        apiMessageDto.setData(responseListDto);
+        apiMessageDto.setMessage("Get list bookmark success");
         return apiMessageDto;
     }
 }

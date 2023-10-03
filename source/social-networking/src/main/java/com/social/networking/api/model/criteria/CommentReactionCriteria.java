@@ -1,5 +1,6 @@
 package com.social.networking.api.model.criteria;
 
+import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.model.Comment;
 import com.social.networking.api.model.CommentReaction;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class CommentReactionCriteria implements Serializable {
     @NotNull(message = "commentId id is required")
     private Long commentId;
     private Integer kind;
+    private Integer status;
 
     public Specification<CommentReaction> getSpecification() {
         return new Specification<CommentReaction>() {
@@ -28,9 +30,13 @@ public class CommentReactionCriteria implements Serializable {
                 if (getCommentId() != null) {
                     Join<CommentReaction, Comment> join = root.join("comment", JoinType.INNER);
                     predicates.add(cb.equal(join.get("id"), getCommentId()));
+                    predicates.add(cb.equal(join.get("status"), SocialNetworkingConstant.STATUS_ACTIVE));
                 }
                 if (getKind() != null) {
                     predicates.add(cb.equal(root.get("kind"), getKind()));
+                }
+                if (getStatus() != null) {
+                    predicates.add(cb.equal(root.get("status"), getStatus()));
                 }
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }

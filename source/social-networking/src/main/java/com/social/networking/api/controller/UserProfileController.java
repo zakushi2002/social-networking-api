@@ -47,12 +47,6 @@ public class UserProfileController extends BaseController {
     @Autowired
     UserProfileMapper userProfileMapper;
     @Autowired
-    PostReactionRepository postReactionRepository;
-    @Autowired
-    CommentReactionRepository commentReactionRepository;
-    @Autowired
-    CommentRepository commentRepository;
-    @Autowired
     PostRepository postRepository;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -182,9 +176,6 @@ public class UserProfileController extends BaseController {
             apiMessageDto.setMessage("User account not found");
             return apiMessageDto;
         }
-        postReactionRepository.deleteAllByAccountId(id);
-        commentReactionRepository.deleteAllByAccountId(id);
-        commentRepository.deleteAllByAccountId(id);
         postRepository.deleteAllByAccountId(id);
         userProfileRepository.deleteById(id);
         accountRepository.deleteById(id);
