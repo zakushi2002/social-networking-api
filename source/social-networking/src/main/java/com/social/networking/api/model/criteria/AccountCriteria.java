@@ -18,6 +18,7 @@ public class AccountCriteria implements Serializable {
     private String fullName;
     private Long groupId;
     private Boolean isSuperAdmin;
+    private Integer status;
 
     public Specification<Account> getSpecification() {
         return new Specification<Account>() {
@@ -44,6 +45,9 @@ public class AccountCriteria implements Serializable {
                 }
                 if (getIsSuperAdmin() != null) {
                     predicates.add(cb.equal(root.get("isSuperAdmin"), getIsSuperAdmin()));
+                }
+                if (getStatus() != null) {
+                    predicates.add(cb.equal(root.get("status"), getStatus()));
                 }
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }

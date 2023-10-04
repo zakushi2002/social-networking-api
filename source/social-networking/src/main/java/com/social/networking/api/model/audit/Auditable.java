@@ -1,5 +1,6 @@
 package com.social.networking.api.model.audit;
 
+import com.social.networking.api.model.ReuseId;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
@@ -14,7 +15,7 @@ import java.util.Date;
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class Auditable<T> {
+public abstract class Auditable<T> extends ReuseId {
     @CreatedBy
     @Column(name = "created_by", nullable = false, updatable = false)
     private T createdBy;

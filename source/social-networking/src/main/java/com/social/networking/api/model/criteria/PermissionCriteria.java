@@ -20,6 +20,7 @@ public class PermissionCriteria implements Serializable {
     private String nameGroup;
     private String action;
     private Boolean showMenu;
+    private Integer status;
 
     public Specification<Permission> getSpecification() {
         return new Specification<Permission>() {
@@ -45,6 +46,9 @@ public class PermissionCriteria implements Serializable {
                 }
                 if (getShowMenu() != null) {
                     predicates.add(cb.equal(root.get("showMenu"), getShowMenu()));
+                }
+                if (getStatus() != null) {
+                    predicates.add(cb.equal(root.get("status"), getStatus()));
                 }
                 query.orderBy(cb.desc(root.get("createdDate")));
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));

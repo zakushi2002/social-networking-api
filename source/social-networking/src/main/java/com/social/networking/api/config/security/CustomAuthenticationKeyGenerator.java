@@ -1,4 +1,5 @@
 package com.social.networking.api.config.security;
+import com.social.networking.api.service.id.IdGenerator;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
@@ -19,6 +20,7 @@ public class CustomAuthenticationKeyGenerator implements AuthenticationKeyGenera
     private static final String SCOPE = "scope";
 
     private static final String USERNAME = "username";
+    private static final String DEVICE_ID = "device_id";
 
     @Override
     public String extractKey(OAuth2Authentication authentication) {
@@ -32,6 +34,13 @@ public class CustomAuthenticationKeyGenerator implements AuthenticationKeyGenera
             values.put(SCOPE, OAuth2Utils.formatParameterList(authorizationRequest.getScope()));
         }
 
+        String deviceId = authorizationRequest.getRequestParameters().get(DEVICE_ID);
+        if (deviceId != null && !deviceId.isEmpty()) {
+            values.put(DEVICE_ID, deviceId);
+        } else {
+            deviceId = String.valueOf(new IdGenerator().nextId());
+            values.put(DEVICE_ID, deviceId);
+        }
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("MD5");

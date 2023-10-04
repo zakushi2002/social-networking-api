@@ -1,0 +1,44 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="TOAN (generated)" id="1696363596746-1">
+        <createTable tableName="db_social_networking_bookmark">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_bookmarkPK"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1696363596746-2">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_bookmark"
+                                 constraintName="FKgpicr4ttfmrin9rej47svv6j4" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_post" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1696363596746-3">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_bookmark"
+                                 constraintName="FKipf4dr9895bnm116akbtirm95" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>
