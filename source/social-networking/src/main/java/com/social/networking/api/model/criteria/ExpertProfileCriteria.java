@@ -1,5 +1,6 @@
 package com.social.networking.api.model.criteria;
 
+import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Category;
 import com.social.networking.api.model.ExpertProfile;
@@ -49,18 +50,22 @@ public class ExpertProfileCriteria implements Serializable {
                 if (getHospitalId() != null) {
                     Join<ExpertProfile, Category> hospital = root.join("hospital", JoinType.INNER);
                     predicates.add(cb.equal(hospital.get("id"), getHospitalId()));
+                    predicates.add(cb.equal(hospital.get("kind"), SocialNetworkingConstant.CATEGORY_KIND_HOSPITAL));
                 }
                 if (getHospitalRoleId() != null) {
                     Join<ExpertProfile, Category> hospitalRole = root.join("hospitalRole", JoinType.INNER);
                     predicates.add(cb.equal(hospitalRole.get("id"), getHospitalRoleId()));
+                    predicates.add(cb.equal(hospitalRole.get("kind"), SocialNetworkingConstant.CATEGORY_KIND_HOSPITAL_ROLE));
                 }
                 if (getAcademicDegreeId() != null) {
                     Join<ExpertProfile, Category> academicDegree = root.join("academicDegree", JoinType.INNER);
                     predicates.add(cb.equal(academicDegree.get("id"), getAcademicDegreeId()));
+                    predicates.add(cb.equal(academicDegree.get("kind"), SocialNetworkingConstant.CATEGORY_KIND_ACADEMIC_DEGREE));
                 }
                 if (getDepartmentId() != null) {
                     Join<ExpertProfile, Category> department = root.join("department", JoinType.INNER);
                     predicates.add(cb.equal(department.get("id"), getDepartmentId()));
+                    predicates.add(cb.equal(department.get("kind"), SocialNetworkingConstant.CATEGORY_KIND_DEPARTMENT));
                 }
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
