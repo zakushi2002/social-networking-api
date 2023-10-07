@@ -6,7 +6,7 @@ APP_BOOT_TIME_SECOND = 30
 SLACK_CHANNEL_NAME = "G015NGG1013"
 
 TARTGET_FOLDER_DEPLOY="/opt/deploy/social-networking"
-JAR_NAME = "social-networking-api-0.0.1.jar"
+JAR_NAME = "social-networking-0.0.1.jar"
 
 
 APP_NAME = "social-networking-api"
@@ -59,7 +59,7 @@ def buildMaster(){
         stage ("Build source") {
             withEnv( ["PATH+MAVEN=/usr/local/src/apache-maven/bin"] ) {
                 sh """
-                    cp -r source/social-networking-api/* dev-ops/
+                    cp -r source/social-networking/* dev-ops/
                     cd dev-ops
                     cp config/* src/main/resources/
                     mvn clean package -Dmaven.test.skip
