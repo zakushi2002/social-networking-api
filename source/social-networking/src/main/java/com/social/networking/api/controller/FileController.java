@@ -3,11 +3,12 @@ package com.social.networking.api.controller;
 import com.social.networking.api.service.SocialNetworkingApiService;
 import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.UploadFileDto;
+import com.social.networking.api.view.dto.aws.FileS3Dto;
 import com.social.networking.api.view.form.UploadFileForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -29,31 +27,38 @@ public class FileController {
     @Autowired
     SocialNetworkingApiService socialNetworkingApiService;
 
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/upload/s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiMessageDto<UploadFileDto> upload(@Valid UploadFileForm uploadFileForm, BindingResult bindingResult) {
-        ApiMessageDto<UploadFileDto> apiMessageDto = socialNetworkingApiService.storeFile(uploadFileForm);
-        apiMessageDto.setResult(true);
-        return apiMessageDto;
+        return socialNetworkingApiService.uploadFileS3(uploadFileForm);
     }
 
-    @GetMapping("/download/{folder}/{fileName:.+}")
+    @GetMapping(value = "/load/s3/{fileName:.+}")
     @Cacheable("images")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String folder, @PathVariable String fileName, HttpServletRequest request) throws FileNotFoundException {
-        Resource resource = socialNetworkingApiService.loadFileAsResource(folder, fileName);
-        String contentType = null;
-        try {
-            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException ex) {
-            log.info("Could not determine file type.");
-        }
-        if (contentType == null) {
-            contentType = "application/octet-stream";
+    public ResponseEntity<?> loadFileS3(@PathVariable String fileName) {
+        FileS3Dto fileS3Dto = socialNetworkingApiService.loadFileAsResource(fileName);
+        if (fileS3Dto == null) {
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok()
+                .contentLength(fileS3Dto.getFileByte().length)
+                .contentType(MediaType.parseMediaType(fileS3Dto.getFileType()))
                 .cacheControl(CacheControl.maxAge(7776000, TimeUnit.SECONDS))
-                .contentType(MediaType.parseMediaType(contentType))
-                //.header(HttpHeaders.EXPIRES, expires)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(fileS3Dto.getFileByte());
+    }
+
+    @GetMapping(value = "/download/s3/{fileName:.+}")
+    @Cacheable("images")
+    public ResponseEntity<ByteArrayResource> downloadFileS3(@PathVariable String fileName) {
+        byte[] data = socialNetworkingApiService.loadFileAsResource(fileName).getFileByte();
+        if (data == null) {
+            return ResponseEntity.notFound().build();
+        }
+        ByteArrayResource resource = new ByteArrayResource(data);
+        return ResponseEntity.ok()
+                .contentLength(data.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .cacheControl(CacheControl.maxAge(7776000, TimeUnit.SECONDS))
                 .body(resource);
     }
 }
