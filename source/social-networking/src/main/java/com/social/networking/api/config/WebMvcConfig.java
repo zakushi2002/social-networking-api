@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -51,6 +52,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
         converters.add(new MappingJackson2XmlHttpMessageConverter(builder.createXmlMapper(true).build()));
         converters.add(new ResourceHttpMessageConverter());
+        converters.add(new ByteArrayHttpMessageConverter());
     }
 
     @Override

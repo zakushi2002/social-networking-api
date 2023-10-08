@@ -31,6 +31,7 @@
         <hibernate-core.version>5.6.14.Final</hibernate-core.version>
         <javassist.version>3.24.0-GA</javassist.version>
         <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+        <aws.java.sdk.version>1.11.1000</aws.java.sdk.version>
         <liquibase.changeLogFile>/src/main/resources/liquibase/db.changelog-master.xml</liquibase.changeLogFile>
     </properties>
     <dependencies>
@@ -250,9 +251,23 @@
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+        </dependency>
     </dependencies>
+
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-bom</artifactId>
+                <version>${aws.java.sdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>

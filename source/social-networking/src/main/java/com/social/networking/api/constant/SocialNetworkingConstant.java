@@ -1,10 +1,7 @@
 package com.social.networking.api.constant;
 
-import com.social.networking.api.utils.ConfigurationService;
-
 public class SocialNetworkingConstant {
-    public static final String ROOT_DIRECTORY = ConfigurationService.getInstance().getString("file.upload-dir","/tmp/upload");
-
+    public static final String REGION_STATIC = "ap-southeast-1";
     /**
      * Date format constant
      */
