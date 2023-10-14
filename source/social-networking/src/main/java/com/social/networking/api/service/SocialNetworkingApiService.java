@@ -8,12 +8,14 @@ import com.social.networking.api.view.form.UploadFileForm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -29,6 +31,10 @@ public class SocialNetworkingApiService {
     @Value("${cloud.aws.s3.endpoint.url}")
     private String endpointUrl;
     private final AWSCloudUtil awsCloudUtil = new AWSCloudUtil();
+    @Autowired
+    OTPService OTPService;
+    @Autowired
+    CommonAsyncService commonAsyncService;
 
     public ApiMessageDto<UploadFileDto> uploadFileS3(UploadFileForm uploadFileForm) {
         ApiMessageDto<UploadFileDto> apiMessageDto = new ApiMessageDto<>();
@@ -66,5 +72,13 @@ public class SocialNetworkingApiService {
 
     public void deleteFileS3(String fileName) {
         awsCloudUtil.deleteFile(fileName, accessKey, secretKey, bucketName);
+    }
+
+    public String getOTPForgetPassword() {
+        return OTPService.generate(6);
+    }
+
+    public void sendEmail(String email, Map<String, Object> variables, String subject) {
+        commonAsyncService.sendEmail(email, variables, subject);
     }
 }

@@ -7,6 +7,8 @@ import com.social.networking.api.model.Group;
 import com.social.networking.api.model.criteria.AccountCriteria;
 import com.social.networking.api.repository.AccountRepository;
 import com.social.networking.api.repository.GroupRepository;
+import com.social.networking.api.service.SocialNetworkingApiService;
+import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.ApiResponse;
 import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
@@ -14,6 +16,9 @@ import com.social.networking.api.view.dto.account.AccountDto;
 import com.social.networking.api.view.form.account.CreateAdminForm;
 import com.social.networking.api.view.form.account.UpdateAdminForm;
 import com.social.networking.api.view.form.account.UpdateAdminProfileForm;
+import com.social.networking.api.view.form.account.forgot.ChangePasswordForgotForm;
+import com.social.networking.api.view.form.account.forgot.GetOTPForm;
+import com.social.networking.api.view.form.account.forgot.OTPForm;
 import com.social.networking.api.view.mapper.AccountMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +33,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1/account")
@@ -42,6 +51,8 @@ public class AccountController extends BaseController {
     AccountMapper accountMapper;
     @Autowired
     GroupRepository groupRepository;
+    @Autowired
+    SocialNetworkingApiService socialNetworkingApiService;
 
     @PostMapping(value = "/create-admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ACC_C_AD')")
@@ -192,5 +203,102 @@ public class AccountController extends BaseController {
         accountRepository.save(account);
         apiMessageDto.setMessage("Update admin profile success");
         return apiMessageDto;
+    }
+
+    @PostMapping(value = "/send-otp-code", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
+    public ApiMessageDto<Long> sendOTPCode(@Valid @RequestBody GetOTPForm getOTPForm, BindingResult bindingResult) {
+        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
+        Account account = accountRepository.findAccountByEmail(getOTPForm.getEmail());
+        if (account == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+            return apiMessageDto;
+        }
+        String otpCode = socialNetworkingApiService.getOTPForgetPassword();
+        account.setResetPwdCode(otpCode);
+        account.setResetPwdTime(new Date());
+        accountRepository.save(account);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("otp", otpCode);
+        variables.put("fullName", account.getFullName());
+        socialNetworkingApiService.sendEmail(getOTPForm.getEmail(), variables, SocialNetworkingConstant.OTP_SUBJECT_EMAIL);
+        apiMessageDto.setMessage("Send OTP code success");
+        return apiMessageDto;
+    }
+
+    @PutMapping(value = "/check-otp-code", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
+    public ApiMessageDto<String> checkOTPCode(@Valid @RequestBody OTPForm otpForm, BindingResult bindingResult) {
+        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+        Account account = accountRepository.findAccountByEmail(otpForm.getEmail());
+        if (account == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+            return apiMessageDto;
+        }
+        if (account.getStatus().equals(SocialNetworkingConstant.STATUS_LOCK)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_LOCKED);
+            apiMessageDto.setMessage("Account was locked");
+            return apiMessageDto;
+        }
+        if (account.getAttemptCode() != null && account.getAttemptCode() >= SocialNetworkingConstant.ATTEMPT_CODE_MAX) {
+            account.setStatus(SocialNetworkingConstant.STATUS_LOCK);
+            accountRepository.save(account);
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_LOCKED);
+            apiMessageDto.setMessage("Account is locked");
+            return apiMessageDto;
+        }
+        if (!otpForm.getOtp().equals(account.getResetPwdCode())) {
+            if (account.getAttemptCode() == null) {
+                account.setAttemptCode(SocialNetworkingConstant.ATTEMPT_CODE_START);
+            }
+            else {
+                account.setAttemptCode(account.getAttemptCode() + 1);
+            }
+            accountRepository.save(account);
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_OTP_INVALID);
+            return apiMessageDto;
+        }
+        if (!isOTPRequired(account)) {
+            account.setResetPwdCode(null);
+            account.setResetPwdTime(null);
+            accountRepository.save(account);
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_OTP_EXPIRED);
+            return apiMessageDto;
+        }
+        account.setResetPwdCode(null);
+        account.setResetPwdTime(null);
+        accountRepository.save(account);
+        apiMessageDto.setMessage("Check OTP code success");
+        return apiMessageDto;
+    }
+
+    @PutMapping(value = "/change-password-forgot", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
+    public ApiMessageDto<Long> changePassword(@Valid @RequestBody ChangePasswordForgotForm changePasswordForgotForm, BindingResult bindingResult) {
+        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
+        Account account = accountRepository.findAccountByEmail(changePasswordForgotForm.getEmail());
+        if (account == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+            return apiMessageDto;
+        }
+        account.setPassword(passwordEncoder.encode(changePasswordForgotForm.getNewPassword()));
+        accountRepository.save(account);
+        apiMessageDto.setMessage("Change password success");
+        return apiMessageDto;
+    }
+
+    public boolean isOTPRequired(Account account) {
+        if (account.getResetPwdCode() == null) {
+            return false;
+        }
+        long otpRequestedTime = account.getResetPwdTime().getTime();
+        return otpRequestedTime + SocialNetworkingConstant.OTP_VALID_DURATION >= System.currentTimeMillis(); // OTP expires
     }
 }
