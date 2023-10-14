@@ -2,6 +2,11 @@ package com.social.networking.api.constant;
 
 public class SocialNetworkingConstant {
     public static final String REGION_STATIC = "ap-southeast-1";
+    public static final String OTP_SUBJECT_EMAIL = "One-Time Password (OTP) - Expire in 5 minutes!";
+    public static final long OTP_VALID_DURATION = 300000; // 5 minutes
+    public static final Integer OTP_LENGTH = 6;
+    public static final Integer ATTEMPT_CODE_START = 1;
+    public static final Integer ATTEMPT_CODE_MAX = 3;
     /**
      * Date format constant
      */
@@ -27,6 +32,7 @@ public class SocialNetworkingConstant {
     public static final Integer STATUS_PENDING = 0;
     public static final Integer STATUS_LOCK = -1;
     public static final Integer STATUS_DELETE = -2;
+    public static final Integer STATUS_RESTRICT = -3;
 
     /**
      * Post kind constant
@@ -64,6 +70,15 @@ public class SocialNetworkingConstant {
     public static final Integer CATEGORY_KIND_HOSPITAL_ROLE = 2;
     public static final Integer CATEGORY_KIND_DEPARTMENT = 3;
     public static final Integer CATEGORY_KIND_ACADEMIC_DEGREE = 4;
+
+    /**
+     * Notification kind constant
+     */
+    public static final Integer NOTIFICATION_KIND_POST = 1;
+    public static final Integer NOTIFICATION_KIND_COMMENT = 2;
+    public static final Integer NOTIFICATION_KIND_REACTION = 3;
+    public static final Integer NOTIFICATION_KIND_FOLLOW = 4;
+    public static final Integer NOTIFICATION_KIND_SHARE = 5;
 
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");

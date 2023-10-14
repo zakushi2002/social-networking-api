@@ -23,6 +23,7 @@ public class StatusValidation implements ConstraintValidator<Status, Integer> {
         return Objects.equals(status, SocialNetworkingConstant.STATUS_PENDING)
                 || Objects.equals(status, SocialNetworkingConstant.STATUS_ACTIVE)
                 || Objects.equals(status, SocialNetworkingConstant.STATUS_LOCK)
-                || Objects.equals(status, SocialNetworkingConstant.STATUS_DELETE);
+                || Objects.equals(status, SocialNetworkingConstant.STATUS_DELETE)
+                || Objects.equals(status, SocialNetworkingConstant.STATUS_RESTRICT);
     }
 }
