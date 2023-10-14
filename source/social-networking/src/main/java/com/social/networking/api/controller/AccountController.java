@@ -31,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.Date;
@@ -207,6 +208,7 @@ public class AccountController extends BaseController {
 
     @PostMapping(value = "/send-otp-code", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
+    @ApiIgnore
     public ApiMessageDto<Long> sendOTPCode(@Valid @RequestBody GetOTPForm getOTPForm, BindingResult bindingResult) {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(getOTPForm.getEmail());
@@ -215,12 +217,24 @@ public class AccountController extends BaseController {
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
             return apiMessageDto;
         }
+        if (account.getStatus().equals(SocialNetworkingConstant.STATUS_LOCK)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_LOCKED);
+            apiMessageDto.setMessage("Account was locked");
+            return apiMessageDto;
+        }
+        if (account.getResetPwdCode() != null && isOTPRequired(account)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_SENT_REQUEST_OTP);
+            apiMessageDto.setMessage("Account was sent request OTP. Please check your email!");
+            return apiMessageDto;
+        }
         String otpCode = socialNetworkingApiService.getOTPForgetPassword();
         account.setResetPwdCode(otpCode);
         account.setResetPwdTime(new Date());
         accountRepository.save(account);
         Map<String, Object> variables = new HashMap<>();
-        variables.put("otp", otpCode);
+        variables.put("otpCode", otpCode);
         variables.put("fullName", account.getFullName());
         socialNetworkingApiService.sendEmail(getOTPForm.getEmail(), variables, SocialNetworkingConstant.OTP_SUBJECT_EMAIL);
         apiMessageDto.setMessage("Send OTP code success");
@@ -229,6 +243,7 @@ public class AccountController extends BaseController {
 
     @PutMapping(value = "/check-otp-code", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
+    @ApiIgnore
     public ApiMessageDto<String> checkOTPCode(@Valid @RequestBody OTPForm otpForm, BindingResult bindingResult) {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(otpForm.getEmail());
@@ -243,7 +258,13 @@ public class AccountController extends BaseController {
             apiMessageDto.setMessage("Account was locked");
             return apiMessageDto;
         }
-        if (account.getAttemptCode() != null && account.getAttemptCode() >= SocialNetworkingConstant.ATTEMPT_CODE_MAX) {
+        if (account.getResetPwdCode() == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_SEND_REQUEST_OTP);
+            apiMessageDto.setMessage("Account not send request OTP");
+            return apiMessageDto;
+        }
+        if (account.getAttemptCode() != null && account.getAttemptCode() > SocialNetworkingConstant.ATTEMPT_CODE_MAX) {
             account.setStatus(SocialNetworkingConstant.STATUS_LOCK);
             accountRepository.save(account);
             apiMessageDto.setResult(false);
@@ -254,8 +275,7 @@ public class AccountController extends BaseController {
         if (!otpForm.getOtp().equals(account.getResetPwdCode())) {
             if (account.getAttemptCode() == null) {
                 account.setAttemptCode(SocialNetworkingConstant.ATTEMPT_CODE_START);
-            }
-            else {
+            } else {
                 account.setAttemptCode(account.getAttemptCode() + 1);
             }
             accountRepository.save(account);
@@ -271,6 +291,7 @@ public class AccountController extends BaseController {
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_OTP_EXPIRED);
             return apiMessageDto;
         }
+        account.setAttemptCode(null);
         account.setResetPwdCode(null);
         account.setResetPwdTime(null);
         accountRepository.save(account);
@@ -280,7 +301,8 @@ public class AccountController extends BaseController {
 
     @PutMapping(value = "/change-password-forgot", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiMessageDto<Long> changePassword(@Valid @RequestBody ChangePasswordForgotForm changePasswordForgotForm, BindingResult bindingResult) {
+    @ApiIgnore
+    public ApiMessageDto<Long> changePasswordForgot(@Valid @RequestBody ChangePasswordForgotForm changePasswordForgotForm, BindingResult bindingResult) {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(changePasswordForgotForm.getEmail());
         if (account == null) {

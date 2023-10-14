@@ -29,6 +29,8 @@ public class ErrorCode {
     public static final String ACCOUNT_ERROR_OTP_INVALID = "ERROR-ACCOUNT-004";
     public static final String ACCOUNT_ERROR_OTP_EXPIRED = "ERROR-ACCOUNT-005";
     public static final String ACCOUNT_ERROR_LOCKED = "ERROR-ACCOUNT-006";
+    public static final String ACCOUNT_ERROR_NOT_SEND_REQUEST_OTP = "ERROR-ACCOUNT-007";
+    public static final String ACCOUNT_ERROR_SENT_REQUEST_OTP = "ERROR-ACCOUNT-008";
 
     /**
      * User profile error code

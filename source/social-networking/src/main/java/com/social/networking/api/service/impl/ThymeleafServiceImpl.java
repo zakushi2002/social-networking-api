@@ -2,6 +2,7 @@ package com.social.networking.api.service.impl;
 
 import com.social.networking.api.service.ThymeleafService;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -10,6 +11,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.util.Map;
 
+@Service
 public class ThymeleafServiceImpl implements ThymeleafService {
     private static final String MAIL_TEMPLATE_BASE_NAME = "mail/MailMessages";
     private static final String MAIL_TEMPLATE_PREFIX = "/templates/";
@@ -25,6 +27,7 @@ public class ThymeleafServiceImpl implements ThymeleafService {
         final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(htmlTemplateResolver());
         templateEngine.setTemplateEngineMessageSource(emailMessageSource());
+        return templateEngine;
     }
 
     private static ITemplateResolver htmlTemplateResolver() {
