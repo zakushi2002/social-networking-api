@@ -1,5 +1,6 @@
 package com.social.networking.api.controller;
 
+import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Bookmark;
 import com.social.networking.api.model.Post;
@@ -14,6 +15,7 @@ import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.post.PostDto;
 import com.social.networking.api.view.dto.post.bookmark.BookmarkDto;
 import com.social.networking.api.view.dto.reaction.PostReactionDto;
+import com.social.networking.api.view.form.post.ApprovePostForm;
 import com.social.networking.api.view.form.post.CreatePostForm;
 import com.social.networking.api.view.form.post.UpdatePostForm;
 import com.social.networking.api.view.form.post.bookmark.CreateBookmarkForm;
@@ -285,6 +287,25 @@ public class PostController extends BaseController {
         ResponseListDto<BookmarkDto> responseListDto = new ResponseListDto(bookmarkMapper.fromEntitiesToBookmarkDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("Get list bookmark success");
+        return apiMessageDto;
+    }
+
+    @PutMapping(value = "/approve", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('POST_A')")
+    @Transactional
+    public ApiMessageDto<Long> approvePost(@Valid @RequestBody ApprovePostForm approvePostForm, BindingResult bindingResult) {
+        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
+        Post post = postRepository.findById(approvePostForm.getId()).orElse(null);
+        if (post == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Post is not exist");
+            return apiMessageDto;
+        }
+        post.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
+        postRepository.save(post);
+        apiMessageDto.setMessage("Approve post successfully");
+        apiMessageDto.setData(post.getId());
         return apiMessageDto;
     }
 }

@@ -16,6 +16,7 @@ public interface PostMapper {
     @Mapping(source = "content", target = "content")
     @Mapping(source = "kind", target = "kind")
     @Mapping(source = "privacy", target = "privacy")
+    @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
     Post fromCreatePostFormToEntity(CreatePostForm createPostForm);
 
