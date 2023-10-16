@@ -1,5 +1,6 @@
 package com.social.networking.api.service;
 
+import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.utils.AWSCloudUtil;
 import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.UploadFileDto;
@@ -75,7 +76,7 @@ public class SocialNetworkingApiService {
     }
 
     public String getOTPForgetPassword() {
-        return OTPService.generate(6);
+        return OTPService.generate(SocialNetworkingConstant.OTP_LENGTH);
     }
 
     public void sendEmail(String email, Map<String, Object> variables, String subject) {

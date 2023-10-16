@@ -18,4 +18,6 @@ public class CreatePostForm {
     @ApiModelProperty(name = "privacy", required = true)
     @Privacy
     private Integer privacy;
+    @ApiModelProperty(name = "status", required = true)
+    private Integer status;
 }
