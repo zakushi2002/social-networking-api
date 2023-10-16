@@ -49,7 +49,7 @@ public class PostCriteria implements Serializable {
                 }
                 if (!StringUtils.isEmpty(getAccountName())) {
                     Join<Account, Post> join = root.join("account", JoinType.INNER);
-                    predicates.add(cb.like(cb.lower(join.get("name")), "%" + getAccountName().toLowerCase() + "%"));
+                    predicates.add(cb.like(cb.lower(join.get("fullName")), "%" + getAccountName().toLowerCase() + "%"));
                     predicates.add(cb.equal(join.get("status"), SocialNetworkingConstant.STATUS_ACTIVE));
                 }
                 if (getStatus() != null) {
