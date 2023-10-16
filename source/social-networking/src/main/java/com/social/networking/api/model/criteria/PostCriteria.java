@@ -16,6 +16,7 @@ import java.util.List;
 public class PostCriteria implements Serializable {
     private Long id;
     private Long accountId;
+    private String accountName;
     private String keyword;
     private Integer kind;
     private Integer status;
@@ -44,6 +45,11 @@ public class PostCriteria implements Serializable {
                 if (getAccountId() != null) {
                     Join<Account, Post> join = root.join("account", JoinType.INNER);
                     predicates.add(cb.equal(join.get("id"), getAccountId()));
+                    predicates.add(cb.equal(join.get("status"), SocialNetworkingConstant.STATUS_ACTIVE));
+                }
+                if (!StringUtils.isEmpty(getAccountName())) {
+                    Join<Account, Post> join = root.join("account", JoinType.INNER);
+                    predicates.add(cb.like(cb.lower(join.get("name")), "%" + getAccountName().toLowerCase() + "%"));
                     predicates.add(cb.equal(join.get("status"), SocialNetworkingConstant.STATUS_ACTIVE));
                 }
                 if (getStatus() != null) {
