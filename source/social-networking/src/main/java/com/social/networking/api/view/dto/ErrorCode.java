@@ -84,5 +84,12 @@ public class ErrorCode {
     public static final String RELATIONSHIP_ERROR_ALREADY_FOLLOWED = "ERROR-RELATIONSHIP-000";
     public static final String RELATIONSHIP_ERROR_NOT_FOLLOW_YOURSELF = "ERROR-RELATIONSHIP-001";
     public static final String RELATIONSHIP_ERROR_NOT_FOUND = "ERROR-RELATIONSHIP-002";
+    public static final String RELATIONSHIP_ERROR_NO_OWNERSHIP = "ERROR-RELATIONSHIP-003";
 
+    /**
+     * Report error code
+     */
+    public static final String REPORT_ERROR_NOT_FOUND = "ERROR-REPORT-000";
+    public static final String REPORT_ERROR_REPORT_YOURSELF = "ERROR-REPORT-001";
+    public static final String REPORT_ERROR_APPROVED_OR_REJECTED = "ERROR-REPORT-002";
 }

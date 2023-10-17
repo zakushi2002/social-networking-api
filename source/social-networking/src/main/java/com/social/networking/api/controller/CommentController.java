@@ -1,16 +1,10 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
-import com.social.networking.api.model.Account;
-import com.social.networking.api.model.Comment;
-import com.social.networking.api.model.CommentReaction;
-import com.social.networking.api.model.Post;
+import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.CommentCriteria;
 import com.social.networking.api.model.criteria.CommentReactionCriteria;
-import com.social.networking.api.repository.AccountRepository;
-import com.social.networking.api.repository.CommentReactionRepository;
-import com.social.networking.api.repository.CommentRepository;
-import com.social.networking.api.repository.PostRepository;
+import com.social.networking.api.repository.*;
 import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
