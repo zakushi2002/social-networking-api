@@ -15,7 +15,7 @@ import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.post.PostDto;
 import com.social.networking.api.view.dto.post.bookmark.BookmarkDto;
 import com.social.networking.api.view.dto.reaction.PostReactionDto;
-import com.social.networking.api.view.form.post.ApprovePostForm;
+import com.social.networking.api.view.form.post.HandlePostForm;
 import com.social.networking.api.view.form.post.CreatePostForm;
 import com.social.networking.api.view.form.post.UpdatePostForm;
 import com.social.networking.api.view.form.post.bookmark.CreateBookmarkForm;
@@ -291,21 +291,49 @@ public class PostController extends BaseController {
     }
 
     @PutMapping(value = "/approve", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('POST_A')")
+    @PreAuthorize("hasRole('POST_APPROVE')")
     @Transactional
-    public ApiMessageDto<Long> approvePost(@Valid @RequestBody ApprovePostForm approvePostForm, BindingResult bindingResult) {
+    public ApiMessageDto<Long> approvePost(@Valid @RequestBody HandlePostForm handlePostForm, BindingResult bindingResult) {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
-        Post post = postRepository.findById(approvePostForm.getId()).orElse(null);
+        Post post = postRepository.findById(handlePostForm.getId()).orElse(null);
         if (post == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
             apiMessageDto.setMessage("Post is not exist");
             return apiMessageDto;
         }
+        if (!post.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_APPROVED);
+            apiMessageDto.setMessage("Post has been approved!");
+            return apiMessageDto;
+        }
         post.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
         postRepository.save(post);
         apiMessageDto.setMessage("Approve post successfully");
         apiMessageDto.setData(post.getId());
+        return apiMessageDto;
+    }
+
+    @PutMapping(value = "/reject", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('POST_REJECT')")
+    @Transactional
+    public ApiMessageDto<Long> rejectPost(@Valid @RequestBody HandlePostForm handlePostForm, BindingResult bindingResult) {
+        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
+        Post post = postRepository.findById(handlePostForm.getId()).orElse(null);
+        if (post == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Post is not exist");
+            return apiMessageDto;
+        }
+        if (!post.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_REJECTED);
+            apiMessageDto.setMessage("Post has been rejected!");
+            return apiMessageDto;
+        }
+        postRepository.deleteById(handlePostForm.getId());
         return apiMessageDto;
     }
 }
