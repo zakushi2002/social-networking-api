@@ -29,6 +29,7 @@ public class SocialNetworkingConstant {
      * Status constant
      */
     public static final Integer STATUS_ACTIVE = 1;
+    public static final Integer STATUS_SEEN = 2;
     public static final Integer STATUS_PENDING = 0;
     public static final Integer STATUS_LOCK = -1;
     public static final Integer STATUS_DELETE = -2;
@@ -78,7 +79,13 @@ public class SocialNetworkingConstant {
     public static final Integer NOTIFICATION_KIND_COMMENT = 2;
     public static final Integer NOTIFICATION_KIND_REACTION = 3;
     public static final Integer NOTIFICATION_KIND_FOLLOW = 4;
-    public static final Integer NOTIFICATION_KIND_SHARE = 5;
+
+    /**
+     * Report kind constant
+     */
+    public static final Integer REPORT_KIND_POST = 1;
+    public static final Integer REPORT_KIND_COMMENT = 2;
+    public static final Integer REPORT_KIND_ACCOUNT = 3;
 
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");
