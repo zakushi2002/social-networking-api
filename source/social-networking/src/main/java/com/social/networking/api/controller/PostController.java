@@ -304,8 +304,8 @@ public class PostController extends BaseController {
         }
         if (!post.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
             apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_APPROVED);
-            apiMessageDto.setMessage("Post has been approved!");
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_HANDLED);
+            apiMessageDto.setMessage("Post has been handled!");
             return apiMessageDto;
         }
         post.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
@@ -329,8 +329,8 @@ public class PostController extends BaseController {
         }
         if (!post.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
             apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_REJECTED);
-            apiMessageDto.setMessage("Post has been rejected!");
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_HANDLED);
+            apiMessageDto.setMessage("Post has been handled!");
             return apiMessageDto;
         }
         postRepository.deleteById(handlePostForm.getId());
