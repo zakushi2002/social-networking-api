@@ -52,7 +52,6 @@ public class SocialNetworkingConstant {
      */
     public static final Integer COMMENT_DEPTH_LEVEL_1 = 1;
     public static final Integer COMMENT_DEPTH_LEVEL_2 = 2;
-    public static final Integer COMMENT_DEPTH_LEVEL_3 = 3;
 
     /**
      * Reaction kind constant
