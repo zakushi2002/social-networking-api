@@ -70,16 +70,8 @@ public class CommentController extends BaseController {
                 apiMessageDto.setCode(ErrorCode.COMMENT_ERROR_NOT_FOUND);
                 return apiMessageDto;
             }
-            if (parent.getDepth().equals(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_3)) {
-                comment.setDepth(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_3);
-                comment.setParent(parent.getParent());
-            } else if (parent.getDepth().equals(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2)) {
-                comment.setDepth(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_3);
-                comment.setParent(parent);
-            } else {
-                comment.setDepth(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2);
-                comment.setParent(parent);
-            }
+            comment.setParent(parent);
+            comment.setDepth(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2);
         } else {
             comment.setDepth(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1);
         }
