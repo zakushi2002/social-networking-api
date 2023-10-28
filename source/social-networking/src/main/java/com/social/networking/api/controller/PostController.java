@@ -219,10 +219,10 @@ public class PostController extends BaseController {
         return apiMessageDto;
     }
 
-    @PostMapping(value = "/add-bookmark", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/bookmark", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('BOOKMARK_C')")
     @Transactional
-    public ApiMessageDto<Long> addBookmark(@Valid @RequestBody CreateBookmarkForm createBookmarkForm, BindingResult bindingResult) {
+    public ApiMessageDto<Long> bookmark(@Valid @RequestBody CreateBookmarkForm createBookmarkForm, BindingResult bindingResult) {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Post post = postRepository.findById(createBookmarkForm.getPostId()).orElse(null);
         if (post == null) {
@@ -240,41 +240,22 @@ public class PostController extends BaseController {
         }
         Bookmark bookmark = bookmarkRepository.findFirstByAccountIdAndPostId(getCurrentUser(), createBookmarkForm.getPostId()).orElse(null);
         if (bookmark != null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.BOOKMARK_ERROR_EXIST);
-            apiMessageDto.setMessage("Bookmark is exist");
-            return apiMessageDto;
+            if (!bookmark.getAccount().getId().equals(getCurrentUser())) {
+                apiMessageDto.setResult(false);
+                apiMessageDto.setCode(ErrorCode.BOOKMARK_ERROR_EXIST);
+                apiMessageDto.setMessage("Bookmark is not owner");
+                return apiMessageDto;
+            }
+            bookmarkRepository.deleteById(bookmark.getId());
+            apiMessageDto.setMessage("Remove bookmark successfully");
+        } else {
+            bookmark = new Bookmark();
+            bookmark.setAccount(account);
+            bookmark.setPost(post);
+            bookmarkRepository.save(bookmark);
+            apiMessageDto.setMessage("Add bookmark successfully");
         }
-        bookmark = new Bookmark();
-        bookmark.setAccount(account);
-        bookmark.setPost(post);
-        bookmarkRepository.save(bookmark);
-        apiMessageDto.setMessage("Add bookmark successfully");
         apiMessageDto.setData(bookmark.getId());
-        return apiMessageDto;
-    }
-
-    @DeleteMapping(value = "/remove-bookmark/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('BOOKMARK_D')")
-    @Transactional
-    public ApiMessageDto<Long> removeBookmark(@PathVariable("id") Long id) {
-        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
-        Bookmark bookmark = bookmarkRepository.findById(id).orElse(null);
-        if (bookmark == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.BOOKMARK_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Bookmark is not exist");
-            return apiMessageDto;
-        }
-        if (!bookmark.getAccount().getId().equals(getCurrentUser())) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.BOOKMARK_ERROR_EXIST);
-            apiMessageDto.setMessage("Bookmark is not owner");
-            return apiMessageDto;
-        }
-        bookmarkRepository.deleteById(id);
-        apiMessageDto.setMessage("Remove bookmark successfully");
-        apiMessageDto.setData(id);
         return apiMessageDto;
     }
 
