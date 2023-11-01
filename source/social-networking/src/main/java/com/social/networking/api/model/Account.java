@@ -43,4 +43,6 @@ public class Account extends Auditable<String> {
     private Integer attemptCode;
     private Integer attemptLogin;
     private Boolean isSuperAdmin = false;
+    private String provider;
+    private String providerId;
 }

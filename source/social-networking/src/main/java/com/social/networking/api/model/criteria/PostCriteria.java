@@ -11,6 +11,7 @@ import javax.persistence.criteria.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class PostCriteria implements Serializable {
@@ -21,8 +22,11 @@ public class PostCriteria implements Serializable {
     private Integer kind;
     private Integer status;
     private Integer privacy;
+    private Long followerId;
+    private Boolean following;
+    private Boolean homeSort;
 
-    public Specification<Post> getSpecification() {
+    public Specification<Post> getSpecification(Map<Long, String> mapFollowingIdList) {
         return new Specification<Post>() {
             private static final long serialVersionUID = 1L;
 
@@ -52,10 +56,27 @@ public class PostCriteria implements Serializable {
                     predicates.add(cb.like(cb.lower(join.get("fullName")), "%" + getAccountName().toLowerCase() + "%"));
                     predicates.add(cb.equal(join.get("status"), SocialNetworkingConstant.STATUS_ACTIVE));
                 }
+                if (getFollowing() != null && getFollowing() && getFollowerId() != null) {
+                    if (!mapFollowingIdList.isEmpty()) {
+                        Root<Account> accountRoot = query.from(Account.class);
+                        List<Predicate> predicatesFollowing = new ArrayList<>();
+                        for (Long key : mapFollowingIdList.keySet()) {
+                            predicatesFollowing.add(cb.equal(accountRoot.get("id"), key));
+                        }
+                        predicates.add(cb.or(predicatesFollowing.toArray(new Predicate[predicatesFollowing.size()])));
+                    } else {
+                        predicates.add(cb.equal(root.get("id"), 0));
+                    }
+                }
+                if (getHomeSort() != null && getHomeSort()) {
+                    query.orderBy(cb.desc(root.get("moderatedDate")));
+                } else {
+                    query.orderBy(cb.desc(root.get("createdDate")));
+                }
                 if (getStatus() != null) {
                     predicates.add(cb.equal(root.get("status"), getStatus()));
                 }
-                query.orderBy(cb.desc(root.get("createdDate")));
+
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };
