@@ -17,6 +17,7 @@ public class SocialNetworkingConstant {
      * Security Constant for grant type
      */
     public static final String GRANT_TYPE_PASSWORD = "password";
+    public static final String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
 
     /**
      * Account kind constant
@@ -86,6 +87,11 @@ public class SocialNetworkingConstant {
     public static final Integer REPORT_KIND_COMMENT = 2;
     public static final Integer REPORT_KIND_ACCOUNT = 3;
 
+    /**
+     * Provider constant
+     */
+    public static final String PROVIDER_FACEBOOK = "facebook";
+    public static final String PROVIDER_GOOGLE = "google";
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");
     }

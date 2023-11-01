@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -29,4 +30,5 @@ public class Post extends Auditable<String> {
     private Integer privacy;
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PostReaction> postReactions = new ArrayList<>();
+    private Date moderatedDate;
 }

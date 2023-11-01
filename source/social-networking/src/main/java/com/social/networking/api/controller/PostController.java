@@ -1,10 +1,7 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
-import com.social.networking.api.model.Account;
-import com.social.networking.api.model.Bookmark;
-import com.social.networking.api.model.Post;
-import com.social.networking.api.model.PostReaction;
+import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.BookmarkCriteria;
 import com.social.networking.api.model.criteria.PostCriteria;
 import com.social.networking.api.model.criteria.PostReactionCriteria;
@@ -34,6 +31,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/post")
@@ -54,6 +54,8 @@ public class PostController extends BaseController {
     BookmarkRepository bookmarkRepository;
     @Autowired
     BookmarkMapper bookmarkMapper;
+    @Autowired
+    RelationshipRepository relationshipRepository;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -158,7 +160,17 @@ public class PostController extends BaseController {
     @PreAuthorize("hasRole('POST_L')")
     public ApiMessageDto<ResponseListDto<PostDto>> listPost(PostCriteria postCriteria, Pageable pageable) {
         ApiMessageDto<ResponseListDto<PostDto>> apiMessageDto = new ApiMessageDto<>();
-        Page<Post> page = postRepository.findAll(postCriteria.getSpecification(), pageable);
+        HashMap<Long, String> map = new HashMap<>();
+        if (postCriteria.getFollowing() != null && postCriteria.getFollowing()) {
+            List<Relationship> followingList = relationshipRepository.findAllByFollowerId(getCurrentUser());
+            if (followingList != null && !followingList.isEmpty()) {
+                for (Relationship relationship : followingList) {
+                    map.put(relationship.getAccount().getId(), "");
+                }
+            }
+            postCriteria.setFollowerId(getCurrentUser());
+        }
+        Page<Post> page = postRepository.findAll(postCriteria.getSpecification(map), pageable);
         ResponseListDto<PostDto> responseListDto = new ResponseListDto(postMapper.fromEntityToPostDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("Get list post success");
@@ -290,6 +302,7 @@ public class PostController extends BaseController {
             return apiMessageDto;
         }
         post.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
+        post.setModeratedDate(new Date());
         postRepository.save(post);
         apiMessageDto.setMessage("Approve post successfully");
         apiMessageDto.setData(post.getId());
