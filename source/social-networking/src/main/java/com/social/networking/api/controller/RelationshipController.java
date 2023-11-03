@@ -146,6 +146,28 @@ public class RelationshipController extends BaseController {
         return apiMessageDto;
     }
 
+    @GetMapping(value = "/list-follower-by-account-id/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('FL_FROM_L')")
+    public ApiMessageDto<ResponseListDto<RelationshipDto>> listFollower(@PathVariable("accountId") Long accountId, Pageable pageable) {
+        ApiMessageDto<ResponseListDto<RelationshipDto>> apiMessageDto = new ApiMessageDto<>();
+        Page<Relationship> followers = relationshipRepository.findAllByAccountId(accountId, pageable);
+        ResponseListDto<RelationshipDto> responseListDto = new ResponseListDto(relationshipMapper.viewMyFollowerList(followers.getContent()), followers.getTotalElements(), followers.getTotalPages());
+        apiMessageDto.setData(responseListDto);
+        apiMessageDto.setMessage("Get follower list successfully!");
+        return apiMessageDto;
+    }
+
+    @GetMapping(value = "/list-following-by-account-id/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('FL_TO_L')")
+    public ApiMessageDto<ResponseListDto<RelationshipDto>> listFollowing(@PathVariable("accountId") Long accountId, Pageable pageable) {
+        ApiMessageDto<ResponseListDto<RelationshipDto>> apiMessageDto = new ApiMessageDto<>();
+        Page<Relationship> followings = relationshipRepository.findAllByFollowerId(accountId, pageable);
+        ResponseListDto<RelationshipDto> responseListDto = new ResponseListDto(relationshipMapper.viewMyFollowingList(followings.getContent()), followings.getTotalElements(), followings.getTotalPages());
+        apiMessageDto.setData(responseListDto);
+        apiMessageDto.setMessage("Get following list successfully!");
+        return apiMessageDto;
+    }
+
     @GetMapping(value = "/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FL_V')")
     public ApiMessageDto<RelationshipDto> getRelationship(@PathVariable("id") Long id) {

@@ -1,4 +1,4 @@
-package com.social.networking.api.view.dto.profile.expert;
+package com.social.networking.api.view.dto.account;
 
 import com.social.networking.api.view.dto.InfoAdminDto;
 import com.social.networking.api.view.dto.category.CategoryDto;
@@ -7,19 +7,18 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
-
 @Data
-public class ExpertProfileDto extends InfoAdminDto {
-    @ApiModelProperty(name = "expertKind")
-    private Integer expertKind;
-    @ApiModelProperty(name = "expertEmail")
-    private String expertEmail;
-    @ApiModelProperty(name = "expertFullName")
-    private String expertFullName;
-    @ApiModelProperty(name = "expertAvatar")
-    private String expertAvatar;
-    @ApiModelProperty(name = "expertGroup")
-    private GroupDto expertGroup;
+public class AccountProfileDto extends InfoAdminDto {
+    @ApiModelProperty(name = "kind")
+    private Integer kind;
+    @ApiModelProperty(name = "email")
+    private String email;
+    @ApiModelProperty(name = "fullName")
+    private String fullName;
+    @ApiModelProperty(name = "avatar")
+    private String avatar;
+    @ApiModelProperty(name = "group")
+    private GroupDto group;
     @ApiModelProperty(name = "dateOfBirth")
     private Date dateOfBirth;
     @ApiModelProperty(name = "phone")

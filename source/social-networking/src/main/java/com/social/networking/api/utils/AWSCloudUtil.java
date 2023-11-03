@@ -27,7 +27,7 @@ public class AWSCloudUtil {
         File file = new File(fileName);
         try (OutputStream os = new FileOutputStream(file)) {
             os.write(fileBytes);
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, fileName, file).withCannedAcl(CannedAccessControlList.PublicReadWrite);
             s3Client.putObject(putObjectRequest);
         } catch (IOException e) {
             e.printStackTrace();
