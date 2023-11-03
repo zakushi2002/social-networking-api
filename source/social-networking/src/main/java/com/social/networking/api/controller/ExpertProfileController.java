@@ -8,6 +8,7 @@ import com.social.networking.api.model.ExpertProfile;
 import com.social.networking.api.model.Group;
 import com.social.networking.api.model.criteria.ExpertProfileCriteria;
 import com.social.networking.api.repository.*;
+import com.social.networking.api.service.SocialNetworkingApiService;
 import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
@@ -17,7 +18,6 @@ import com.social.networking.api.view.form.profile.expert.UpdateExpertAccountFor
 import com.social.networking.api.view.mapper.AccountMapper;
 import com.social.networking.api.view.mapper.ExpertProfileMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +51,8 @@ public class ExpertProfileController extends BaseController {
     CategoryRepository categoryRepository;
     @Autowired
     PostRepository postRepository;
+    @Autowired
+    SocialNetworkingApiService socialNetworkingApiService;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('EXP_C')")
@@ -161,12 +163,6 @@ public class ExpertProfileController extends BaseController {
             apiMessageDto.setMessage("Expert profile not found");
             return apiMessageDto;
         }
-        if (!passwordEncoder.matches(updateExpertAccountForm.getOldPassword(), expertProfile.getAccount().getPassword())) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_WRONG_PASSWORD);
-            apiMessageDto.setMessage("Old password is wrong");
-            return apiMessageDto;
-        }
         if (updateExpertAccountForm.getPhone() != null && updateExpertAccountForm.getPhone().trim().isEmpty()) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.EXPERT_PROFILE_ERROR_PHONE_EMPTY);
@@ -201,10 +197,8 @@ public class ExpertProfileController extends BaseController {
             apiMessageDto.setMessage("Department not found or not category kind department");
             return apiMessageDto;
         }
-        if (StringUtils.isNoneBlank(updateExpertAccountForm.getNewPassword())) {
-            expertProfile.getAccount().setPassword(passwordEncoder.encode(updateExpertAccountForm.getNewPassword()));
-        }
         if (updateExpertAccountForm.getAvatarPath() != null && !updateExpertAccountForm.getAvatarPath().trim().isEmpty()) {
+            // socialNetworkingApiService.deleteFileS3(expertProfile.getAccount().getAvatarPath());
             expertProfile.getAccount().setAvatarPath(updateExpertAccountForm.getAvatarPath().trim());
         }
         accountRepository.save(expertProfile.getAccount());

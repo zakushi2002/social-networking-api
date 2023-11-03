@@ -1,7 +1,12 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Account;
+import com.social.networking.api.model.ExpertProfile;
+import com.social.networking.api.model.UserProfile;
 import com.social.networking.api.view.dto.account.AccountDto;
+import com.social.networking.api.view.dto.account.AccountProfileDto;
+import com.social.networking.api.view.dto.profile.expert.ExpertProfileDto;
+import com.social.networking.api.view.dto.profile.user.UserProfileDto;
 import com.social.networking.api.view.form.account.UpdateAdminForm;
 import com.social.networking.api.view.form.profile.expert.CreateExpertAccountForm;
 import com.social.networking.api.view.form.profile.user.CreateUserAccountForm;
@@ -12,7 +17,7 @@ import java.util.List;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {GroupMapper.class})
+        uses = {GroupMapper.class, CategoryMapper.class})
 public interface AccountMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "kind", target = "kind")
@@ -79,4 +84,31 @@ public interface AccountMapper {
     @Mapping(source = "avatarPath", target = "avatarPath")
     @BeanMapping(ignoreByDefault = true)
     Account fromCreateExpertAccountFormToEntity(CreateExpertAccountForm createExpertAccountForm);
+
+    @Mapping(source = "account.id", target = "id")
+    @Mapping(source = "account.kind", target = "kind")
+    @Mapping(source = "account.email", target = "email")
+    @Mapping(source = "account.fullName", target = "fullName")
+    @Mapping(source = "account.avatarPath", target = "avatar")
+    @Mapping(source = "account.group", target = "group", qualifiedByName = "fromEntityToGroupDtoAutoComplete")
+    @Mapping(source = "dob", target = "dateOfBirth")
+    @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "bio", target = "bio")
+    @Mapping(source = "hospital", target = "hospital", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "hospitalRole", target = "hospitalRole", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "academicDegree", target = "academicDegree", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "department", target = "department", qualifiedByName = "fromEntityToShortDto")
+    @BeanMapping(ignoreByDefault = true)
+    AccountProfileDto fromEntityToProfileDtoForClient(ExpertProfile expertProfile);
+
+    @Mapping(source = "account.id", target = "id")
+    @Mapping(source = "account.kind", target = "kind")
+    @Mapping(source = "account.email", target = "email")
+    @Mapping(source = "account.fullName", target = "fullName")
+    @Mapping(source = "account.avatarPath", target = "avatar")
+    @Mapping(source = "dob", target = "dateOfBirth")
+    @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "bio", target = "bio")
+    @BeanMapping(ignoreByDefault = true)
+    AccountProfileDto fromEntityToProfileDtoForClient(UserProfile userProfile);
 }
