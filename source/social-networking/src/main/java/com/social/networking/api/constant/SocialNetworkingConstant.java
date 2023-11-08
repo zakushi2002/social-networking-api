@@ -18,6 +18,7 @@ public class SocialNetworkingConstant {
      */
     public static final String GRANT_TYPE_PASSWORD = "password";
     public static final String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
+    public static final String GRANT_TYPE_GOOGLE = "google";
 
     /**
      * Account kind constant

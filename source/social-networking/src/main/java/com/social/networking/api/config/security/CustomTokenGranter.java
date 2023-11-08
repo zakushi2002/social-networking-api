@@ -1,6 +1,10 @@
 package com.social.networking.api.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.service.impl.UserServiceImpl;
+import com.social.networking.api.view.dto.profile.oauth2.OAuth2ProfileDto;
+import com.social.networking.api.view.dto.profile.oauth2.OAuth2ProfileDtoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -11,6 +15,7 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 
 public class CustomTokenGranter extends AbstractTokenGranter {
 
@@ -34,10 +39,14 @@ public class CustomTokenGranter extends AbstractTokenGranter {
     }
 
     protected OAuth2AccessToken getAccessToken(ClientDetails client, TokenRequest tokenRequest) {
-        String email = tokenRequest.getRequestParameters().get("email");
-        String password = tokenRequest.getRequestParameters().get("password");
-
         try {
+            if (SocialNetworkingConstant.GRANT_TYPE_GOOGLE.equalsIgnoreCase(tokenRequest.getGrantType())) {
+                Map<String, Object> attributes = new ObjectMapper().readValue(tokenRequest.getRequestParameters().get("google"), Map.class);
+                OAuth2ProfileDto oAuth2ProfileDto = OAuth2ProfileDtoFactory.getOAuth2UserInfo(SocialNetworkingConstant.GRANT_TYPE_GOOGLE, attributes);
+                return userService.getAccessTokenForGoogle(client, tokenRequest, oAuth2ProfileDto, this.getTokenServices());
+            }
+            String email = tokenRequest.getRequestParameters().get("email");
+            String password = tokenRequest.getRequestParameters().get("password");
             return userService.getAccessTokenForMultipleTenancies(client, tokenRequest, email, password, this.getTokenServices());
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();

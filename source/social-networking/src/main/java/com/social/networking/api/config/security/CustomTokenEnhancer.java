@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 public class CustomTokenEnhancer implements TokenEnhancer {
@@ -30,19 +31,23 @@ public class CustomTokenEnhancer implements TokenEnhancer {
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
         Map<String, Object> additionalInfo = new HashMap<>();
+        String grantType = authentication.getOAuth2Request().getRequestParameters().get("grantType");
+        if (!Objects.equals(grantType, SocialNetworkingConstant.GRANT_TYPE_GOOGLE)) {
+            grantType = SocialNetworkingConstant.GRANT_TYPE_PASSWORD;
+        }
         String email = authentication.getName();
         AccountForTokenDto a = getAccountByEmail(email);
 
         if (a != null) {
             Long accountId = a.getId();
-            String kind = a.getKind() + "";//token kind
-            String permission = "<>";//empty string
-            Integer userKind = a.getKind(); //loại user là admin hay là gì
+            String kind = a.getKind() + ""; // token kind
+            String permission = "<>"; // empty string
+            Integer userKind = a.getKind(); // USER / EXPERT / ADMIN
             Long orderId = -1L;
             Boolean isSuperAdmin = a.getIsSuperAdmin();
             additionalInfo.put("user_id", a.getId());
             additionalInfo.put("user_kind", a.getKind());
-            additionalInfo.put("grant_type", SocialNetworkingConstant.GRANT_TYPE_PASSWORD);
+            additionalInfo.put("grant_type", grantType);
             String DELIM = "|";
             String additionalInfoStr = ZipUtils.zipString(accountId + DELIM
                     + kind + DELIM
