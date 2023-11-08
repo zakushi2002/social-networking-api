@@ -1,10 +1,16 @@
 package com.social.networking.api.service.impl;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.exception.oauth.OAuth2AuthenticationProcessingException;
 import com.social.networking.api.jwt.SocialNetworkingJwt;
 import com.social.networking.api.model.Account;
+import com.social.networking.api.model.Group;
 import com.social.networking.api.model.Permission;
+import com.social.networking.api.model.UserProfile;
 import com.social.networking.api.repository.AccountRepository;
+import com.social.networking.api.repository.GroupRepository;
+import com.social.networking.api.repository.UserProfileRepository;
+import com.social.networking.api.view.dto.profile.oauth2.OAuth2ProfileDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -26,6 +32,7 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -38,7 +45,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserDetailsService {
     @Autowired
-    private AccountRepository accountRepository;
+    AccountRepository accountRepository;
+    @Autowired
+    GroupRepository groupRepository;
+    @Autowired
+    UserProfileRepository userProfileRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userId) {
@@ -53,6 +64,9 @@ public class UserServiceImpl implements UserDetailsService {
             enabled = false;
         }
         Collection<GrantedAuthority> grantedAuthorities = getAccountPermission(user);
+        if (user.getPassword() == null) {
+            return new User(user.getEmail(), user.getProviderId(), enabled, true, true, true, grantedAuthorities);
+        }
         return new User(user.getEmail(), user.getPassword(), enabled, true, true, true, grantedAuthorities);
     }
 
@@ -77,7 +91,7 @@ public class UserServiceImpl implements UserDetailsService {
 
     public OAuth2AccessToken getAccessTokenForMultipleTenancies(ClientDetails client, TokenRequest tokenRequest, String email, String password, AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
         Map<String, String> requestParameters = new HashMap<>();
-        requestParameters.put("grantType", SocialNetworkingConstant.GRANT_TYPE_PASSWORD);
+        requestParameters.put("grantType", tokenRequest.getGrantType());
 
         String clientId = client.getClientId();
         boolean approved = true;
@@ -86,6 +100,26 @@ public class UserServiceImpl implements UserDetailsService {
         Map<String, Serializable> extensionProperties = new HashMap<>();
 
         UserDetails userDetails = loadUserByUsername(email);
+        OAuth2Request oAuth2Request = new OAuth2Request(requestParameters, clientId,
+                userDetails.getAuthorities(), approved, client.getScope(),
+                client.getResourceIds(), null, responseTypes, extensionProperties);
+        User userPrincipal = new User(userDetails.getUsername(), userDetails.getPassword(), userDetails.isEnabled(), userDetails.isAccountNonExpired(), userDetails.isCredentialsNonExpired(), userDetails.isAccountNonLocked(), userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal, null, userDetails.getAuthorities());
+        OAuth2Authentication auth = new OAuth2Authentication(oAuth2Request, authenticationToken);
+        return tokenServices.createAccessToken(auth);
+    }
+
+    public OAuth2AccessToken getAccessTokenForGoogle(ClientDetails client, TokenRequest tokenRequest, OAuth2ProfileDto oAuth2ProfileDto, AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
+        Map<String, String> requestParameters = new HashMap<>();
+        requestParameters.put("grantType", tokenRequest.getGrantType());
+
+        String clientId = client.getClientId();
+        boolean approved = true;
+        Set<String> responseTypes = new HashSet<>();
+        responseTypes.add("code");
+        Map<String, Serializable> extensionProperties = new HashMap<>();
+
+        UserDetails userDetails = processOAuth2User(oAuth2ProfileDto, tokenRequest.getGrantType());
         OAuth2Request oAuth2Request = new OAuth2Request(requestParameters, clientId,
                 userDetails.getAuthorities(), approved, client.getScope(),
                 client.getResourceIds(), null, responseTypes, extensionProperties);
@@ -111,5 +145,50 @@ public class UserServiceImpl implements UserDetailsService {
             }
         }
         return null;
+    }
+
+    private UserDetails processOAuth2User(OAuth2ProfileDto oAuth2ProfileDto, String provider) {
+        if (StringUtils.isEmpty(oAuth2ProfileDto.getEmail())) {
+            throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
+        }
+        Account account = accountRepository.findAccountByEmail(oAuth2ProfileDto.getEmail());
+        if (account != null) {
+            if (!account.getProvider().equals(SocialNetworkingConstant.GRANT_TYPE_GOOGLE)) {
+                throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
+                        account.getProvider() + " account. Please use your " + account.getProvider() +
+                        " account to login.");
+            }
+            account = updateExistingUser(account, oAuth2ProfileDto);
+        } else {
+            account = registerNewUser(oAuth2ProfileDto, provider);
+        }
+
+        return loadUserByUsername(account.getEmail());
+    }
+
+    private Account registerNewUser(OAuth2ProfileDto oAuth2ProfileDto, String provider) {
+        Account account = new Account();
+        Group group = groupRepository.findFirstByKind(SocialNetworkingConstant.ACCOUNT_KIND_USER);
+        if (group == null) {
+            throw new OAuth2AuthenticationProcessingException("Group not found");
+        }
+        account.setGroup(group);
+        account.setKind(SocialNetworkingConstant.ACCOUNT_KIND_USER);
+        account.setProvider(provider);
+        account.setProviderId(oAuth2ProfileDto.getId());
+        account.setFullName(oAuth2ProfileDto.getName());
+        account.setEmail(oAuth2ProfileDto.getEmail());
+        account.setAvatarPath(oAuth2ProfileDto.getImageUrl());
+        accountRepository.save(account);
+        UserProfile userProfile = new UserProfile();
+        userProfile.setAccount(account);
+        userProfileRepository.save(userProfile);
+        return account;
+    }
+
+    private Account updateExistingUser(Account existingUser, OAuth2ProfileDto oAuth2ProfileDto) {
+        existingUser.setFullName(oAuth2ProfileDto.getName());
+        existingUser.setAvatarPath(oAuth2ProfileDto.getImageUrl());
+        return accountRepository.save(existingUser);
     }
 }
