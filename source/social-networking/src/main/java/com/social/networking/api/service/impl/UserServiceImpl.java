@@ -153,7 +153,8 @@ public class UserServiceImpl implements UserDetailsService {
         }
         Account account = accountRepository.findAccountByEmail(oAuth2ProfileDto.getEmail());
         if (account != null) {
-            if (!account.getProvider().equals(SocialNetworkingConstant.GRANT_TYPE_GOOGLE)) {
+            if (account.getProviderId() != null && account.getProvider() != null
+                    && (!account.getProvider().equals(provider) || !account.getProviderId().trim().equals(oAuth2ProfileDto.getId().trim()))) {
                 throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
                         account.getProvider() + " account. Please use your " + account.getProvider() +
                         " account to login.");
@@ -187,6 +188,10 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
     private Account updateExistingUser(Account existingUser, OAuth2ProfileDto oAuth2ProfileDto) {
+        if (existingUser.getProvider() == null && existingUser.getProviderId() == null ) {
+            existingUser.setProvider(SocialNetworkingConstant.GRANT_TYPE_GOOGLE);
+            existingUser.setProviderId(oAuth2ProfileDto.getId());
+        }
         existingUser.setFullName(oAuth2ProfileDto.getName());
         existingUser.setAvatarPath(oAuth2ProfileDto.getImageUrl());
         return accountRepository.save(existingUser);
