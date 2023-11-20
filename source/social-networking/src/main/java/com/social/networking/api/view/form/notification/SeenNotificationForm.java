@@ -8,6 +8,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SeenNotificationForm {
     @ApiModelProperty(name = "seenNotificationIds", example = "[1, 2, 3]", required = true)
-    @NotNull(message = "seenNotificationIds is required!")
-    private Long[] seenNotificationIds;
+    @NotNull(message = "announcementIds is required!")
+    private Long[] announcementIds;
 }

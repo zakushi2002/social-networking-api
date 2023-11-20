@@ -21,6 +21,7 @@ import com.social.networking.api.view.mapper.BookmarkMapper;
 import com.social.networking.api.view.mapper.PostMapper;
 import com.social.networking.api.view.mapper.ReactionMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,6 +70,13 @@ public class PostController extends BaseController {
             apiMessageDto.setMessage("Account is not exist");
             return apiMessageDto;
         }
+        if (createPostForm.getKind().equals(SocialNetworkingConstant.POST_KIND_NORMAL) && StringUtils.isEmpty(createPostForm.getTitle().trim()))
+        {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_TITLE_REQUIRED);
+            apiMessageDto.setMessage("Title is required");
+            return apiMessageDto;
+        }
         Post post = postMapper.fromCreatePostFormToEntity(createPostForm);
         post.setAccount(account);
         postRepository.save(post);
@@ -87,6 +95,13 @@ public class PostController extends BaseController {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
             apiMessageDto.setMessage("Post is not exist");
+            return apiMessageDto;
+        }
+        if (post.getKind().equals(SocialNetworkingConstant.POST_KIND_NORMAL) && StringUtils.isEmpty(updatePostForm.getTitle().trim()))
+        {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_TITLE_REQUIRED);
+            apiMessageDto.setMessage("Title is required");
             return apiMessageDto;
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);

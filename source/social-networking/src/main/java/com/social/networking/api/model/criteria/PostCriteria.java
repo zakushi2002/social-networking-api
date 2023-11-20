@@ -18,6 +18,7 @@ public class PostCriteria implements Serializable {
     private Long id;
     private Long accountId;
     private String accountName;
+    private String title;
     private String keyword;
     private Integer kind;
     private Integer status;
@@ -43,6 +44,9 @@ public class PostCriteria implements Serializable {
                 if (getPrivacy() != null) {
                     predicates.add(cb.equal(root.get("privacy"), getPrivacy()));
                 }
+                if (!StringUtils.isEmpty(getTitle())) {
+                    predicates.add(cb.like(cb.lower(root.get("title")), "%" + getTitle().trim().toLowerCase() + "%"));
+                }
                 if (!StringUtils.isEmpty(getKeyword())) {
                     predicates.add(cb.like(cb.lower(root.get("content")), "%" + getKeyword().toLowerCase() + "%"));
                 }
@@ -65,7 +69,7 @@ public class PostCriteria implements Serializable {
 
                         }
                         predicates.add(cb.or(predicatesFollowing.toArray(new Predicate[predicatesFollowing.size()])));
-                        predicates.add(cb.equal(accountRoot.get("id"),root.get("account").get("id")));
+                        predicates.add(cb.equal(accountRoot.get("id"), root.get("account").get("id")));
                     } else {
                         predicates.add(cb.equal(root.get("id"), 0));
                     }

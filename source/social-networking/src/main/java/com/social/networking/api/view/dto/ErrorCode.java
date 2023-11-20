@@ -50,6 +50,7 @@ public class ErrorCode {
     public static final String POST_ERROR_NOT_FOUND = "ERROR-POST-000";
     public static final String POST_ERROR_NOT_OWNER = "ERROR-POST-001";
     public static final String POST_ERROR_HANDLED = "ERROR-POST-002"; // Post has been approved or rejected
+    public static final String POST_ERROR_TITLE_REQUIRED = "ERROR-POST-003";
 
     /**
      * Comment error code

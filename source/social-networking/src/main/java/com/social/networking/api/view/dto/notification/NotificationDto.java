@@ -1,9 +1,11 @@
 package com.social.networking.api.view.dto.notification;
 
 import com.social.networking.api.view.dto.InfoAdminDto;
-import com.social.networking.api.view.dto.account.AccountDto;
+import com.social.networking.api.view.dto.notification.announcement.AnnouncementDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class NotificationDto extends InfoAdminDto {
@@ -11,10 +13,6 @@ public class NotificationDto extends InfoAdminDto {
     private String content;
     @ApiModelProperty(name = "kind")
     private Integer kind;
-    @ApiModelProperty(name = "accountTo")
-    private AccountDto accountTo;
-    @ApiModelProperty(name = "accountFrom")
-    private AccountDto accountFrom;
-    @ApiModelProperty(name = "isRead")
-    private Boolean isRead;
+    @ApiModelProperty(name = "announcements")
+    private List<AnnouncementDto> announcements;
 }
