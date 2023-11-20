@@ -66,6 +66,7 @@ public interface AccountMapper {
     List<AccountDto> fromEntityToAccountDtoList(List<Account> accounts);
 
     @IterableMapping(elementTargetType = AccountDto.class, qualifiedByName = "fromAccountToAutoCompleteDto")
+    @Named("fromEntityToAccountAutoCompleteDtoList")
     List<AccountDto> fromEntityToAccountAutoCompleteDtoList(List<Account> accounts);
 
     @Mapping(source = "fullName", target = "fullName")
@@ -111,4 +112,14 @@ public interface AccountMapper {
     @Mapping(source = "bio", target = "bio")
     @BeanMapping(ignoreByDefault = true)
     AccountProfileDto fromEntityToProfileDtoForClient(UserProfile userProfile);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "fullName", target = "fullName")
+    @BeanMapping(ignoreByDefault = true)
+    @Named("fromEntityToShortDtoForNotification")
+    AccountDto fromEntityToShortDtoForNotification(Account account);
+
+    @IterableMapping(elementTargetType = AccountDto.class, qualifiedByName = "fromEntityToShortDtoForNotification")
+    @Named("fromEntityToShortDtoListForNotification")
+    List<AccountDto> fromEntityToShortDtoListForNotification(List<Account> accounts);
 }

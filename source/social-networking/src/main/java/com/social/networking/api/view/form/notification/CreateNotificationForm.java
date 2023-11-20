@@ -9,13 +9,13 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class CreateNotificationForm {
-    @ApiModelProperty(name = "content", required = true, example = "{ commentId: 1, reasonReport: 'Spam' }" )
+    @ApiModelProperty(name = "content", required = true)
     @NotEmpty(message = "content cannot be empty!")
     private String content;
     @ApiModelProperty(name = "kind", required = true)
     @NotificationKind
     private Integer kind;
-    @ApiModelProperty(name = "accountToId", required = true)
-    @NotNull(message = "accountToId cannot be null!")
-    private Long accountToId;
+    @ApiModelProperty(name = "receivers", required = true)
+    @NotNull(message = "receivers cannot be null!")
+    private Long[] receivers;
 }

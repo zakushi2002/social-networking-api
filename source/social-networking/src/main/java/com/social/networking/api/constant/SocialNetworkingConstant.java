@@ -93,6 +93,13 @@ public class SocialNetworkingConstant {
      */
     public static final String PROVIDER_FACEBOOK = "facebook";
     public static final String PROVIDER_GOOGLE = "google";
+
+    /**
+     * Conversation kind constant
+     */
+    public static final Integer CONVERSATION_KIND_GROUP = 1;
+    public static final Integer CONVERSATION_KIND_PRIVATE = 2;
+
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");
     }

@@ -11,6 +11,8 @@ import java.util.List;
 
 @Data
 public class PostDto extends InfoAdminDto {
+    @ApiModelProperty(name = "title")
+    private String title;
     @ApiModelProperty(name = "content")
     private String content;
     @ApiModelProperty(name = "owner")
