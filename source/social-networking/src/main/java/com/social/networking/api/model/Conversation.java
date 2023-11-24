@@ -27,5 +27,5 @@ public class Conversation extends Auditable<String> {
     @Column(columnDefinition = "LONGTEXT")
     private String lastMessage;
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ConversationAccount> messages = new ArrayList<>();
+    private List<ConversationAccount> accountList = new ArrayList<>();
 }

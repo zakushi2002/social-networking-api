@@ -192,8 +192,6 @@ public class UserServiceImpl implements UserDetailsService {
             existingUser.setProvider(SocialNetworkingConstant.GRANT_TYPE_GOOGLE);
             existingUser.setProviderId(oAuth2ProfileDto.getId());
         }
-        existingUser.setFullName(oAuth2ProfileDto.getName());
-        existingUser.setAvatarPath(oAuth2ProfileDto.getImageUrl());
         return accountRepository.save(existingUser);
     }
 }

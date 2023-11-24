@@ -97,8 +97,12 @@ public class SocialNetworkingConstant {
     /**
      * Conversation kind constant
      */
-    public static final Integer CONVERSATION_KIND_GROUP = 1;
-    public static final Integer CONVERSATION_KIND_PRIVATE = 2;
+    public static final Integer CONVERSATION_KIND_PRIVATE = 1;
+    public static final Integer CONVERSATION_KIND_GROUP = 2;
+
+    /**
+     * Conversation introduction constant
+     */
 
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");

@@ -94,4 +94,11 @@ public class ErrorCode {
     public static final String REPORT_ERROR_NOT_FOUND = "ERROR-REPORT-000";
     public static final String REPORT_ERROR_REPORT_YOURSELF = "ERROR-REPORT-001";
     public static final String REPORT_ERROR_APPROVED_OR_REJECTED = "ERROR-REPORT-002";
+
+    /**
+     * Conversation error code
+     */
+    public static final String CONVERSATION_ERROR_NOT_FOUND = "ERROR-CONVERSATION-000";
+    public static final String CONVERSATION_ERROR_ACCOUNT_ID_EMPTY = "ERROR-CONVERSATION-001";
+    public static final String CONVERSATION_ERROR_ACCOUNT_ID_NOT_FOUND = "ERROR-CONVERSATION-002";
 }
