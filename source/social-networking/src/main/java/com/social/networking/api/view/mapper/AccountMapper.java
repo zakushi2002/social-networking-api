@@ -62,6 +62,10 @@ public interface AccountMapper {
     @Named("fromAccountToAutoCompleteDtoWithGroup")
     AccountDto fromAccountToAutoCompleteDtoWithGroup(Account account);
 
+    @IterableMapping(elementTargetType = AccountDto.class, qualifiedByName = "fromAccountToAutoCompleteDtoWithGroup")
+    @Named("fromAccountToAutoCompleteDtoWithGroupList")
+    List<AccountDto> fromAccountToAutoCompleteDtoWithGroupList(List<Account> accounts);
+
     @IterableMapping(elementTargetType = AccountDto.class, qualifiedByName = "fromAccountToDto")
     List<AccountDto> fromEntityToAccountDtoList(List<Account> accounts);
 
