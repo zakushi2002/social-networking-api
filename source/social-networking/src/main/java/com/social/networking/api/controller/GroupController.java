@@ -168,4 +168,32 @@ public class GroupController extends BaseController {
         return apiMessageDto;
     }
 
+    @DeleteMapping(value = "/remove-permission", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('GR_U')")
+    @Transactional
+    public ApiMessageDto<String> removePermission(@Valid @RequestBody AddPermissionForm addPermissionForm, BindingResult bindingResult) {
+        if (!isSuperAdmin()) {
+            throw new UnauthorizationException("Not allowed remove permission.");
+        }
+        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+        Group group = groupRepository.findById(addPermissionForm.getId()).orElse(null);
+        if (group == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Group not found");
+            return apiMessageDto;
+        }
+        List<Permission> permissionList = new ArrayList<>();
+        for (long permissionId : addPermissionForm.getPermissions()) {
+            Permission permission = permissionRepository.findById(permissionId).orElse(null);
+            if (permission != null) {
+                permissionList.add(permission);
+            }
+        }
+        group.getPermissions().removeAll(permissionList);
+        groupRepository.save(group);
+        apiMessageDto.setMessage("Remove permission success");
+        return apiMessageDto;
+    }
+
 }
