@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @Data
 public class MessageCriteria implements Serializable {
     private Long id;
+    @NotNull(message = "conversationId can not be null!")
     private Long conversationId;
     private Long senderId;
     private String content;
