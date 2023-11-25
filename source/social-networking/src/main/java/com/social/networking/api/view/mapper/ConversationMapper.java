@@ -64,6 +64,7 @@ public interface ConversationMapper {
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToConversationDtoComplete")
     ConversationDto fromEntityToConversationDtoComplete(Conversation conversation);
+
     @Mapping(source = "name", target = "name")
     @Mapping(source = "image", target = "image")
     @BeanMapping(ignoreByDefault = true)
