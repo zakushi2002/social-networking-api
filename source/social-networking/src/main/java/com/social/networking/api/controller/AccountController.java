@@ -362,6 +362,17 @@ public class AccountController extends BaseController {
         return apiMessageDto;
     }
 
+    @GetMapping(value = "/list-account-client", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ACC_L_CLIENT')")
+    public ApiResponse<ResponseListDto<AccountDto>> listAccountClient(AccountCriteria accountCriteria, Pageable pageable) {
+        ApiResponse<ResponseListDto<AccountDto>> apiMessageDto = new ApiResponse<>();
+        Page<Account> page = accountRepository.findAll(accountCriteria.getSpecification(), pageable);
+        ResponseListDto<AccountDto> responseListDto = new ResponseListDto(accountMapper.fromAccountToAutoCompleteDtoWithGroupList(page.getContent()), page.getTotalElements(), page.getTotalPages());
+        apiMessageDto.setData(responseListDto);
+        apiMessageDto.setMessage("Get list account success");
+        return apiMessageDto;
+    }
+
     public boolean isOTPRequired(Account account) {
         if (account.getResetPwdCode() == null) {
             return false;
