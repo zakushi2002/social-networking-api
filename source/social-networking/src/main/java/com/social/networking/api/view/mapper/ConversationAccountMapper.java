@@ -33,7 +33,7 @@ public interface ConversationAccountMapper {
     @Named("fromConversationAccountToDtoForListAccountResponseListDto")
     List<ConversationAccountDto> fromConversationAccountToDtoForListAccountResponseListDto(List<ConversationAccount> conversationAccounts);
 
-    @Mapping(source = "id", target = "id")
+    // @Mapping(source = "id", target = "id")
     @Mapping(source = "account", target = "account", qualifiedByName = "fromAccountToAutoCompleteDto")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromConversationAccountToDtoForListAccountShort")

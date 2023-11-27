@@ -66,7 +66,6 @@ public class PostCriteria implements Serializable {
                         List<Predicate> predicatesFollowing = new ArrayList<>();
                         for (Long key : mapFollowingIdList.keySet()) {
                             predicatesFollowing.add(cb.equal(accountRoot.get("id"), key));
-
                         }
                         predicates.add(cb.or(predicatesFollowing.toArray(new Predicate[predicatesFollowing.size()])));
                         predicates.add(cb.equal(accountRoot.get("id"), root.get("account").get("id")));

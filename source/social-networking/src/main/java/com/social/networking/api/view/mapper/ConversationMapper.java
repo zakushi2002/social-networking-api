@@ -65,6 +65,10 @@ public interface ConversationMapper {
     @Named("fromEntityToConversationDtoComplete")
     ConversationDto fromEntityToConversationDtoComplete(Conversation conversation);
 
+    @IterableMapping(elementTargetType = ConversationDto.class, qualifiedByName = "fromEntityToConversationDtoComplete")
+    @Named("fromEntityToConversationDtoCompleteList")
+    List<ConversationDto> fromEntityToConversationDtoCompleteList(List<Conversation> conversations);
+
     @Mapping(source = "name", target = "name")
     @Mapping(source = "image", target = "image")
     @BeanMapping(ignoreByDefault = true)

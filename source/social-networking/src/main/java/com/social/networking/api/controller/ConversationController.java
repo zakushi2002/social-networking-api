@@ -53,7 +53,7 @@ public class ConversationController extends BaseController {
     @PreAuthorize("hasRole('CONVERSATION_L')")
     public ApiMessageDto<ResponseListDto<ConversationDto>> listConversation(ConversationCriteria conversationCriteria, Pageable pageable) {
         ApiMessageDto<ResponseListDto<ConversationDto>> apiMessageDto = new ApiMessageDto<>();
-        Page<Conversation> conversationPage = conversationRepository.findAll(conversationCriteria.getSpecification(), pageable);
+        Page<Conversation> conversationPage = conversationRepository.findAll(conversationCriteria.getSpecification(null), pageable);
         ResponseListDto<ConversationDto> responseListDto = new ResponseListDto(conversationMapper.fromEntityToConversationDtoShortList(conversationPage.getContent()), conversationPage.getTotalElements(), conversationPage.getTotalPages());
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("List conversation success");
@@ -210,6 +210,17 @@ public class ConversationController extends BaseController {
         conversationRepository.save(conversation);
         apiMessageDto.setData(conversationMapper.fromEntityToConversationDtoShort(conversation));
         apiMessageDto.setMessage("Change last message success");
+        return apiMessageDto;
+    }
+
+    @GetMapping(value = "/list-conversation", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('CONVERSATION_USER_L')")
+    public ApiMessageDto<ResponseListDto<ConversationDto>> listConversationForUser(ConversationCriteria conversationCriteria, Pageable pageable) {
+        ApiMessageDto<ResponseListDto<ConversationDto>> apiMessageDto = new ApiMessageDto<>();
+        Page<Conversation> conversationPage = conversationRepository.findAll(conversationCriteria.getSpecification(getCurrentUser()), pageable);
+        ResponseListDto<ConversationDto> responseListDto = new ResponseListDto(conversationMapper.fromEntityToConversationDtoCompleteList(conversationPage.getContent()), conversationPage.getTotalElements(), conversationPage.getTotalPages());
+        apiMessageDto.setData(responseListDto);
+        apiMessageDto.setMessage("List conversation success");
         return apiMessageDto;
     }
 }
