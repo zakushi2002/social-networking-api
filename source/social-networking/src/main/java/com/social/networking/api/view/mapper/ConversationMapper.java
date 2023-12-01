@@ -21,6 +21,7 @@ public interface ConversationMapper {
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "modifiedDate", target = "modifiedDate")
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "accountList", target = "accountList", qualifiedByName = "fromConversationAccountToDtoForListAccountShort")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToConversationDto")
     ConversationDto fromEntityToConversationDto(Conversation conversation);
