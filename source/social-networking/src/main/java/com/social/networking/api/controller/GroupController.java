@@ -190,7 +190,7 @@ public class GroupController extends BaseController {
                 permissionList.add(permission);
             }
         }
-        group.getPermissions().removeAll(permissionList);
+        group.getPermissions().removeIf(permission -> permissionList.stream().anyMatch(p -> p.getId().equals(permission.getId())));
         groupRepository.save(group);
         apiMessageDto.setMessage("Remove permission success");
         return apiMessageDto;
