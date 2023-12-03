@@ -8,11 +8,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {NotificationMapper.class})
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AnnouncementMapper {
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "notification", target = "notification", qualifiedByName = "fromEntityToNotificationDto")
     @Mapping(source = "account.id", target = "accountId")
     @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)

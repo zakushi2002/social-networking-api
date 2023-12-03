@@ -31,7 +31,7 @@ public interface NotificationMapper {
     List<NotificationDto> fromEntityToNotificationDtoList(List<Notification> notifications);
 
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "announcements", target = "announcements", qualifiedByName = "fromEntityToDtoList")
+    // @Mapping(source = "announcements", target = "announcements", qualifiedByName = "fromEntityToDtoList")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToNotificationDtoWithAnnouncements")
     NotificationDto fromEntityToNotificationDtoWithAnnouncements(Notification notification);
