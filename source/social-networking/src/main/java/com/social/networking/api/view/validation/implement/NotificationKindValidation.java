@@ -19,9 +19,10 @@ public class NotificationKindValidation implements ConstraintValidator<Notificat
         if (notificationKind == null && allowNull) {
             return true;
         }
-        return Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_POST)
-                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT)
-                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION)
-                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_FOLLOW);
+        return Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_NEW_POST_OF_FOLLOWING)
+                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST)
+                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST)
+                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT)
+                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_NEW_FOLLOWER);
     }
 }

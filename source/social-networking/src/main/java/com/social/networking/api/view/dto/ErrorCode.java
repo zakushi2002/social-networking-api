@@ -108,4 +108,9 @@ public class ErrorCode {
      */
     public static final String MESSAGE_ERROR_NOT_FOUND = "ERROR-MESSAGE-000";
     public static final String MESSAGE_ERROR_NOT_OWNER = "ERROR-MESSAGE-001";
+
+    /**
+     * Notification error code
+     */
+    public static final String NOTIFICATION_ERROR_NOT_FOUND = "ERROR-NOTIFICATION-000";
 }

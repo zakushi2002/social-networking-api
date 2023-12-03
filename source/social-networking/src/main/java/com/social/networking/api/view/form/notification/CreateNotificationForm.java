@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Data
 public class CreateNotificationForm {
@@ -15,7 +14,4 @@ public class CreateNotificationForm {
     @ApiModelProperty(name = "kind", required = true)
     @NotificationKind
     private Integer kind;
-    @ApiModelProperty(name = "receivers", required = true)
-    @NotNull(message = "receivers cannot be null!")
-    private Long[] receivers;
 }
