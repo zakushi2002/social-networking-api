@@ -19,4 +19,6 @@ public class ConversationDto extends InfoAdminDto {
     private String lastMessage;
     @ApiModelProperty(name = "accountList")
     private List<ConversationAccountDto> accountList;
+    @ApiModelProperty(name = "modifiedBy")
+    private String modifiedBy;
 }

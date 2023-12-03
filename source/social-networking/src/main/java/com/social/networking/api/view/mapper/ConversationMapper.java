@@ -61,6 +61,8 @@ public interface ConversationMapper {
     @Mapping(source = "image", target = "image")
     @Mapping(source = "kind", target = "kind")
     @Mapping(source = "lastMessage", target = "lastMessage")
+    @Mapping(source = "modifiedDate", target = "modifiedDate")
+    @Mapping(source = "modifiedBy", target = "modifiedBy")
     @Mapping(source = "accountList", target = "accountList", qualifiedByName = "fromConversationAccountToDtoForListAccountShort")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToConversationDtoComplete")
