@@ -89,7 +89,7 @@ public class NotificationController extends BaseController {
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiMessageDto<ResponseListDto<NotificationDto>> listNotification(@Valid NotificationCriteria notificationCriteria, Pageable pageable) {
         ApiMessageDto<ResponseListDto<NotificationDto>> apiMessageDto = new ApiMessageDto<>();
-        Page<Notification> notificationPage = notificationRepository.findAll(notificationCriteria.getSpecification(), pageable);
+        Page<Notification> notificationPage = notificationRepository.findAll(notificationCriteria.getSpecification(getCurrentUser()), pageable);
         ResponseListDto<NotificationDto> responseListDto = new ResponseListDto(notificationMapper.fromEntityToNotificationDtoList(notificationPage.getContent()), notificationPage.getTotalElements(), notificationPage.getTotalPages());
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("Get notification list successfully!");
