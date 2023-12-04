@@ -186,4 +186,9 @@
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
     </changeSet>
+    <changeSet author="TOAN (generated)" id="1698367745919-16">
+        <addColumn tableName="db_social_networking_notification">
+            <column name="object_id" type="bigint" afterColumn="kind"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -23,6 +23,7 @@ public class Notification extends Auditable<String> {
     private Integer kind;
     @Column(columnDefinition = "LONGTEXT")
     private String content;
+    private Long objectId;
     @OneToMany(mappedBy = "notification", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Announcement> announcements = new ArrayList<>();
 }

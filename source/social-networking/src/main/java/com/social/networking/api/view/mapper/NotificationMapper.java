@@ -20,6 +20,7 @@ public interface NotificationMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "kind", target = "kind")
+    @Mapping(source = "objectId", target = "objectId")
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
@@ -31,6 +32,7 @@ public interface NotificationMapper {
     List<NotificationDto> fromEntityToNotificationDtoList(List<Notification> notifications);
 
     @Mapping(source = "id", target = "id")
+    @Mapping(source ="objectId", target = "objectId")
     // @Mapping(source = "announcements", target = "announcements", qualifiedByName = "fromEntityToDtoList")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToNotificationDtoWithAnnouncements")
