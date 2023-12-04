@@ -14,6 +14,7 @@ import java.util.List;
 public interface NotificationMapper {
     @Mapping(source = "content", target = "content")
     @Mapping(source = "kind", target = "kind")
+    @Mapping(source = "objectId", target = "objectId")
     @BeanMapping(ignoreByDefault = true)
     Notification fromCreateNotificationFormToEntity(CreateNotificationForm createNotificationForm);
 
