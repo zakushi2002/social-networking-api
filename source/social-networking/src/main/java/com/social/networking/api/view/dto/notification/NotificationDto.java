@@ -13,6 +13,8 @@ public class NotificationDto extends InfoAdminDto {
     private String content;
     @ApiModelProperty(name = "kind")
     private Integer kind;
+    @ApiModelProperty(name = "objectId")
+    private Long objectId;
     @ApiModelProperty(name = "announcements")
     private List<AnnouncementDto> announcements;
 }

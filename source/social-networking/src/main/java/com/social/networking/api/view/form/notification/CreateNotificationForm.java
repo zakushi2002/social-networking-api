@@ -14,4 +14,6 @@ public class CreateNotificationForm {
     @ApiModelProperty(name = "kind", required = true)
     @NotificationKind
     private Integer kind;
+    @ApiModelProperty(name = "objectId", required = true)
+    private Long objectId;
 }
