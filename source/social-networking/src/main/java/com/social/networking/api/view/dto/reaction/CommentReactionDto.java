@@ -11,6 +11,8 @@ public class CommentReactionDto {
     private Integer kind;
     @ApiModelProperty(name = "commentId")
     private Long commentId;
+    @ApiModelProperty(name = "ownerCommentId")
+    private Long ownerCommentId;
     @ApiModelProperty(name = "accountId")
     private Long accountId;
 }

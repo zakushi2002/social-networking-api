@@ -195,8 +195,8 @@ public class PostController extends BaseController {
     @PostMapping(value = "/react", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('REACT_POST')")
     @Transactional
-    public ApiMessageDto<Long> react(@Valid @RequestBody ReactPostForm reactPostForm, BindingResult bindingResult) {
-        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
+    public ApiMessageDto<PostReactionDto> react(@Valid @RequestBody ReactPostForm reactPostForm, BindingResult bindingResult) {
+        ApiMessageDto<PostReactionDto> apiMessageDto = new ApiMessageDto<>();
         PostReaction postReaction = postReactionRepository.findByPostIdAndAccountIdAndKind(reactPostForm.getPostId(), getCurrentUser(), reactPostForm.getKind()).orElse(null);
         if (postReaction != null) {
             if (!postReaction.getAccount().getId().equals(getCurrentUser())) {
@@ -207,7 +207,7 @@ public class PostController extends BaseController {
             }
             postReactionRepository.deleteById(postReaction.getId());
             apiMessageDto.setMessage("Un-react post successfully");
-            apiMessageDto.setData(postReaction.getId());
+            apiMessageDto.setData(reactionMapper.fromEntityToPostReactionDto(postReaction));
             return apiMessageDto;
         }
         Post post = postRepository.findById(reactPostForm.getPostId()).orElse(null);
@@ -231,7 +231,7 @@ public class PostController extends BaseController {
         post.getPostReactions().add(postReaction);
         postRepository.save(post);
         apiMessageDto.setMessage("React post successfully");
-        apiMessageDto.setData(postReaction.getId());
+        apiMessageDto.setData(reactionMapper.fromEntityToPostReactionDto(postReaction));
         return apiMessageDto;
     }
 

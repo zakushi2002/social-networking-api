@@ -11,6 +11,8 @@ public class PostReactionDto {
     private Integer kind;
     @ApiModelProperty(name = "postId")
     private Long postId;
+    @ApiModelProperty(name = "ownerPostId")
+    private Long ownerPostId;
     @ApiModelProperty(name = "accountId")
     private Long accountId;
 }
