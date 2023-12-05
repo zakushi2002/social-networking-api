@@ -17,4 +17,6 @@ public class NotificationDto extends InfoAdminDto {
     private Long objectId;
     @ApiModelProperty(name = "announcements")
     private List<AnnouncementDto> announcements;
+    @ApiModelProperty(name = "createdBy")
+    private String createdBy;
 }
