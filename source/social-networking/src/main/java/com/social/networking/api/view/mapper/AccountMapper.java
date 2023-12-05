@@ -55,6 +55,7 @@ public interface AccountMapper {
     AccountDto fromAccountToAutoCompleteDto(Account account);
 
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "email", target = "email")
     @Mapping(source = "avatarPath", target = "avatar")
     @Mapping(source = "fullName", target = "fullName")
     @Mapping(source = "group", target = "group", qualifiedByName = "fromEntityToGroupDtoAutoComplete")
