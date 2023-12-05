@@ -190,8 +190,8 @@ public class CommentController extends BaseController {
     @PostMapping(value = "/react", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('REACT_CMT')")
     @Transactional
-    public ApiMessageDto<Long> reactComment(@Valid @RequestBody ReactCommentForm reactCommentForm, BindingResult bindingResult) {
-        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
+    public ApiMessageDto<CommentReactionDto> reactComment(@Valid @RequestBody ReactCommentForm reactCommentForm, BindingResult bindingResult) {
+        ApiMessageDto<CommentReactionDto> apiMessageDto = new ApiMessageDto<>();
         CommentReaction commentReaction = commentReactionRepository.findByCommentIdAndAccountIdAndKind(reactCommentForm.getCommentId(), getCurrentUser(), reactCommentForm.getKind()).orElse(null);
         if (commentReaction != null) {
             if (!commentReaction.getAccount().getId().equals(getCurrentUser())) {
@@ -202,7 +202,7 @@ public class CommentController extends BaseController {
             }
             commentReactionRepository.deleteById(commentReaction.getId());
             apiMessageDto.setMessage("Un-react comment successfully");
-            apiMessageDto.setData(commentReaction.getId());
+            apiMessageDto.setData(reactionMapper.fromEntityToCommentReactionDto(commentReaction));
             return apiMessageDto;
         }
         Comment comment = commentRepository.findById(reactCommentForm.getCommentId()).orElse(null);
@@ -224,7 +224,7 @@ public class CommentController extends BaseController {
         comment.getCommentReactions().add(commentReaction);
         commentRepository.save(comment);
         apiMessageDto.setMessage("React comment successfully");
-        apiMessageDto.setData(commentReaction.getId());
+        apiMessageDto.setData(reactionMapper.fromEntityToCommentReactionDto(commentReaction));
         return apiMessageDto;
     }
 
