@@ -37,4 +37,11 @@ public interface CommentMapper {
 
     @IterableMapping(elementTargetType = CommentDto.class, qualifiedByName = "fromEntityToCommentDto")
     List<CommentDto> fromEntitiesToCommentDtoList(List<Comment> comments);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "post", target = "post", qualifiedByName = "fromEntityToCreateCommentNotificationDto")
+    @Mapping(source = "content", target = "commentContent")
+    @BeanMapping(ignoreByDefault = true)
+    @Named("fromEntityToCreateCommentDto")
+    CommentDto fromEntityToCreateCommentDto(Comment comment);
 }

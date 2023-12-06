@@ -23,4 +23,6 @@ public class CommentDto extends InfoAdminDto {
     private CommentDto parentComment;
     @ApiModelProperty(name = "commentReactions")
     private List<CommentReactionDto> commentReactions;
+    @ApiModelProperty(name = "ownerIdOfPost")
+    private Long ownerIdOfPost;
 }
