@@ -48,8 +48,8 @@ public class CommentController extends BaseController {
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CMT_C')")
     @Transactional
-    public ApiMessageDto<Long> createComment(@Valid @RequestBody CreateCommentForm createCommentForm, BindingResult bindingResult) {
-        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
+    public ApiMessageDto<CommentDto> createComment(@Valid @RequestBody CreateCommentForm createCommentForm, BindingResult bindingResult) {
+        ApiMessageDto<CommentDto> apiMessageDto = new ApiMessageDto<>();
         Post post = postRepository.findById(createCommentForm.getPostId()).orElse(null);
         if (post == null) {
             apiMessageDto.setResult(false);
@@ -82,8 +82,10 @@ public class CommentController extends BaseController {
         }
         comment.setAccount(account);
         commentRepository.save(comment);
+        CommentDto commentDto = commentMapper.fromEntityToCreateCommentDto(comment);
+        commentDto.setOwnerIdOfPost(post.getAccount().getId());
         apiMessageDto.setMessage("Create comment successfully");
-        apiMessageDto.setData(comment.getId());
+        apiMessageDto.setData(commentDto);
         return apiMessageDto;
     }
 
