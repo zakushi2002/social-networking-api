@@ -304,7 +304,7 @@ public class AccountController extends BaseController {
             apiMessageDto.setMessage("Account was locked");
             return apiMessageDto;
         }
-        if (account.getResetPwdCode() == null) {
+        if (account.getResetPwdCode() == null || account.getResetPwdCode().trim().isEmpty()) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_SEND_REQUEST_OTP);
             apiMessageDto.setMessage("Account not send request OTP");
@@ -374,7 +374,7 @@ public class AccountController extends BaseController {
     }
 
     public boolean isOTPRequired(Account account) {
-        if (account.getResetPwdCode() == null) {
+        if (account.getResetPwdCode() == null || account.getResetPwdCode().trim().isEmpty()) {
             return false;
         }
         long otpRequestedTime = account.getResetPwdTime().getTime();
