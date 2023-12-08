@@ -71,8 +71,15 @@ public class SocialNetworkingApiService {
         return awsCloudUtil.downloadFile(fileName, accessKey, secretKey, bucketName);
     }
 
-    public void deleteFileS3(String fileName) {
-        awsCloudUtil.deleteFile(fileName, accessKey, secretKey, bucketName);
+    public void deleteFileS3(String avatarPath) {
+        String awsEndpoint = endpointUrl + bucketName + "/";
+        if (!avatarPath.contains(awsEndpoint)) {
+            return;
+        }
+        String key = avatarPath.replace(awsEndpoint, "");
+        System.out.println("AWS S3: Do you want to delete file " + key);
+        awsCloudUtil.deleteFile(key, accessKey, secretKey, bucketName);
+        log.info("AWS S3: Delete file success " + key);
     }
 
     public String getOTPForgetPassword() {

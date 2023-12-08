@@ -9,6 +9,8 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 public class CreatePostForm {
+    @ApiModelProperty(name = "title")
+    private String title;
     @ApiModelProperty(name = "content", required = true)
     @NotEmpty(message = "content cannot be null!")
     private String content;

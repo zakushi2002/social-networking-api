@@ -10,15 +10,15 @@ import java.util.Date;
 
 @Data
 public class ExpertProfileDto extends InfoAdminDto {
-    @ApiModelProperty(name = "kind")
+    @ApiModelProperty(name = "expertKind")
     private Integer expertKind;
-    @ApiModelProperty(name = "email")
+    @ApiModelProperty(name = "expertEmail")
     private String expertEmail;
-    @ApiModelProperty(name = "fullName")
+    @ApiModelProperty(name = "expertFullName")
     private String expertFullName;
-    @ApiModelProperty(name = "avatar")
+    @ApiModelProperty(name = "expertAvatar")
     private String expertAvatar;
-    @ApiModelProperty(name = "group")
+    @ApiModelProperty(name = "expertGroup")
     private GroupDto expertGroup;
     @ApiModelProperty(name = "dateOfBirth")
     private Date dateOfBirth;

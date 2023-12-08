@@ -13,6 +13,7 @@ import java.util.List;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {AccountMapper.class, ReactionMapper.class})
 public interface PostMapper {
+    @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "kind", target = "kind")
     @Mapping(source = "privacy", target = "privacy")
@@ -20,12 +21,14 @@ public interface PostMapper {
     @BeanMapping(ignoreByDefault = true)
     Post fromCreatePostFormToEntity(CreatePostForm createPostForm);
 
+    @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "privacy", target = "privacy")
     @BeanMapping(ignoreByDefault = true)
     void mappingUpdatePostFormToEntity(UpdatePostForm updatePostForm, @MappingTarget Post post);
 
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
     @Mapping(source = "kind", target = "kind")
@@ -33,6 +36,7 @@ public interface PostMapper {
     @Mapping(source = "postReactions", target = "postReactions", qualifiedByName = "fromEntitiesToPostReactionDtoShortList")
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "modifiedDate", target = "modifiedDate")
+    @Mapping(source = "moderatedDate", target = "moderatedDate")
     @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToPostDto")
@@ -43,6 +47,7 @@ public interface PostMapper {
     List<PostDto> fromEntityToPostDtoList(List<Post> posts);
 
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
     @Mapping(source = "kind", target = "kind")
@@ -65,18 +70,26 @@ public interface PostMapper {
     PostDto fromEntityToAutoCompleteDto(Post post);
 
     @Mapping(source = "id", target = "id")
+    @BeanMapping(ignoreByDefault = true)
+    @Named("fromEntityToCreateCommentNotificationDto")
+    PostDto fromEntityToCreateCommentNotificationDto(Post post);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
     @Mapping(source = "kind", target = "kind")
     @Mapping(source = "postReactions", target = "postReactions", qualifiedByName = "fromEntitiesToPostReactionDtoShortList")
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "modifiedDate", target = "modifiedDate")
+    @Mapping(source = "moderatedDate", target = "moderatedDate")
     @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToPostDtoForBookmark")
     PostDto fromEntityToPostDtoForBookmark(Post post);
 
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "title", target = "title")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
     @Mapping(source = "kind", target = "kind")
     @BeanMapping(ignoreByDefault = true)

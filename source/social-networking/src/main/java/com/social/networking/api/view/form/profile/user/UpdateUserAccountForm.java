@@ -23,10 +23,4 @@ public class UpdateUserAccountForm {
     private String phone;
     @ApiModelProperty(name = "bio")
     private String bio;
-    @ApiModelProperty(name = "newPassword")
-    @Size(min = 8, message = "newPassword must be at least 8 characters")
-    private String newPassword;
-    @ApiModelProperty(name = "oldPassword", required = true)
-    @NotEmpty(message = "oldPassword cannot be empty!")
-    private String oldPassword;
 }

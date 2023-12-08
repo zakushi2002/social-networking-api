@@ -7,6 +7,7 @@ import com.social.networking.api.model.Group;
 import com.social.networking.api.model.UserProfile;
 import com.social.networking.api.model.criteria.UserProfileCriteria;
 import com.social.networking.api.repository.*;
+import com.social.networking.api.service.SocialNetworkingApiService;
 import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
@@ -16,7 +17,6 @@ import com.social.networking.api.view.form.profile.user.UpdateUserAccountForm;
 import com.social.networking.api.view.mapper.AccountMapper;
 import com.social.networking.api.view.mapper.UserProfileMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +48,8 @@ public class UserProfileController extends BaseController {
     UserProfileMapper userProfileMapper;
     @Autowired
     PostRepository postRepository;
+    @Autowired
+    SocialNetworkingApiService socialNetworkingApiService;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -130,16 +132,8 @@ public class UserProfileController extends BaseController {
             apiMessageDto.setMessage("Phone cannot be empty");
             return apiMessageDto;
         }
-        if (!passwordEncoder.matches(updateUserAccountForm.getOldPassword(), userProfile.getAccount().getPassword())) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_WRONG_PASSWORD);
-            apiMessageDto.setMessage("Old password is wrong");
-            return apiMessageDto;
-        }
-        if (StringUtils.isNoneBlank(updateUserAccountForm.getNewPassword())) {
-            userProfile.getAccount().setPassword(passwordEncoder.encode(updateUserAccountForm.getNewPassword()));
-        }
         if (updateUserAccountForm.getAvatarPath() != null && !updateUserAccountForm.getAvatarPath().trim().isEmpty()) {
+            // socialNetworkingApiService.deleteFileS3(userProfile.getAccount().getAvatarPath());
             userProfile.getAccount().setAvatarPath(updateUserAccountForm.getAvatarPath());
         }
         accountRepository.save(userProfile.getAccount());

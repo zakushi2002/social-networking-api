@@ -3,16 +3,21 @@ package com.social.networking.api.controller;
 import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.exception.UnauthorizationException;
 import com.social.networking.api.model.Account;
+import com.social.networking.api.model.ExpertProfile;
 import com.social.networking.api.model.Group;
+import com.social.networking.api.model.UserProfile;
 import com.social.networking.api.model.criteria.AccountCriteria;
 import com.social.networking.api.repository.AccountRepository;
+import com.social.networking.api.repository.ExpertProfileRepository;
 import com.social.networking.api.repository.GroupRepository;
+import com.social.networking.api.repository.UserProfileRepository;
 import com.social.networking.api.service.SocialNetworkingApiService;
 import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.ApiResponse;
 import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.account.AccountDto;
+import com.social.networking.api.view.dto.account.AccountProfileDto;
 import com.social.networking.api.view.form.account.CreateAdminForm;
 import com.social.networking.api.view.form.account.UpdateAdminForm;
 import com.social.networking.api.view.form.account.UpdateAdminProfileForm;
@@ -20,6 +25,8 @@ import com.social.networking.api.view.form.account.forgot.ChangePasswordForgotFo
 import com.social.networking.api.view.form.account.forgot.GetOTPForm;
 import com.social.networking.api.view.form.account.forgot.OTPForm;
 import com.social.networking.api.view.mapper.AccountMapper;
+import com.social.networking.api.view.mapper.ExpertProfileMapper;
+import com.social.networking.api.view.mapper.UserProfileMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +61,10 @@ public class AccountController extends BaseController {
     GroupRepository groupRepository;
     @Autowired
     SocialNetworkingApiService socialNetworkingApiService;
+    @Autowired
+    UserProfileRepository userProfileRepository;
+    @Autowired
+    ExpertProfileRepository expertProfileRepository;
 
     @PostMapping(value = "/create-admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ACC_C_AD')")
@@ -107,6 +118,7 @@ public class AccountController extends BaseController {
             return apiMessageDto;
         }
         if (updateAdminForm.getAvatarPath() != null && !updateAdminForm.getAvatarPath().trim().isEmpty()) {
+            // socialNetworkingApiService.deleteFileS3(account.getAvatarPath());
             account.setAvatarPath(updateAdminForm.getAvatarPath());
         }
         accountMapper.mappingUpdateAdminFormToAccount(updateAdminForm, account);
@@ -128,6 +140,40 @@ public class AccountController extends BaseController {
         }
         apiMessageDto.setData(account);
         apiMessageDto.setMessage("Get account success");
+        return apiMessageDto;
+    }
+
+    @GetMapping(value = "/get-profile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('PROFILE_V')")
+    public ApiMessageDto<AccountProfileDto> getAccountProfile(@PathVariable("id") Long id) {
+        ApiMessageDto<AccountProfileDto> apiMessageDto = new ApiMessageDto<>();
+        Account account = accountRepository.findById(id).orElse(null);
+        if (account == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Account not found");
+            return apiMessageDto;
+        }
+        if (account.getKind().equals(SocialNetworkingConstant.ACCOUNT_KIND_USER)) {
+            UserProfile userProfile = userProfileRepository.findById(id).orElse(null);
+            if (userProfile == null) {
+                apiMessageDto.setResult(false);
+                apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+                apiMessageDto.setMessage("User profile not found");
+                return apiMessageDto;
+            }
+            apiMessageDto.setData(accountMapper.fromEntityToProfileDtoForClient(userProfile));
+        } else if (account.getKind().equals(SocialNetworkingConstant.ACCOUNT_KIND_EXPERT)) {
+            ExpertProfile expertProfile = expertProfileRepository.findById(id).orElse(null);
+            if (expertProfile == null) {
+                apiMessageDto.setResult(false);
+                apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+                apiMessageDto.setMessage("Expert profile not found");
+                return apiMessageDto;
+            }
+            apiMessageDto.setData(accountMapper.fromEntityToProfileDtoForClient(expertProfile));
+        }
+        apiMessageDto.setMessage("Get account profile success");
         return apiMessageDto;
     }
 
@@ -258,7 +304,7 @@ public class AccountController extends BaseController {
             apiMessageDto.setMessage("Account was locked");
             return apiMessageDto;
         }
-        if (account.getResetPwdCode() == null) {
+        if (account.getResetPwdCode() == null || account.getResetPwdCode().trim().isEmpty()) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_SEND_REQUEST_OTP);
             apiMessageDto.setMessage("Account not send request OTP");
@@ -316,8 +362,19 @@ public class AccountController extends BaseController {
         return apiMessageDto;
     }
 
+    @GetMapping(value = "/list-account-client", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ACC_L_CLIENT')")
+    public ApiResponse<ResponseListDto<AccountDto>> listAccountClient(AccountCriteria accountCriteria, Pageable pageable) {
+        ApiResponse<ResponseListDto<AccountDto>> apiMessageDto = new ApiResponse<>();
+        Page<Account> page = accountRepository.findAll(accountCriteria.getSpecification(), pageable);
+        ResponseListDto<AccountDto> responseListDto = new ResponseListDto(accountMapper.fromAccountToAutoCompleteDtoWithGroupList(page.getContent()), page.getTotalElements(), page.getTotalPages());
+        apiMessageDto.setData(responseListDto);
+        apiMessageDto.setMessage("Get list account success");
+        return apiMessageDto;
+    }
+
     public boolean isOTPRequired(Account account) {
-        if (account.getResetPwdCode() == null) {
+        if (account.getResetPwdCode() == null || account.getResetPwdCode().trim().isEmpty()) {
             return false;
         }
         long otpRequestedTime = account.getResetPwdTime().getTime();

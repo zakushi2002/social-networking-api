@@ -12,6 +12,8 @@ public class UpdatePostForm {
     @ApiModelProperty(name = "id", required = true)
     @NotNull(message = "id cannot be null!")
     private Long id;
+    @ApiModelProperty(name = "title")
+    private String title;
     @ApiModelProperty(name = "content", required = true)
     @NotEmpty(message = "content cannot be null!")
     private String content;

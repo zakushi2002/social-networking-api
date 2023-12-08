@@ -6,10 +6,13 @@ import com.social.networking.api.view.dto.reaction.PostReactionDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
 public class PostDto extends InfoAdminDto {
+    @ApiModelProperty(name = "title")
+    private String title;
     @ApiModelProperty(name = "content")
     private String content;
     @ApiModelProperty(name = "owner")
@@ -20,4 +23,6 @@ public class PostDto extends InfoAdminDto {
     private Integer privacy;
     @ApiModelProperty(name = "postReactions")
     private List<PostReactionDto> postReactions;
+    @ApiModelProperty(name = "moderatedDate")
+    private Date moderatedDate;
 }

@@ -21,6 +21,7 @@ public interface ReactionMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "kind", target = "kind")
     @Mapping(source = "account.id", target = "accountId")
+    @Mapping(source = "post.account.id", target = "ownerPostId")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToPostReactionDto")
     PostReactionDto fromEntityToPostReactionDto(PostReaction postReaction);
@@ -46,6 +47,7 @@ public interface ReactionMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "kind", target = "kind")
     @Mapping(source = "account.id", target = "accountId")
+    @Mapping(source = "comment.account.id", target = "ownerCommentId")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToCommentReactionDto")
     CommentReactionDto fromEntityToCommentReactionDto(CommentReaction commentReaction);

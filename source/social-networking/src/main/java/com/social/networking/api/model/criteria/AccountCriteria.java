@@ -1,5 +1,6 @@
 package com.social.networking.api.model.criteria;
 
+import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Group;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class AccountCriteria implements Serializable {
     private Long groupId;
     private Boolean isSuperAdmin;
     private Integer status;
+    private Boolean isClient;
 
     public Specification<Account> getSpecification() {
         return new Specification<Account>() {
@@ -45,6 +47,9 @@ public class AccountCriteria implements Serializable {
                 }
                 if (getIsSuperAdmin() != null) {
                     predicates.add(cb.equal(root.get("isSuperAdmin"), getIsSuperAdmin()));
+                }
+                if (getIsClient() != null && getIsClient()) {
+                    predicates.add(cb.notEqual(root.get("kind"), SocialNetworkingConstant.ACCOUNT_KIND_ADMIN));
                 }
                 if (getStatus() != null) {
                     predicates.add(cb.equal(root.get("status"), getStatus()));

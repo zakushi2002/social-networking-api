@@ -1,10 +1,7 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
-import com.social.networking.api.model.Account;
-import com.social.networking.api.model.Bookmark;
-import com.social.networking.api.model.Post;
-import com.social.networking.api.model.PostReaction;
+import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.BookmarkCriteria;
 import com.social.networking.api.model.criteria.PostCriteria;
 import com.social.networking.api.model.criteria.PostReactionCriteria;
@@ -24,6 +21,7 @@ import com.social.networking.api.view.mapper.BookmarkMapper;
 import com.social.networking.api.view.mapper.PostMapper;
 import com.social.networking.api.view.mapper.ReactionMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +32,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/post")
@@ -54,6 +55,8 @@ public class PostController extends BaseController {
     BookmarkRepository bookmarkRepository;
     @Autowired
     BookmarkMapper bookmarkMapper;
+    @Autowired
+    RelationshipRepository relationshipRepository;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -65,6 +68,13 @@ public class PostController extends BaseController {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
             apiMessageDto.setMessage("Account is not exist");
+            return apiMessageDto;
+        }
+        if (createPostForm.getKind().equals(SocialNetworkingConstant.POST_KIND_NORMAL) && StringUtils.isEmpty(createPostForm.getTitle().trim()))
+        {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_TITLE_REQUIRED);
+            apiMessageDto.setMessage("Title is required");
             return apiMessageDto;
         }
         Post post = postMapper.fromCreatePostFormToEntity(createPostForm);
@@ -85,6 +95,13 @@ public class PostController extends BaseController {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
             apiMessageDto.setMessage("Post is not exist");
+            return apiMessageDto;
+        }
+        if (post.getKind().equals(SocialNetworkingConstant.POST_KIND_NORMAL) && StringUtils.isEmpty(updatePostForm.getTitle().trim()))
+        {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.POST_ERROR_TITLE_REQUIRED);
+            apiMessageDto.setMessage("Title is required");
             return apiMessageDto;
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
@@ -158,7 +175,17 @@ public class PostController extends BaseController {
     @PreAuthorize("hasRole('POST_L')")
     public ApiMessageDto<ResponseListDto<PostDto>> listPost(PostCriteria postCriteria, Pageable pageable) {
         ApiMessageDto<ResponseListDto<PostDto>> apiMessageDto = new ApiMessageDto<>();
-        Page<Post> page = postRepository.findAll(postCriteria.getSpecification(), pageable);
+        HashMap<Long, String> map = new HashMap<>();
+        if (postCriteria.getFollowing() != null && postCriteria.getFollowing()) {
+            List<Relationship> followingList = relationshipRepository.findAllByFollowerId(getCurrentUser());
+            if (followingList != null && !followingList.isEmpty()) {
+                for (Relationship relationship : followingList) {
+                    map.put(relationship.getAccount().getId(), "");
+                }
+            }
+            postCriteria.setFollowerId(getCurrentUser());
+        }
+        Page<Post> page = postRepository.findAll(postCriteria.getSpecification(map), pageable);
         ResponseListDto<PostDto> responseListDto = new ResponseListDto(postMapper.fromEntityToPostDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("Get list post success");
@@ -168,8 +195,8 @@ public class PostController extends BaseController {
     @PostMapping(value = "/react", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('REACT_POST')")
     @Transactional
-    public ApiMessageDto<Long> react(@Valid @RequestBody ReactPostForm reactPostForm, BindingResult bindingResult) {
-        ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
+    public ApiMessageDto<PostReactionDto> react(@Valid @RequestBody ReactPostForm reactPostForm, BindingResult bindingResult) {
+        ApiMessageDto<PostReactionDto> apiMessageDto = new ApiMessageDto<>();
         PostReaction postReaction = postReactionRepository.findByPostIdAndAccountIdAndKind(reactPostForm.getPostId(), getCurrentUser(), reactPostForm.getKind()).orElse(null);
         if (postReaction != null) {
             if (!postReaction.getAccount().getId().equals(getCurrentUser())) {
@@ -180,7 +207,7 @@ public class PostController extends BaseController {
             }
             postReactionRepository.deleteById(postReaction.getId());
             apiMessageDto.setMessage("Un-react post successfully");
-            apiMessageDto.setData(postReaction.getId());
+            apiMessageDto.setData(reactionMapper.fromEntityToPostReactionDto(postReaction));
             return apiMessageDto;
         }
         Post post = postRepository.findById(reactPostForm.getPostId()).orElse(null);
@@ -204,7 +231,7 @@ public class PostController extends BaseController {
         post.getPostReactions().add(postReaction);
         postRepository.save(post);
         apiMessageDto.setMessage("React post successfully");
-        apiMessageDto.setData(postReaction.getId());
+        apiMessageDto.setData(reactionMapper.fromEntityToPostReactionDto(postReaction));
         return apiMessageDto;
     }
 
@@ -290,6 +317,7 @@ public class PostController extends BaseController {
             return apiMessageDto;
         }
         post.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
+        post.setModeratedDate(new Date());
         postRepository.save(post);
         apiMessageDto.setMessage("Approve post successfully");
         apiMessageDto.setData(post.getId());

@@ -17,6 +17,8 @@ public class SocialNetworkingConstant {
      * Security Constant for grant type
      */
     public static final String GRANT_TYPE_PASSWORD = "password";
+    public static final String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
+    public static final String GRANT_TYPE_GOOGLE = "google";
 
     /**
      * Account kind constant
@@ -74,10 +76,11 @@ public class SocialNetworkingConstant {
     /**
      * Notification kind constant
      */
-    public static final Integer NOTIFICATION_KIND_POST = 1;
-    public static final Integer NOTIFICATION_KIND_COMMENT = 2;
-    public static final Integer NOTIFICATION_KIND_REACTION = 3;
-    public static final Integer NOTIFICATION_KIND_FOLLOW = 4;
+    public static final Integer NOTIFICATION_KIND_NEW_POST_OF_FOLLOWING = 1;
+    public static final Integer NOTIFICATION_KIND_COMMENT_IN_MY_POST = 2;
+    public static final Integer NOTIFICATION_KIND_REACTION_MY_POST = 3;
+    public static final Integer NOTIFICATION_KIND_REACTION_MY_COMMENT = 4;
+    public static final Integer NOTIFICATION_KIND_NEW_FOLLOWER = 5;
 
     /**
      * Report kind constant
@@ -85,6 +88,22 @@ public class SocialNetworkingConstant {
     public static final Integer REPORT_KIND_POST = 1;
     public static final Integer REPORT_KIND_COMMENT = 2;
     public static final Integer REPORT_KIND_ACCOUNT = 3;
+
+    /**
+     * Provider constant
+     */
+    public static final String PROVIDER_FACEBOOK = "facebook";
+    public static final String PROVIDER_GOOGLE = "google";
+
+    /**
+     * Conversation kind constant
+     */
+    public static final Integer CONVERSATION_KIND_PRIVATE = 1;
+    public static final Integer CONVERSATION_KIND_GROUP = 2;
+
+    /**
+     * Conversation introduction constant
+     */
 
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");

@@ -10,6 +10,7 @@ import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.group.GroupDto;
+import com.social.networking.api.view.form.group.AddPermissionForm;
 import com.social.networking.api.view.form.group.CreateGroupForm;
 import com.social.networking.api.view.form.group.UpdateGroupForm;
 import com.social.networking.api.view.mapper.GroupMapper;
@@ -138,4 +139,61 @@ public class GroupController extends BaseController {
         apiMessageDto.setMessage("Get group success");
         return apiMessageDto;
     }
+
+    @PostMapping(value = "/add-permission", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('GR_U')")
+    @Transactional
+    public ApiMessageDto<String> addPermission(@Valid @RequestBody AddPermissionForm addPermissionForm, BindingResult bindingResult) {
+        if (!isSuperAdmin()) {
+            throw new UnauthorizationException("Not allowed add permission.");
+        }
+        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+        Group group = groupRepository.findById(addPermissionForm.getId()).orElse(null);
+        if (group == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Group not found");
+            return apiMessageDto;
+        }
+        List<Permission> permissionList = new ArrayList<>();
+        for (long permissionId : addPermissionForm.getPermissions()) {
+            Permission permission = permissionRepository.findById(permissionId).orElse(null);
+            if (permission != null) {
+                permissionList.add(permission);
+            }
+        }
+        group.getPermissions().addAll(permissionList);
+        groupRepository.save(group);
+        apiMessageDto.setMessage("Add permission success");
+        return apiMessageDto;
+    }
+
+    @DeleteMapping(value = "/remove-permission", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('GR_U')")
+    @Transactional
+    public ApiMessageDto<String> removePermission(@Valid @RequestBody AddPermissionForm addPermissionForm, BindingResult bindingResult) {
+        if (!isSuperAdmin()) {
+            throw new UnauthorizationException("Not allowed remove permission.");
+        }
+        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+        Group group = groupRepository.findById(addPermissionForm.getId()).orElse(null);
+        if (group == null) {
+            apiMessageDto.setResult(false);
+            apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Group not found");
+            return apiMessageDto;
+        }
+        List<Permission> permissionList = new ArrayList<>();
+        for (long permissionId : addPermissionForm.getPermissions()) {
+            Permission permission = permissionRepository.findById(permissionId).orElse(null);
+            if (permission != null) {
+                permissionList.add(permission);
+            }
+        }
+        group.getPermissions().removeIf(permission -> permissionList.stream().anyMatch(p -> p.getId().equals(permission.getId())));
+        groupRepository.save(group);
+        apiMessageDto.setMessage("Remove permission success");
+        return apiMessageDto;
+    }
+
 }

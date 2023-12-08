@@ -50,6 +50,7 @@ public class ErrorCode {
     public static final String POST_ERROR_NOT_FOUND = "ERROR-POST-000";
     public static final String POST_ERROR_NOT_OWNER = "ERROR-POST-001";
     public static final String POST_ERROR_HANDLED = "ERROR-POST-002"; // Post has been approved or rejected
+    public static final String POST_ERROR_TITLE_REQUIRED = "ERROR-POST-003";
 
     /**
      * Comment error code
@@ -93,4 +94,23 @@ public class ErrorCode {
     public static final String REPORT_ERROR_NOT_FOUND = "ERROR-REPORT-000";
     public static final String REPORT_ERROR_REPORT_YOURSELF = "ERROR-REPORT-001";
     public static final String REPORT_ERROR_APPROVED_OR_REJECTED = "ERROR-REPORT-002";
+
+    /**
+     * Conversation error code
+     */
+    public static final String CONVERSATION_ERROR_NOT_FOUND = "ERROR-CONVERSATION-000";
+    public static final String CONVERSATION_ERROR_ACCOUNT_ID_EMPTY = "ERROR-CONVERSATION-001";
+    public static final String CONVERSATION_ERROR_ACCOUNT_ID_NOT_FOUND = "ERROR-CONVERSATION-002";
+    public static final String CONVERSATION_ERROR_NOT_MEMBER = "ERROR-CONVERSATION-003";
+
+    /**
+     * Message error code
+     */
+    public static final String MESSAGE_ERROR_NOT_FOUND = "ERROR-MESSAGE-000";
+    public static final String MESSAGE_ERROR_NOT_OWNER = "ERROR-MESSAGE-001";
+
+    /**
+     * Notification error code
+     */
+    public static final String NOTIFICATION_ERROR_NOT_FOUND = "ERROR-NOTIFICATION-000";
 }
