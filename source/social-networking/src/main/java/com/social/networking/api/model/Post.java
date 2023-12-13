@@ -31,5 +31,7 @@ public class Post extends Auditable<String> {
     private Integer privacy;
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PostReaction> postReactions = new ArrayList<>();
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<Comment> commentList;
     private Date moderatedDate;
 }

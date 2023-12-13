@@ -44,4 +44,13 @@ public interface CommentMapper {
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToCreateCommentDto")
     CommentDto fromEntityToCreateCommentDto(Comment comment);
+    
+    @Mapping(source = "id", target = "id")
+    @BeanMapping(ignoreByDefault = true)
+    @Named("fromEntityToCountComment")
+    CommentDto fromEntityToCountComment(Comment comment);
+
+    @IterableMapping(elementTargetType = CommentDto.class, qualifiedByName = "fromEntityToCountComment")
+    @Named("fromEntityToCountListComment")
+    List<CommentDto> fromEntityToCountListComment(List<Comment> comments);
 }
