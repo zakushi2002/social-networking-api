@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,5 +35,5 @@ public class Comment extends Auditable<String> {
     private List<Comment> comments;
     private Integer depth;
     @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<CommentReaction> commentReactions;
+    private List<CommentReaction> commentReactions = new ArrayList<>();
 }
