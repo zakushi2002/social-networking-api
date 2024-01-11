@@ -5,7 +5,7 @@ import com.social.networking.api.utils.AWSCloudUtil;
 import com.social.networking.api.dto.ApiMessageDto;
 import com.social.networking.api.dto.UploadFileDto;
 import com.social.networking.api.dto.aws.FileS3Dto;
-import com.social.networking.api.view.form.UploadFileForm;
+import com.social.networking.api.form.UploadFileForm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;

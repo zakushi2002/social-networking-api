@@ -4,7 +4,7 @@ import com.social.networking.api.service.SocialNetworkingApiService;
 import com.social.networking.api.dto.ApiMessageDto;
 import com.social.networking.api.dto.UploadFileDto;
 import com.social.networking.api.dto.aws.FileS3Dto;
-import com.social.networking.api.view.form.UploadFileForm;
+import com.social.networking.api.form.UploadFileForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;

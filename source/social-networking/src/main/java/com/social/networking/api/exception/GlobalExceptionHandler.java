@@ -12,7 +12,7 @@ package com.social.networking.api.exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.social.networking.api.dto.ApiMessageDto;
 import com.social.networking.api.dto.ApiResponse;
-import com.social.networking.api.view.form.ErrorForm;
+import com.social.networking.api.form.ErrorForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
