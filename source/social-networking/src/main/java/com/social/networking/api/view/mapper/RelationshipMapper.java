@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Relationship;
-import com.social.networking.api.view.dto.relationship.RelationshipDto;
+import com.social.networking.api.dto.relationship.RelationshipDto;
 import org.mapstruct.*;
 
 import java.util.List;

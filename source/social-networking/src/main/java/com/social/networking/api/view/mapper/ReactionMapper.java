@@ -2,8 +2,8 @@ package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.CommentReaction;
 import com.social.networking.api.model.PostReaction;
-import com.social.networking.api.view.dto.reaction.CommentReactionDto;
-import com.social.networking.api.view.dto.reaction.PostReactionDto;
+import com.social.networking.api.dto.reaction.CommentReactionDto;
+import com.social.networking.api.dto.reaction.PostReactionDto;
 import com.social.networking.api.view.form.reaction.comment.ReactCommentForm;
 import com.social.networking.api.view.form.reaction.post.ReactPostForm;
 import org.mapstruct.*;

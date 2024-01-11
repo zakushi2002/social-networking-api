@@ -2,7 +2,7 @@ package com.social.networking.api.config.security;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.model.TablePrefix;
-import com.social.networking.api.view.dto.AccountForTokenDto;
+import com.social.networking.api.dto.AccountForTokenDto;
 import com.social.networking.api.utils.ZipUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;

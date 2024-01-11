@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Conversation;
-import com.social.networking.api.view.dto.conversation.ConversationDto;
+import com.social.networking.api.dto.conversation.ConversationDto;
 import com.social.networking.api.view.form.conversation.CreateConversationForm;
 import com.social.networking.api.view.form.conversation.UpdateConversationForm;
 import org.mapstruct.*;

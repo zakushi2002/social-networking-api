@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Post;
-import com.social.networking.api.view.dto.post.PostDto;
+import com.social.networking.api.dto.post.PostDto;
 import com.social.networking.api.view.form.post.CreatePostForm;
 import com.social.networking.api.view.form.post.UpdatePostForm;
 import org.mapstruct.*;

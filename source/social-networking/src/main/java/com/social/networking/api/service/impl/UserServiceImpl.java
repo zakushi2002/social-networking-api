@@ -10,7 +10,7 @@ import com.social.networking.api.model.UserProfile;
 import com.social.networking.api.repository.AccountRepository;
 import com.social.networking.api.repository.GroupRepository;
 import com.social.networking.api.repository.UserProfileRepository;
-import com.social.networking.api.view.dto.profile.oauth2.OAuth2ProfileDto;
+import com.social.networking.api.dto.profile.oauth2.OAuth2ProfileDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

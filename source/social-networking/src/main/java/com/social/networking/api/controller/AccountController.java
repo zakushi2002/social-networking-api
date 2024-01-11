@@ -12,12 +12,12 @@ import com.social.networking.api.repository.ExpertProfileRepository;
 import com.social.networking.api.repository.GroupRepository;
 import com.social.networking.api.repository.UserProfileRepository;
 import com.social.networking.api.service.SocialNetworkingApiService;
-import com.social.networking.api.view.dto.ApiMessageDto;
-import com.social.networking.api.view.dto.ApiResponse;
-import com.social.networking.api.view.dto.ErrorCode;
-import com.social.networking.api.view.dto.ResponseListDto;
-import com.social.networking.api.view.dto.account.AccountDto;
-import com.social.networking.api.view.dto.account.AccountProfileDto;
+import com.social.networking.api.dto.ApiMessageDto;
+import com.social.networking.api.dto.ApiResponse;
+import com.social.networking.api.dto.ErrorCode;
+import com.social.networking.api.dto.ResponseListDto;
+import com.social.networking.api.dto.account.AccountDto;
+import com.social.networking.api.dto.account.AccountProfileDto;
 import com.social.networking.api.view.form.account.CreateAdminForm;
 import com.social.networking.api.view.form.account.UpdateAdminForm;
 import com.social.networking.api.view.form.account.UpdateAdminProfileForm;
@@ -25,8 +25,6 @@ import com.social.networking.api.view.form.account.forgot.ChangePasswordForgotFo
 import com.social.networking.api.view.form.account.forgot.GetOTPForm;
 import com.social.networking.api.view.form.account.forgot.OTPForm;
 import com.social.networking.api.view.mapper.AccountMapper;
-import com.social.networking.api.view.mapper.ExpertProfileMapper;
-import com.social.networking.api.view.mapper.UserProfileMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +42,6 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1/account")

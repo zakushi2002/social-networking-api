@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Group;
-import com.social.networking.api.view.dto.group.GroupDto;
+import com.social.networking.api.dto.group.GroupDto;
 import com.social.networking.api.view.form.group.CreateGroupForm;
 import org.mapstruct.*;
 

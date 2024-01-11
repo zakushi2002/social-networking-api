@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.UserProfile;
-import com.social.networking.api.view.dto.profile.user.UserProfileDto;
+import com.social.networking.api.dto.profile.user.UserProfileDto;
 import com.social.networking.api.view.form.profile.user.CreateUserAccountForm;
 import com.social.networking.api.view.form.profile.user.UpdateUserAccountForm;
 import org.mapstruct.*;

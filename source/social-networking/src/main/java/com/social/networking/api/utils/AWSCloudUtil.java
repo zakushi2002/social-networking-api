@@ -9,7 +9,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.social.networking.api.constant.SocialNetworkingConstant;
-import com.social.networking.api.view.dto.aws.FileS3Dto;
+import com.social.networking.api.dto.aws.FileS3Dto;
 
 import java.io.*;
 

@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.ConversationAccount;
-import com.social.networking.api.view.dto.conversation.account.ConversationAccountDto;
+import com.social.networking.api.dto.conversation.account.ConversationAccountDto;
 import org.mapstruct.*;
 
 import java.util.List;

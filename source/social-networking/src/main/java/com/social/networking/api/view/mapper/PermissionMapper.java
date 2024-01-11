@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Permission;
-import com.social.networking.api.view.dto.permission.PermissionDto;
+import com.social.networking.api.dto.permission.PermissionDto;
 import com.social.networking.api.view.form.permission.CreatePermissionForm;
 import org.mapstruct.*;
 

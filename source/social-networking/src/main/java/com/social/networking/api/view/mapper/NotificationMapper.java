@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Notification;
-import com.social.networking.api.view.dto.notification.NotificationDto;
+import com.social.networking.api.dto.notification.NotificationDto;
 import com.social.networking.api.view.form.notification.CreateNotificationForm;
 import org.mapstruct.*;
 

@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Announcement;
-import com.social.networking.api.view.dto.notification.announcement.AnnouncementDto;
+import com.social.networking.api.dto.notification.announcement.AnnouncementDto;
 import org.mapstruct.*;
 
 import java.util.List;

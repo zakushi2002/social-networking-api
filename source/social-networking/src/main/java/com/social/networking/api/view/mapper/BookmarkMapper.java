@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Bookmark;
-import com.social.networking.api.view.dto.post.bookmark.BookmarkDto;
+import com.social.networking.api.dto.post.bookmark.BookmarkDto;
 import org.mapstruct.*;
 
 import java.util.List;

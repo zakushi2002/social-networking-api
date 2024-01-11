@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Category;
-import com.social.networking.api.view.dto.category.CategoryDto;
+import com.social.networking.api.dto.category.CategoryDto;
 import com.social.networking.api.view.form.category.CreateCategoryForm;
 import com.social.networking.api.view.form.category.UpdateCategoryForm;
 import org.mapstruct.*;

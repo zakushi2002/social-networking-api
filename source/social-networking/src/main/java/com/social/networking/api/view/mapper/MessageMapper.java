@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Message;
-import com.social.networking.api.view.dto.message.MessageDto;
+import com.social.networking.api.dto.message.MessageDto;
 import org.mapstruct.*;
 
 import java.util.List;

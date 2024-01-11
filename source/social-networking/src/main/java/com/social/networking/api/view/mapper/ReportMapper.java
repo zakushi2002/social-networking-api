@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Report;
-import com.social.networking.api.view.dto.report.ReportDto;
+import com.social.networking.api.dto.report.ReportDto;
 import com.social.networking.api.view.form.report.CreateReportForm;
 import org.mapstruct.*;
 

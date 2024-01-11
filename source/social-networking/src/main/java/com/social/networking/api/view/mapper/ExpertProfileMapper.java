@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.ExpertProfile;
-import com.social.networking.api.view.dto.profile.expert.ExpertProfileDto;
+import com.social.networking.api.dto.profile.expert.ExpertProfileDto;
 import com.social.networking.api.view.form.profile.expert.CreateExpertAccountForm;
 import com.social.networking.api.view.form.profile.expert.UpdateExpertAccountForm;
 import org.mapstruct.*;

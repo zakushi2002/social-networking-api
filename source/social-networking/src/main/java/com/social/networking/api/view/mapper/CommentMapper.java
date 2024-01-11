@@ -1,7 +1,7 @@
 package com.social.networking.api.view.mapper;
 
 import com.social.networking.api.model.Comment;
-import com.social.networking.api.view.dto.comment.CommentDto;
+import com.social.networking.api.dto.comment.CommentDto;
 import com.social.networking.api.view.form.comment.CreateCommentForm;
 import com.social.networking.api.view.form.comment.UpdateCommentForm;
 import org.mapstruct.*;
