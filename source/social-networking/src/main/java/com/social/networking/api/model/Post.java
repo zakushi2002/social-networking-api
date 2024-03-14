@@ -34,4 +34,9 @@ public class Post extends Auditable<String> {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<Comment> commentList;
     private Date moderatedDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "community_id")
+    private Category category;
+    @Column(columnDefinition = "TEXT")
+    private String tags;
 }
