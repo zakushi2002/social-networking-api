@@ -36,7 +36,7 @@ public class Post extends Auditable<String> {
     private Date moderatedDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id")
-    private Category category;
+    private Category community;
     @Column(columnDefinition = "TEXT")
     private String tags;
 }

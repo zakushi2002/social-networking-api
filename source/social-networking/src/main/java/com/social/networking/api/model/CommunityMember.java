@@ -23,6 +23,6 @@ public class CommunityMember extends Auditable<String> {
     private Account account;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id")
-    private Category category;
+    private Category community;
     private Integer kind;
 }
