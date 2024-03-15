@@ -33,26 +33,43 @@
         </addColumn>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1710484995942-3">
-        <addColumn tableName="db_social_networking_post">
-            <column name="tags" type="TEXT"/>
-        </addColumn>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-4">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_community_member"
                                  constraintName="FK7r2lvmv6q3gubnlqaqa9m4jdk" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-5">
+    <changeSet author="TOAN (generated)" id="1710484995942-4">
         <addForeignKeyConstraint baseColumnNames="community_id" baseTableName="db_social_networking_community_member"
                                  constraintName="FKo1s5i3jbhokbyah1vh5i2ae0k" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_category" validate="true" onDelete="CASCADE"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-6">
+    <changeSet author="TOAN (generated)" id="1710484995942-5">
         <addForeignKeyConstraint baseColumnNames="community_id" baseTableName="db_social_networking_post"
                                  constraintName="FKr5vp33eo4uw9971ehqjq79am1" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_category" validate="true" onDelete="SET NULL"/>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1710484995942-6">
+        <createTable tableName="db_social_networking_post_topic">
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="topic_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1710484995942-7">
+        <addForeignKeyConstraint baseColumnNames="topic_id" baseTableName="db_social_networking_post_topic"
+                                 constraintName="FK63qcd16xyv0ssi07kv5m2of93" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_category" validate="true"/>
+    </changeSet>
+    <changeSet author="TOAN (generated)" id="1710484995942-8">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_post_topic"
+                                 constraintName="FKbhjnumqewi8h73p5fkk0e549p" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_post" validate="true"/>
     </changeSet>
 </databaseChangeLog>

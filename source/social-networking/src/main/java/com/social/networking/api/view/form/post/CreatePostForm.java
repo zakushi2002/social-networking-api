@@ -20,6 +20,10 @@ public class CreatePostForm {
     @ApiModelProperty(name = "privacy", required = true)
     @Privacy
     private Integer privacy;
+    @ApiModelProperty(name = "communityId")
+    private Long communityId;
+    @ApiModelProperty(name = "topics")
+    private Long[] topics;
     @ApiModelProperty(name = "status", required = true)
     private Integer status;
 }
