@@ -72,6 +72,8 @@ public class SocialNetworkingConstant {
     public static final Integer CATEGORY_KIND_HOSPITAL_ROLE = 2;
     public static final Integer CATEGORY_KIND_DEPARTMENT = 3;
     public static final Integer CATEGORY_KIND_ACADEMIC_DEGREE = 4;
+    public static final Integer CATEGORY_KIND_COMMUNITY = 5;
+    public static final Integer CATEGORY_KIND_TOPIC = 6;
 
     /**
      * Notification kind constant
