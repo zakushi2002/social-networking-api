@@ -9,7 +9,7 @@ import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.relationship.RelationshipDto;
 import com.social.networking.api.view.form.relationship.CreateRelationshipForm;
-import com.social.networking.api.view.mapper.RelationshipMapper;
+import com.social.networking.api.mapper.RelationshipMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/relationship")
+@RequestMapping("/v1/relationships")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class RelationshipController extends BaseController {

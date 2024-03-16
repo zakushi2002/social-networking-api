@@ -17,8 +17,8 @@ import com.social.networking.api.view.dto.conversation.account.ConversationAccou
 import com.social.networking.api.view.form.conversation.ChangeLastMessageForm;
 import com.social.networking.api.view.form.conversation.CreateConversationForm;
 import com.social.networking.api.view.form.conversation.UpdateConversationForm;
-import com.social.networking.api.view.mapper.ConversationAccountMapper;
-import com.social.networking.api.view.mapper.ConversationMapper;
+import com.social.networking.api.mapper.ConversationAccountMapper;
+import com.social.networking.api.mapper.ConversationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/conversation")
+@RequestMapping("/v1/conversations")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class ConversationController extends BaseController {

@@ -1,12 +1,10 @@
-package com.social.networking.api.view.mapper;
+package com.social.networking.api.mapper;
 
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.ExpertProfile;
 import com.social.networking.api.model.UserProfile;
 import com.social.networking.api.view.dto.account.AccountDto;
 import com.social.networking.api.view.dto.account.AccountProfileDto;
-import com.social.networking.api.view.dto.profile.expert.ExpertProfileDto;
-import com.social.networking.api.view.dto.profile.user.UserProfileDto;
 import com.social.networking.api.view.form.account.UpdateAdminForm;
 import com.social.networking.api.view.form.profile.expert.CreateExpertAccountForm;
 import com.social.networking.api.view.form.profile.user.CreateUserAccountForm;

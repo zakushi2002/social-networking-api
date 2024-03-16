@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/v1/file")
+@RequestMapping("/v1/files")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class FileController {

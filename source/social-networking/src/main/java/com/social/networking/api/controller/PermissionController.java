@@ -11,7 +11,7 @@ import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.permission.PermissionDto;
 import com.social.networking.api.view.form.permission.CreatePermissionForm;
-import com.social.networking.api.view.mapper.PermissionMapper;
+import com.social.networking.api.mapper.PermissionMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,11 +25,9 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
-@RequestMapping("/v1/permission")
+@RequestMapping("/v1/permissions")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 @ApiIgnore

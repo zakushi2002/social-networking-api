@@ -16,7 +16,7 @@ import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.report.ReportDto;
 import com.social.networking.api.view.form.report.HandleReportForm;
 import com.social.networking.api.view.form.report.CreateReportForm;
-import com.social.networking.api.view.mapper.ReportMapper;
+import com.social.networking.api.mapper.ReportMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/report")
+@RequestMapping("/v1/reports")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class ReportController extends BaseController {

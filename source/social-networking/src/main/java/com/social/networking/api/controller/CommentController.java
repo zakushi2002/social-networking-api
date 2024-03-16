@@ -13,8 +13,8 @@ import com.social.networking.api.view.dto.reaction.CommentReactionDto;
 import com.social.networking.api.view.form.comment.CreateCommentForm;
 import com.social.networking.api.view.form.comment.UpdateCommentForm;
 import com.social.networking.api.view.form.reaction.comment.ReactCommentForm;
-import com.social.networking.api.view.mapper.CommentMapper;
-import com.social.networking.api.view.mapper.ReactionMapper;
+import com.social.networking.api.mapper.CommentMapper;
+import com.social.networking.api.mapper.ReactionMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/comment")
+@RequestMapping("/v1/comments")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class CommentController extends BaseController {

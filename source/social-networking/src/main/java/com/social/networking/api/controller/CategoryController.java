@@ -11,7 +11,7 @@ import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.category.CategoryDto;
 import com.social.networking.api.view.form.category.CreateCategoryForm;
 import com.social.networking.api.view.form.category.UpdateCategoryForm;
-import com.social.networking.api.view.mapper.CategoryMapper;
+import com.social.networking.api.mapper.CategoryMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

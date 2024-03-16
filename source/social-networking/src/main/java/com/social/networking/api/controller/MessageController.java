@@ -14,7 +14,7 @@ import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.message.MessageDto;
 import com.social.networking.api.view.form.message.SendMessageForm;
-import com.social.networking.api.view.mapper.MessageMapper;
+import com.social.networking.api.mapper.MessageMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/message")
+@RequestMapping("/v1/messages")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class MessageController extends BaseController {

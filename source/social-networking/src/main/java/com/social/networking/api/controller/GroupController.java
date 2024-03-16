@@ -13,7 +13,7 @@ import com.social.networking.api.view.dto.group.GroupDto;
 import com.social.networking.api.view.form.group.AddPermissionForm;
 import com.social.networking.api.view.form.group.CreateGroupForm;
 import com.social.networking.api.view.form.group.UpdateGroupForm;
-import com.social.networking.api.view.mapper.GroupMapper;
+import com.social.networking.api.mapper.GroupMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/v1/group")
+@RequestMapping("/v1/groups")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 @ApiIgnore

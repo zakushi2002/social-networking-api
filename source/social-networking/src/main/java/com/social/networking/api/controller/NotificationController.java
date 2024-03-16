@@ -12,11 +12,10 @@ import com.social.networking.api.view.dto.ApiMessageDto;
 import com.social.networking.api.view.dto.ErrorCode;
 import com.social.networking.api.view.dto.ResponseListDto;
 import com.social.networking.api.view.dto.notification.NotificationDto;
-import com.social.networking.api.view.dto.notification.announcement.AnnouncementDto;
 import com.social.networking.api.view.form.notification.CreateNotificationForm;
 import com.social.networking.api.view.form.notification.annoucement.CreateAnnouncementForm;
-import com.social.networking.api.view.mapper.AnnouncementMapper;
-import com.social.networking.api.view.mapper.NotificationMapper;
+import com.social.networking.api.mapper.AnnouncementMapper;
+import com.social.networking.api.mapper.NotificationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/notification")
+@RequestMapping("/v1/notifications")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class NotificationController extends BaseController {

@@ -1,4 +1,4 @@
-package com.social.networking.api.view.mapper;
+package com.social.networking.api.mapper;
 
 import com.social.networking.api.model.Permission;
 import com.social.networking.api.view.dto.permission.PermissionDto;

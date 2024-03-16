@@ -1,4 +1,4 @@
-package com.social.networking.api.view.mapper;
+package com.social.networking.api.mapper;
 
 import com.social.networking.api.model.Announcement;
 import com.social.networking.api.view.dto.notification.announcement.AnnouncementDto;
