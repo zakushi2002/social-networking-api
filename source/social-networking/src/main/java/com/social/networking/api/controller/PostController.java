@@ -32,12 +32,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/post")
+@RequestMapping("/v1/posts")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class PostController extends BaseController {
@@ -57,6 +58,8 @@ public class PostController extends BaseController {
     BookmarkMapper bookmarkMapper;
     @Autowired
     RelationshipRepository relationshipRepository;
+    @Autowired
+    CategoryRepository categoryRepository;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -67,17 +70,26 @@ public class PostController extends BaseController {
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account is not exist");
+            apiMessageDto.setMessage("Account is not logged in.");
             return apiMessageDto;
         }
-        if (createPostForm.getKind().equals(SocialNetworkingConstant.POST_KIND_NORMAL) && StringUtils.isEmpty(createPostForm.getTitle().trim()))
-        {
+        Category community = categoryRepository.findById(createPostForm.getCommunityId()).orElse(null);
+        if (community == null) {
             apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_TITLE_REQUIRED);
-            apiMessageDto.setMessage("Title is required");
+            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
+            apiMessageDto.setMessage("Community is not exist.");
             return apiMessageDto;
         }
         Post post = postMapper.fromCreatePostFormToEntity(createPostForm);
+        List<Category> topics = new ArrayList<>();
+        for (Long topicId : createPostForm.getTopics()) {
+            Category category = categoryRepository.findById(topicId).orElse(null);
+            if (category != null) {
+                topics.add(category);
+            }
+        }
+        post.setTopics(topics);
+        post.setCommunity(community);
         post.setAccount(account);
         postRepository.save(post);
         apiMessageDto.setMessage("Create post successfully");
@@ -117,6 +129,14 @@ public class PostController extends BaseController {
             apiMessageDto.setMessage("You are not owner of this post");
             return apiMessageDto;
         }
+        List<Category> topics = new ArrayList<>();
+        for (Long topicId : updatePostForm.getTopics()) {
+            Category category = categoryRepository.findById(topicId).orElse(null);
+            if (category != null) {
+                topics.add(category);
+            }
+        }
+        post.setTopics(topics);
         postMapper.mappingUpdatePostFormToEntity(updatePostForm, post);
         postRepository.save(post);
         apiMessageDto.setMessage("Update post successfully");
