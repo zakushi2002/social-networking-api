@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/comments")
+@RequestMapping("/v1/comment")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class CommentController extends BaseController {

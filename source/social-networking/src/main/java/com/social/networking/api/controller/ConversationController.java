@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/conversations")
+@RequestMapping("/v1/conversation")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class ConversationController extends BaseController {

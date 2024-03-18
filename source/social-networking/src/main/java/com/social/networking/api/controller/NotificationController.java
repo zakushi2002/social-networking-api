@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/notifications")
+@RequestMapping("/v1/notification")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class NotificationController extends BaseController {

@@ -44,7 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/v1/accounts")
+@RequestMapping("/v1/account")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class AccountController extends BaseController {

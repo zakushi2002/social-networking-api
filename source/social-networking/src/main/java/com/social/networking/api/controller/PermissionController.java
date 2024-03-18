@@ -27,7 +27,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/permissions")
+@RequestMapping("/v1/permission")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 @ApiIgnore

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/messages")
+@RequestMapping("/v1/message")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class MessageController extends BaseController {

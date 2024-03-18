@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/v1/groups")
+@RequestMapping("/v1/group")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 @ApiIgnore

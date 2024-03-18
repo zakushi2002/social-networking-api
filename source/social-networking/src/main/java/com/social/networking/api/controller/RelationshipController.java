@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/relationships")
+@RequestMapping("/v1/relationship")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class RelationshipController extends BaseController {

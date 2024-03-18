@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/posts")
+@RequestMapping("/v1/post")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class PostController extends BaseController {

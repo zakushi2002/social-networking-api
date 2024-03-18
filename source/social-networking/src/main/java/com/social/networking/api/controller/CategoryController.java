@@ -28,7 +28,7 @@ import javax.validation.Valid;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/v1/categories")
+@RequestMapping("/v1/category")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class CategoryController extends BaseController {

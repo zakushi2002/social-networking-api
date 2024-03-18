@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/reports")
+@RequestMapping("/v1/report")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class ReportController extends BaseController {
