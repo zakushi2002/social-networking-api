@@ -1,7 +1,7 @@
 package com.social.networking.api.mapper;
 
 import com.social.networking.api.model.CommunityMember;
-import com.social.networking.api.view.dto.community.member.CommunityMemberDto;
+import com.social.networking.api.dto.community.member.CommunityMemberDto;
 import org.mapstruct.*;
 
 import java.util.List;
