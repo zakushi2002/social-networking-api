@@ -5,5 +5,4 @@ import lombok.Data;
 @Data
 public class CreateCommunityMemberForm {
     private Long communityId;
-    private Integer kind;
 }

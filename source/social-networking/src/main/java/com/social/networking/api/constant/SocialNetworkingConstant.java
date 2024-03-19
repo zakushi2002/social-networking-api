@@ -104,8 +104,10 @@ public class SocialNetworkingConstant {
     public static final Integer CONVERSATION_KIND_GROUP = 2;
 
     /**
-     * Conversation introduction constant
+     * Community Member kind constant
      */
+    public static final Integer COMMUNITY_MEMBER_KIND = 0;
+    public static final Integer COMMUNITY_ADMIN_KIND = 1;
 
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");
