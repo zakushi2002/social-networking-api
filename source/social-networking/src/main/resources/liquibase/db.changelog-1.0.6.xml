@@ -9,6 +9,9 @@
                 <constraints nullable="false" primaryKey="true"
                              primaryKeyName="db_social_networking_community_memberPK"/>
             </column>
+            <column name="kind" type="INT"/>
+            <column name="account_id" type="BIGINT"/>
+            <column name="community_id" type="BIGINT"/>
             <column name="created_by" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -22,14 +25,11 @@
                 <constraints nullable="false"/>
             </column>
             <column name="status" type="INT"/>
-            <column name="kind" type="INT"/>
-            <column name="account_id" type="BIGINT"/>
-            <column name="community_id" type="BIGINT"/>
         </createTable>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1710484995942-2">
         <addColumn tableName="db_social_networking_post">
-            <column name="community_id" type="bigint"/>
+            <column name="community_id" type="bigint" afterColumn="kind"/>
         </addColumn>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1710484995942-3">

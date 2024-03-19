@@ -92,7 +92,7 @@ public class PostController extends BaseController {
         post.setCommunity(community);
         post.setAccount(account);
         postRepository.save(post);
-        apiMessageDto.setMessage("Create post successfully");
+        apiMessageDto.setMessage("Create a post successfully.");
         apiMessageDto.setData(post.getId());
         return apiMessageDto;
     }
@@ -106,27 +106,27 @@ public class PostController extends BaseController {
         if (post == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist");
+            apiMessageDto.setMessage("Post is not exist.");
             return apiMessageDto;
         }
         if (post.getKind().equals(SocialNetworkingConstant.POST_KIND_NORMAL) && StringUtils.isEmpty(updatePostForm.getTitle().trim()))
         {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_TITLE_REQUIRED);
-            apiMessageDto.setMessage("Title is required");
+            apiMessageDto.setMessage("Title is required.");
             return apiMessageDto;
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account is not exist");
+            apiMessageDto.setMessage("Account is not exist.");
             return apiMessageDto;
         }
         if (!post.getAccount().getId().equals(account.getId())) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_OWNER);
-            apiMessageDto.setMessage("You are not owner of this post");
+            apiMessageDto.setMessage("You are not owner of this post.");
             return apiMessageDto;
         }
         List<Category> topics = new ArrayList<>();
@@ -139,7 +139,7 @@ public class PostController extends BaseController {
         post.setTopics(topics);
         postMapper.mappingUpdatePostFormToEntity(updatePostForm, post);
         postRepository.save(post);
-        apiMessageDto.setMessage("Update post successfully");
+        apiMessageDto.setMessage("Update a post successfully.");
         apiMessageDto.setData(post.getId());
         return apiMessageDto;
     }
@@ -153,24 +153,24 @@ public class PostController extends BaseController {
         if (post == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist");
+            apiMessageDto.setMessage("Post is not exist.");
             return apiMessageDto;
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account is not exist");
+            apiMessageDto.setMessage("Account is not exist.");
             return apiMessageDto;
         }
         if (!post.getAccount().getId().equals(account.getId())) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_OWNER);
-            apiMessageDto.setMessage("You are not owner of this post");
+            apiMessageDto.setMessage("You are not owner of this post.");
             return apiMessageDto;
         }
         postRepository.deleteById(id);
-        apiMessageDto.setMessage("Delete post successfully");
+        apiMessageDto.setMessage("Delete post successfully.");
         apiMessageDto.setData(id);
         return apiMessageDto;
     }
@@ -183,11 +183,11 @@ public class PostController extends BaseController {
         if (post == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist");
+            apiMessageDto.setMessage("Post is not exist.");
             return apiMessageDto;
         }
         apiMessageDto.setData(postMapper.fromEntityToPostDto(post));
-        apiMessageDto.setMessage("Get post detail successfully");
+        apiMessageDto.setMessage("Get post detail successfully.");
         return apiMessageDto;
     }
 
@@ -208,7 +208,7 @@ public class PostController extends BaseController {
         Page<Post> page = postRepository.findAll(postCriteria.getSpecification(map), pageable);
         ResponseListDto<PostDto> responseListDto = new ResponseListDto(postMapper.fromEntityToPostDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get list post success");
+        apiMessageDto.setMessage("Get list post success.");
         return apiMessageDto;
     }
 
@@ -222,11 +222,11 @@ public class PostController extends BaseController {
             if (!postReaction.getAccount().getId().equals(getCurrentUser())) {
                 apiMessageDto.setResult(false);
                 apiMessageDto.setCode(ErrorCode.POST_REACTION_ERROR_NOT_OWNER);
-                apiMessageDto.setMessage("Post reaction is not owner");
+                apiMessageDto.setMessage("Post reaction is not owner.");
                 return apiMessageDto;
             }
             postReactionRepository.deleteById(postReaction.getId());
-            apiMessageDto.setMessage("Un-react post successfully");
+            apiMessageDto.setMessage("Un-react post successfully.");
             apiMessageDto.setData(reactionMapper.fromEntityToPostReactionDto(postReaction));
             return apiMessageDto;
         }
@@ -234,14 +234,14 @@ public class PostController extends BaseController {
         if (post == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist");
+            apiMessageDto.setMessage("Post is not exist.");
             return apiMessageDto;
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account is not exist");
+            apiMessageDto.setMessage("Account is not exist.");
             return apiMessageDto;
         }
         postReaction = reactionMapper.fromCreatePostReactionFormToEntity(reactPostForm);
@@ -262,7 +262,7 @@ public class PostController extends BaseController {
         Page<PostReaction> page = postReactionRepository.findAll(postReactionCriteria.getSpecification(), pageable);
         ResponseListDto<PostReactionDto> responseListDto = new ResponseListDto(reactionMapper.fromEntitiesToPostReactionDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get list post reaction success");
+        apiMessageDto.setMessage("Get list post reaction success.");
         return apiMessageDto;
     }
 
@@ -275,14 +275,14 @@ public class PostController extends BaseController {
         if (post == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist");
+            apiMessageDto.setMessage("Post is not exist.");
             return apiMessageDto;
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account is not exist");
+            apiMessageDto.setMessage("Account is not exist.");
             return apiMessageDto;
         }
         Bookmark bookmark = bookmarkRepository.findFirstByAccountIdAndPostId(getCurrentUser(), createBookmarkForm.getPostId()).orElse(null);
@@ -290,17 +290,17 @@ public class PostController extends BaseController {
             if (!bookmark.getAccount().getId().equals(getCurrentUser())) {
                 apiMessageDto.setResult(false);
                 apiMessageDto.setCode(ErrorCode.BOOKMARK_ERROR_EXIST);
-                apiMessageDto.setMessage("Bookmark is not owner");
+                apiMessageDto.setMessage("Bookmark is not owner.");
                 return apiMessageDto;
             }
             bookmarkRepository.deleteById(bookmark.getId());
-            apiMessageDto.setMessage("Remove bookmark successfully");
+            apiMessageDto.setMessage("Remove bookmark successfully.");
         } else {
             bookmark = new Bookmark();
             bookmark.setAccount(account);
             bookmark.setPost(post);
             bookmarkRepository.save(bookmark);
-            apiMessageDto.setMessage("Add bookmark successfully");
+            apiMessageDto.setMessage("Add bookmark successfully.");
         }
         apiMessageDto.setData(bookmark.getId());
         return apiMessageDto;
@@ -314,7 +314,7 @@ public class PostController extends BaseController {
         Page<Bookmark> page = bookmarkRepository.findAll(bookmarkCriteria.getSpecification(), pageable);
         ResponseListDto<BookmarkDto> responseListDto = new ResponseListDto(bookmarkMapper.fromEntitiesToBookmarkDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get list bookmark success");
+        apiMessageDto.setMessage("Get list bookmark success.");
         return apiMessageDto;
     }
 
@@ -327,7 +327,7 @@ public class PostController extends BaseController {
         if (post == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist");
+            apiMessageDto.setMessage("Post is not exist.");
             return apiMessageDto;
         }
         if (!post.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
@@ -339,7 +339,7 @@ public class PostController extends BaseController {
         post.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
         post.setModeratedDate(new Date());
         postRepository.save(post);
-        apiMessageDto.setMessage("Approve post successfully");
+        apiMessageDto.setMessage("Approve post successfully.");
         apiMessageDto.setData(post.getId());
         return apiMessageDto;
     }
@@ -353,7 +353,7 @@ public class PostController extends BaseController {
         if (post == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist");
+            apiMessageDto.setMessage("Post is not exist.");
             return apiMessageDto;
         }
         if (!post.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
