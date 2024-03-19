@@ -318,7 +318,7 @@
                     <outputChangeLogFile>${basedir}/src/main/resources/liquibase/db.changelog-1.0.0.xml
                     </outputChangeLogFile>
                     <driver>com.mysql.cj.jdbc.Driver</driver>
-                    <url>jdbc:mysql://localhost:3306/social_networking_api</url>
+                    <url>jdbc:mysql://localhost:3306/family_circle</url>
                     <defaultSchemaName/>
                     <username>root</username>
                     <password>2002</password>
