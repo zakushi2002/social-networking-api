@@ -1,4 +1,4 @@
-package com.social.networking.api.view.dto.community.member;
+package com.social.networking.api.dto.community.member;
 
 import com.social.networking.api.dto.InfoAdminDto;
 import com.social.networking.api.dto.account.AccountDto;
