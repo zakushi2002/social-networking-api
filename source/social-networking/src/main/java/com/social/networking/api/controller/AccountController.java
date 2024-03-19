@@ -72,14 +72,14 @@ public class AccountController extends BaseController {
         if (account != null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
-            apiMessageDto.setMessage("Email is exist");
+            apiMessageDto.setMessage("This email is already registered.");
             return apiMessageDto;
         }
         Group group = groupRepository.findById(createAdminForm.getGroupId()).orElse(null);
         if (group == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Group not found");
+            apiMessageDto.setMessage("Group not found.");
             return apiMessageDto;
         }
         account = new Account();
@@ -90,7 +90,7 @@ public class AccountController extends BaseController {
         account.setKind(SocialNetworkingConstant.ACCOUNT_KIND_ADMIN);
         account.setAvatarPath(createAdminForm.getAvatarPath());
         accountRepository.save(account);
-        apiMessageDto.setMessage("Create admin success");
+        apiMessageDto.setMessage("Create a new admin success.");
         return apiMessageDto;
     }
 
@@ -103,7 +103,7 @@ public class AccountController extends BaseController {
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found");
+            apiMessageDto.setMessage("Account not found.");
             return apiMessageDto;
         }
         if (updateAdminForm.getPassword() != null && !updateAdminForm.getPassword().trim().isEmpty()) {
@@ -111,7 +111,7 @@ public class AccountController extends BaseController {
         } else if (updateAdminForm.getPassword() != null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_PASSWORD_INVALID);
-            apiMessageDto.setMessage("password cannot be empty!");
+            apiMessageDto.setMessage("Password is invalid.");
             return apiMessageDto;
         }
         if (updateAdminForm.getAvatarPath() != null && !updateAdminForm.getAvatarPath().trim().isEmpty()) {
@@ -120,7 +120,7 @@ public class AccountController extends BaseController {
         }
         accountMapper.mappingUpdateAdminFormToAccount(updateAdminForm, account);
         accountRepository.save(account);
-        apiMessageDto.setMessage("Update admin success");
+        apiMessageDto.setMessage("Update admin success.");
         return apiMessageDto;
     }
 
@@ -132,11 +132,11 @@ public class AccountController extends BaseController {
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found");
+            apiMessageDto.setMessage("Account not found.");
             return apiMessageDto;
         }
         apiMessageDto.setData(account);
-        apiMessageDto.setMessage("Get account success");
+        apiMessageDto.setMessage("Get an account success.");
         return apiMessageDto;
     }
 
@@ -148,7 +148,7 @@ public class AccountController extends BaseController {
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found");
+            apiMessageDto.setMessage("Account not found.");
             return apiMessageDto;
         }
         if (account.getKind().equals(SocialNetworkingConstant.ACCOUNT_KIND_USER)) {
@@ -156,7 +156,7 @@ public class AccountController extends BaseController {
             if (userProfile == null) {
                 apiMessageDto.setResult(false);
                 apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("User profile not found");
+                apiMessageDto.setMessage("User profile not found.");
                 return apiMessageDto;
             }
             apiMessageDto.setData(accountMapper.fromEntityToProfileDtoForClient(userProfile));
@@ -165,12 +165,12 @@ public class AccountController extends BaseController {
             if (expertProfile == null) {
                 apiMessageDto.setResult(false);
                 apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("Expert profile not found");
+                apiMessageDto.setMessage("Expert profile not found.");
                 return apiMessageDto;
             }
             apiMessageDto.setData(accountMapper.fromEntityToProfileDtoForClient(expertProfile));
         }
-        apiMessageDto.setMessage("Get account profile success");
+        apiMessageDto.setMessage("Get account profile success.");
         return apiMessageDto;
     }
 
@@ -179,18 +179,18 @@ public class AccountController extends BaseController {
     @Transactional
     public ApiResponse<String> deleteAdmin(@PathVariable("id") Long id) {
         if (!isSuperAdmin()) {
-            throw new UnauthorizationException("Not allowed to delete.");
+            throw new UnauthorizationException("You are not allowed to delete.");
         }
         ApiResponse<String> apiMessageDto = new ApiResponse<>();
         Account account = accountRepository.findById(id).orElse(null);
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found");
+            apiMessageDto.setMessage("Account not found.");
             return apiMessageDto;
         }
         accountRepository.deleteById(id);
-        apiMessageDto.setMessage("Delete admin success");
+        apiMessageDto.setMessage("Delete admin success.");
         return apiMessageDto;
     }
 
@@ -201,7 +201,7 @@ public class AccountController extends BaseController {
         Page<Account> page = accountRepository.findAll(accountCriteria.getSpecification(), pageable);
         ResponseListDto<AccountDto> responseListDto = new ResponseListDto(accountMapper.fromEntityToAccountDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get list account success");
+        apiMessageDto.setMessage("Get list account success.");
         return apiMessageDto;
     }
 
@@ -212,11 +212,11 @@ public class AccountController extends BaseController {
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found");
+            apiMessageDto.setMessage("Account not found.");
             return apiMessageDto;
         }
         apiMessageDto.setData(accountMapper.fromAccountToDtoProfile(account));
-        apiMessageDto.setMessage("Get profile success");
+        apiMessageDto.setMessage("Get profile success.");
         return apiMessageDto;
     }
 
@@ -228,13 +228,13 @@ public class AccountController extends BaseController {
         if (account == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found");
+            apiMessageDto.setMessage("Account not found.");
             return apiMessageDto;
         }
         if (!passwordEncoder.matches(updateAdminProfileForm.getOldPassword(), account.getPassword())) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_WRONG_PASSWORD);
-            apiMessageDto.setMessage("Old password is wrong");
+            apiMessageDto.setMessage("Old password is wrong.");
             return apiMessageDto;
         }
         if (StringUtils.isNoneBlank(updateAdminProfileForm.getNewPassword())) {
@@ -245,7 +245,7 @@ public class AccountController extends BaseController {
         }
         account.setFullName(updateAdminProfileForm.getFullName());
         accountRepository.save(account);
-        apiMessageDto.setMessage("Update admin profile success");
+        apiMessageDto.setMessage("Update admin profile success.");
         return apiMessageDto;
     }
 
@@ -263,7 +263,7 @@ public class AccountController extends BaseController {
         if (account.getStatus().equals(SocialNetworkingConstant.STATUS_LOCK)) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_LOCKED);
-            apiMessageDto.setMessage("Account was locked");
+            apiMessageDto.setMessage("Account was locked.");
             return apiMessageDto;
         }
         if (account.getResetPwdCode() != null && isOTPRequired(account)) {
@@ -280,7 +280,7 @@ public class AccountController extends BaseController {
         variables.put("otpCode", otpCode);
         variables.put("fullName", account.getFullName());
         socialNetworkingApiService.sendEmail(getOTPForm.getEmail(), variables, SocialNetworkingConstant.OTP_SUBJECT_EMAIL);
-        apiMessageDto.setMessage("Send OTP code success");
+        apiMessageDto.setMessage("Send OTP code success.");
         return apiMessageDto;
     }
 
@@ -298,13 +298,13 @@ public class AccountController extends BaseController {
         if (account.getStatus().equals(SocialNetworkingConstant.STATUS_LOCK)) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_LOCKED);
-            apiMessageDto.setMessage("Account was locked");
+            apiMessageDto.setMessage("Account was locked.");
             return apiMessageDto;
         }
         if (account.getResetPwdCode() == null || account.getResetPwdCode().trim().isEmpty()) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_SEND_REQUEST_OTP);
-            apiMessageDto.setMessage("Account not send request OTP");
+            apiMessageDto.setMessage("Account not send request OTP. Please send request OTP again!");
             return apiMessageDto;
         }
         if (account.getAttemptCode() != null && account.getAttemptCode() > SocialNetworkingConstant.ATTEMPT_CODE_MAX) {
@@ -312,7 +312,7 @@ public class AccountController extends BaseController {
             accountRepository.save(account);
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_LOCKED);
-            apiMessageDto.setMessage("Account is locked");
+            apiMessageDto.setMessage("Account is locked.");
             return apiMessageDto;
         }
         if (!otpForm.getOtp().equals(account.getResetPwdCode())) {
@@ -338,7 +338,7 @@ public class AccountController extends BaseController {
         account.setResetPwdCode(null);
         account.setResetPwdTime(null);
         accountRepository.save(account);
-        apiMessageDto.setMessage("Check OTP code success");
+        apiMessageDto.setMessage("Check OTP code success.");
         return apiMessageDto;
     }
 
@@ -355,7 +355,7 @@ public class AccountController extends BaseController {
         }
         account.setPassword(passwordEncoder.encode(changePasswordForgotForm.getNewPassword()));
         accountRepository.save(account);
-        apiMessageDto.setMessage("Change password success");
+        apiMessageDto.setMessage("Change password success.");
         return apiMessageDto;
     }
 
@@ -366,7 +366,7 @@ public class AccountController extends BaseController {
         Page<Account> page = accountRepository.findAll(accountCriteria.getSpecification(), pageable);
         ResponseListDto<AccountDto> responseListDto = new ResponseListDto(accountMapper.fromAccountToAutoCompleteDtoWithGroupList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get list account success");
+        apiMessageDto.setMessage("Get list account success.");
         return apiMessageDto;
     }
 

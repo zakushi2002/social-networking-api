@@ -72,6 +72,8 @@ public class SocialNetworkingConstant {
     public static final Integer CATEGORY_KIND_HOSPITAL_ROLE = 2;
     public static final Integer CATEGORY_KIND_DEPARTMENT = 3;
     public static final Integer CATEGORY_KIND_ACADEMIC_DEGREE = 4;
+    public static final Integer CATEGORY_KIND_COMMUNITY = 5;
+    public static final Integer CATEGORY_KIND_TOPIC = 6;
 
     /**
      * Notification kind constant
@@ -102,8 +104,10 @@ public class SocialNetworkingConstant {
     public static final Integer CONVERSATION_KIND_GROUP = 2;
 
     /**
-     * Conversation introduction constant
+     * Community Member kind constant
      */
+    public static final Integer COMMUNITY_MEMBER_KIND = 0;
+    public static final Integer COMMUNITY_ADMIN_KIND = 1;
 
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");

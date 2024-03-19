@@ -32,10 +32,8 @@ import java.util.Objects;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class CategoryController extends BaseController {
-
     @Autowired
     CategoryRepository categoryRepository;
-
     @Autowired
     CategoryMapper categoryMapper;
     @Autowired
@@ -48,7 +46,7 @@ public class CategoryController extends BaseController {
         Page<Category> listCategory = categoryRepository.findAll(categoryCriteria.getSpecification(), pageable);
         ResponseListDto<CategoryDto> responseListObj = new ResponseListDto(categoryMapper.fromEntityListToCategoryDtoList(listCategory.getContent()), listCategory.getTotalElements(), listCategory.getTotalPages());
         apiMessageDto.setData(responseListObj);
-        apiMessageDto.setMessage("Get list category success");
+        apiMessageDto.setMessage("Get list category success.");
         return apiMessageDto;
     }
 
@@ -59,7 +57,7 @@ public class CategoryController extends BaseController {
         Page<Category> listCategory = categoryRepository.findAll(categoryCriteria.getSpecification(), pageable);
         ResponseListDto<CategoryDto> responseListObj = new ResponseListDto(categoryMapper.fromEntityListToCategoryDtoAutoComplete(listCategory.getContent()), listCategory.getTotalElements(), listCategory.getTotalPages());
         apiMessageDto.setData(responseListObj);
-        apiMessageDto.setMessage("Get auto-complete list category success");
+        apiMessageDto.setMessage("Get auto-complete list category success.");
         return apiMessageDto;
     }
 
@@ -71,11 +69,11 @@ public class CategoryController extends BaseController {
         if (category == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Not found category");
+            apiMessageDto.setMessage("Category not found.");
             return apiMessageDto;
         }
         apiMessageDto.setData(categoryMapper.fromEntityToAdminDto(category));
-        apiMessageDto.setMessage("Get category success");
+        apiMessageDto.setMessage("Get a category success.");
         return apiMessageDto;
     }
 
@@ -88,7 +86,7 @@ public class CategoryController extends BaseController {
         if (category != null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NAME_EXIST_IN_KIND);
-            apiMessageDto.setMessage("Category name is exist");
+            apiMessageDto.setMessage("Category name exist in kind.");
             return apiMessageDto;
         }
         category = categoryMapper.fromCreateCategoryFormToEntity(createCategoryForm);
@@ -104,9 +102,8 @@ public class CategoryController extends BaseController {
         }
         categoryRepository.save(category);
         apiMessageDto.setData(category.getId());
-        apiMessageDto.setMessage("Create category success");
+        apiMessageDto.setMessage("Create a new category success.");
         return apiMessageDto;
-
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -118,7 +115,7 @@ public class CategoryController extends BaseController {
         if (category == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Not found category.");
+            apiMessageDto.setMessage("Category not found.");
             return apiMessageDto;
         }
         Category checkName = categoryRepository.findByNameAndKind(updateCategoryForm.getCategoryName(), category.getKind()).orElse(null);
@@ -135,7 +132,7 @@ public class CategoryController extends BaseController {
         categoryMapper.fromUpdateCategoryFormToEntity(updateCategoryForm, category);
         categoryRepository.save(category);
         apiMessageDto.setData(category.getId());
-        apiMessageDto.setMessage("Update category success");
+        apiMessageDto.setMessage("Update a category success.");
         return apiMessageDto;
     }
 
@@ -148,12 +145,12 @@ public class CategoryController extends BaseController {
         if (category == null) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Not found category");
+            apiMessageDto.setMessage("Category not found.");
             return apiMessageDto;
         }
         categoryRepository.deleteById(id);
         apiMessageDto.setData(id);
-        apiMessageDto.setMessage("Delete category success");
+        apiMessageDto.setMessage("Delete a category success.");
         return apiMessageDto;
     }
 }

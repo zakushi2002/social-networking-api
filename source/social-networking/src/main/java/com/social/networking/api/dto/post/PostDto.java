@@ -2,6 +2,7 @@ package com.social.networking.api.dto.post;
 
 import com.social.networking.api.dto.InfoAdminDto;
 import com.social.networking.api.dto.account.AccountDto;
+import com.social.networking.api.dto.category.CategoryDto;
 import com.social.networking.api.dto.comment.CommentDto;
 import com.social.networking.api.dto.reaction.PostReactionDto;
 import io.swagger.annotations.ApiModelProperty;
@@ -27,4 +28,8 @@ public class PostDto extends InfoAdminDto {
     @ApiModelProperty(name = "moderatedDate")
     private Date moderatedDate;
     private List<CommentDto> commentList;
+    @ApiModelProperty(name = "community")
+    private CategoryDto community;
+    @ApiModelProperty(name = "topics")
+    private List<CategoryDto> topics;
 }

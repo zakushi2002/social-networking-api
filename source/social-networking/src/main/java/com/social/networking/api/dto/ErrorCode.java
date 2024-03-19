@@ -73,6 +73,7 @@ public class ErrorCode {
      */
     public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-000";
     public static final String CATEGORY_ERROR_NAME_EXIST_IN_KIND = "ERROR-CATEGORY-001";
+    public static final String CATEGORY_ERROR_NOT_COMMUNITY_KIND = "ERROR-CATEGORY-002";
 
     /**
      * Bookmark error code
@@ -113,4 +114,10 @@ public class ErrorCode {
      * Notification error code
      */
     public static final String NOTIFICATION_ERROR_NOT_FOUND = "ERROR-NOTIFICATION-000";
+
+    /**
+     * CommunityMember error code
+     */
+    public static final String COMMUNITY_MEMBER_JOINED = "ERROR-COMMUNITY-MEMBER-000";
+    public static final String COMMUNITY_MEMBER_NOT_JOINED = "ERROR-COMMUNITY-MEMBER-001";
 }

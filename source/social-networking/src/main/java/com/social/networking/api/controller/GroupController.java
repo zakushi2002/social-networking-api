@@ -195,5 +195,4 @@ public class GroupController extends BaseController {
         apiMessageDto.setMessage("Remove permission success");
         return apiMessageDto;
     }
-
 }

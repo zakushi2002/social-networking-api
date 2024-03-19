@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {AccountMapper.class, ReactionMapper.class, CommentMapper.class})
+        uses = {AccountMapper.class, ReactionMapper.class, CommentMapper.class, CategoryMapper.class})
 public interface PostMapper {
     @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
@@ -32,6 +32,8 @@ public interface PostMapper {
     @Mapping(source = "content", target = "content")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
     @Mapping(source = "kind", target = "kind")
+    @Mapping(source = "community", target = "community", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "topics", target = "topics", qualifiedByName = "fromEntityListToShortDtoList")
     @Mapping(source = "privacy", target = "privacy")
     @Mapping(source = "postReactions", target = "postReactions", qualifiedByName = "fromEntitiesToPostReactionDtoShortList")
     @Mapping(source = "commentList", target = "commentList", qualifiedByName = "fromEntityToCountListComment")

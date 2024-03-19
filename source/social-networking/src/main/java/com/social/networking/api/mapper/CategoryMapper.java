@@ -64,5 +64,6 @@ public interface CategoryMapper {
     CategoryDto fromEntityToShortDto(Category category);
 
     @IterableMapping(elementTargetType = CategoryDto.class, qualifiedByName = "fromEntityToShortDto")
+    @Named("fromEntityListToShortDtoList")
     List<CategoryDto> fromEntityToShortDtoList(List<Category> categories);
 }

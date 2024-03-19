@@ -34,4 +34,13 @@ public class Post extends Auditable<String> {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<Comment> commentList;
     private Date moderatedDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "community_id")
+    private Category community;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinTable(name = TablePrefix.PREFIX_TABLE + "post_topic",
+            joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "topic_id",
+                    referencedColumnName = "id"))
+    private List<Category> topics = new ArrayList<>();
 }

@@ -20,4 +20,6 @@ public class UpdatePostForm {
     @ApiModelProperty(name = "privacy")
     @Privacy(allowNull = true)
     private Integer privacy;
+    @ApiModelProperty(name = "topics")
+    private Long[] topics;
 }
