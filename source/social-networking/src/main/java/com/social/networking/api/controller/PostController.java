@@ -84,7 +84,7 @@ public class PostController extends BaseController {
         List<Category> topics = new ArrayList<>();
         for (Long topicId : createPostForm.getTopics()) {
             Category category = categoryRepository.findById(topicId).orElse(null);
-            if (category != null) {
+            if (category != null && category.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_TOPIC)) {
                 topics.add(category);
             }
         }
@@ -132,7 +132,7 @@ public class PostController extends BaseController {
         List<Category> topics = new ArrayList<>();
         for (Long topicId : updatePostForm.getTopics()) {
             Category category = categoryRepository.findById(topicId).orElse(null);
-            if (category != null) {
+            if (category != null && category.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_TOPIC)) {
                 topics.add(category);
             }
         }

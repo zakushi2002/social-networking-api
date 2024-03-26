@@ -19,8 +19,6 @@ public class PostDto extends InfoAdminDto {
     private String content;
     @ApiModelProperty(name = "owner")
     private AccountDto owner;
-    @ApiModelProperty(name = "kind")
-    private Integer kind;
     @ApiModelProperty(name = "privacy")
     private Integer privacy;
     @ApiModelProperty(name = "postReactions")
