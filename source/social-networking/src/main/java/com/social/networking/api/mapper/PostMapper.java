@@ -30,7 +30,7 @@ public interface PostMapper {
     @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
-    @Mapping(source = "community", target = "community", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "community", target = "community", qualifiedByName = "adminAutoCompleteMapping")
     @Mapping(source = "topics", target = "topics", qualifiedByName = "fromEntityListToShortDtoList")
     @Mapping(source = "privacy", target = "privacy")
     @Mapping(source = "postReactions", target = "postReactions", qualifiedByName = "fromEntitiesToPostReactionDtoShortList")
