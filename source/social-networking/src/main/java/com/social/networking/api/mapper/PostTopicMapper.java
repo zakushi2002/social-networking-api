@@ -11,8 +11,9 @@ import java.util.List;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {CategoryMapper.class})
 public interface PostTopicMapper {
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "topic", target = "topic", qualifiedByName = "fromEntityToShortDto")
+    // @Mapping(source = "topic", target = "topic", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "topic.id", target = "id")
+    @Mapping(source = "topic.name", target = "nameTopic")
     @Named("fromEntityToPostTopicDto")
     PostTopicDto fromEntityToPostTopicDto(PostTopic postTopic);
 

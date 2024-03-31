@@ -8,8 +8,10 @@ import lombok.Data;
 public class PostTopicDto {
     @ApiModelProperty(name = "id")
     private Long id;
-    @ApiModelProperty(name = "postId")
+    @ApiModelProperty(name = "nameTopic")
+    private String nameTopic;
+    /*@ApiModelProperty(name = "postId")
     private Long postId;
     @ApiModelProperty(name = "topic")
-    private CategoryDto topic;
+    private CategoryDto topic;*/
 }

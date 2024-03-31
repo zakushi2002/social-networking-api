@@ -60,6 +60,8 @@ public class PostController extends BaseController {
     RelationshipRepository relationshipRepository;
     @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
+    PostTopicRepository postTopicRepository;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -81,17 +83,22 @@ public class PostController extends BaseController {
             return apiMessageDto;
         }
         Post post = postMapper.fromCreatePostFormToEntity(createPostForm);
-        List<Category> topics = new ArrayList<>();
-        for (Long topicId : createPostForm.getTopics()) {
-            Category category = categoryRepository.findById(topicId).orElse(null);
-            if (category != null && category.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_TOPIC)) {
-                topics.add(category);
-            }
-        }
-        post.setTopics(topics);
         post.setCommunity(community);
         post.setAccount(account);
         postRepository.save(post);
+        List<PostTopic> topics = new ArrayList<>();
+        for (Long topicId : createPostForm.getTopics()) {
+            Category category = categoryRepository.findById(topicId).orElse(null);
+            if (category != null && category.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_TOPIC)) {
+                PostTopic postTopic = new PostTopic();
+                postTopic.setPost(post);
+                postTopic.setTopic(category);
+                topics.add(postTopic);
+            }
+        }
+        if (createPostForm.getTopics().length != 0) {
+            postTopicRepository.saveAll(topics);
+        }
         apiMessageDto.setMessage("Create a post successfully.");
         apiMessageDto.setData(post.getId());
         return apiMessageDto;
@@ -109,13 +116,6 @@ public class PostController extends BaseController {
             apiMessageDto.setMessage("Post is not exist.");
             return apiMessageDto;
         }
-        if (post.getKind().equals(SocialNetworkingConstant.POST_KIND_NORMAL) && StringUtils.isEmpty(updatePostForm.getTitle().trim()))
-        {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_TITLE_REQUIRED);
-            apiMessageDto.setMessage("Title is required.");
-            return apiMessageDto;
-        }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
             apiMessageDto.setResult(false);
@@ -129,16 +129,24 @@ public class PostController extends BaseController {
             apiMessageDto.setMessage("You are not owner of this post.");
             return apiMessageDto;
         }
-        List<Category> topics = new ArrayList<>();
+        postMapper.mappingUpdatePostFormToEntity(updatePostForm, post);
+        postRepository.save(post);
+
+        List<PostTopic> topics = postTopicRepository.findAllByPostId(updatePostForm.getId());
+        postTopicRepository.deleteAll(topics);
+        topics = new ArrayList<>();
         for (Long topicId : updatePostForm.getTopics()) {
             Category category = categoryRepository.findById(topicId).orElse(null);
             if (category != null && category.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_TOPIC)) {
-                topics.add(category);
+                PostTopic postTopic = new PostTopic();
+                postTopic.setPost(post);
+                postTopic.setTopic(category);
+                topics.add(postTopic);
             }
         }
-        post.setTopics(topics);
-        postMapper.mappingUpdatePostFormToEntity(updatePostForm, post);
-        postRepository.save(post);
+        if (updatePostForm.getTopics().length != 0) {
+            postTopicRepository.saveAll(topics);
+        }
         apiMessageDto.setMessage("Update a post successfully.");
         apiMessageDto.setData(post.getId());
         return apiMessageDto;
