@@ -4,6 +4,7 @@ import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Category;
 import com.social.networking.api.model.Post;
+import com.social.networking.api.model.PostTopic;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
@@ -48,6 +49,11 @@ public class PostCriteria implements Serializable {
                     Join<Category, Post> community = root.join("community", JoinType.INNER);
                     predicates.add(cb.equal(community.get("kind"), SocialNetworkingConstant.CATEGORY_KIND_COMMUNITY));
                     predicates.add(cb.equal(community.get("id"), getCommunityId()));
+                }
+                if (getTopicId() != null) {
+                    Root<PostTopic> postTopicRoot = query.from(PostTopic.class);
+                    predicates.add(cb.equal(postTopicRoot.get("post").get("id"), root.get("id")));
+                    predicates.add(cb.equal(postTopicRoot.get("topic").get("id"), getTopicId()));
                 }
                 if (getPrivacy() != null) {
                     predicates.add(cb.equal(root.get("privacy"), getPrivacy()));

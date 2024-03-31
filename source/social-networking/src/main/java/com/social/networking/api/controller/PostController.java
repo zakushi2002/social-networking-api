@@ -76,10 +76,10 @@ public class PostController extends BaseController {
             return apiMessageDto;
         }
         Category community = categoryRepository.findById(createPostForm.getCommunityId()).orElse(null);
-        if (community == null) {
+        if (community == null || !community.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_COMMUNITY)) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Community is not exist.");
+            apiMessageDto.setMessage("This category is not community or not exist.");
             return apiMessageDto;
         }
         Post post = postMapper.fromCreatePostFormToEntity(createPostForm);
