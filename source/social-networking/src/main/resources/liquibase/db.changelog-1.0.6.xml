@@ -50,30 +50,8 @@
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_category" validate="true" onDelete="SET NULL"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-6">
-        <createTable tableName="db_social_networking_post_topic">
-            <column name="post_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="topic_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-7">
-        <addForeignKeyConstraint baseColumnNames="topic_id" baseTableName="db_social_networking_post_topic"
-                                 constraintName="FK63qcd16xyv0ssi07kv5m2of93" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_category" validate="true"/>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-8">
-        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_post_topic"
-                                 constraintName="FKbhjnumqewi8h73p5fkk0e549p" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_post" validate="true"/>
-    </changeSet>
 
-    <changeSet author="TOAN (generated)" id="1710484995942-9">
+    <changeSet author="TOAN (generated)" id="1710484995942-6">
         <createTable tableName="db_lfa_0_to_5_years">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="db_lfa_0_to_5_yearsPK"/>
@@ -94,7 +72,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet author="TOAN (generated)" id="1710484995942-10">
+    <changeSet author="TOAN (generated)" id="1710484995942-7">
         <createTable tableName="db_wfa_0_to_5_years">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="db_wfa_0_to_5_yearsPK"/>
@@ -114,7 +92,7 @@
 
         </createTable>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-11">
+    <changeSet author="TOAN (generated)" id="1710484995942-8">
         <loadData tableName="db_wfa_0_to_5_years" file="./liquibase/data/wfa_0_to_5_years_zscores.csv">
             <column name="id" header="id"/>
             <column name="months" header="months"/>
@@ -132,7 +110,7 @@
         </loadData>
     </changeSet>
 
-    <changeSet author="TOAN (generated)" id="1710484995942-12">
+    <changeSet author="TOAN (generated)" id="1710484995942-9">
         <loadData tableName="db_lfa_0_to_5_years" file="./liquibase/data/lhfa_0_to_5_years_zscores.csv">
             <column name="id" header="id"/>
             <column name="months" header="months"/>
@@ -149,5 +127,33 @@
             <column name="sd2" header="sd2"/>
             <column name="sd3" header="sd3"/>
         </loadData>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-10">
+        <createTable tableName="db_social_networking_post_topic">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_post_topicPK"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="topic_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-11">
+        <addForeignKeyConstraint baseColumnNames="topic_id" baseTableName="db_social_networking_post_topic"
+                                 constraintName="FK63qcd16xyv0ssi07kv5m2of93" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_category" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-12">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_post_topic"
+                                 constraintName="FKbhjnumqewi8h73p5fkk0e549p" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_post" validate="true" onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>
