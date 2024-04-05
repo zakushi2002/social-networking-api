@@ -126,7 +126,7 @@ public class CategoryController extends BaseController {
             category.getCategoryList().forEach(child -> child.setStatus(updateCategoryForm.getStatus()));
             categoryRepository.saveAll(category.getCategoryList());
         }
-        if (StringUtils.isNoneBlank(category.getImage()) && !updateCategoryForm.getCategoryImage().equals(category.getImage())) {
+        if (StringUtils.isNoneBlank(updateCategoryForm.getCategoryImage()) && !updateCategoryForm.getCategoryImage().equals(category.getImage())) {
             category.setImage(updateCategoryForm.getCategoryImage());
         }
         categoryMapper.fromUpdateCategoryFormToEntity(updateCategoryForm, category);
