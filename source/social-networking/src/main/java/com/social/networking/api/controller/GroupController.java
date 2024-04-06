@@ -100,14 +100,6 @@ public class GroupController extends BaseController {
         if (StringUtils.isNoneBlank(updateGroupForm.getDescription())) {
             group.setDescription(updateGroupForm.getDescription());
         }
-        List<Permission> permissionList = new ArrayList<>();
-        for (long permissionId : updateGroupForm.getPermissions()) {
-            Permission permission = permissionRepository.findById(permissionId).orElse(null);
-            if (permission != null) {
-                permissionList.add(permission);
-            }
-        }
-        group.setPermissions(permissionList);
         groupRepository.save(group);
         apiMessageDto.setMessage("Update group success");
         return apiMessageDto;
