@@ -31,7 +31,7 @@ public class PostCriteria implements Serializable {
     private Boolean following;
     private Boolean homeSort;
 
-    public Specification<Post> getSpecification(Map<Long, String> mapFollowingIdList) {
+    public Specification<Post> getSpecification(Map<Long, String> mapFollowingIdList, Map<Long, String> mapCommunityMemberIdList) {
         return new Specification<Post>() {
             private static final long serialVersionUID = 1L;
 
@@ -75,14 +75,20 @@ public class PostCriteria implements Serializable {
                     predicates.add(cb.equal(join.get("status"), SocialNetworkingConstant.STATUS_ACTIVE));
                 }
                 if (getFollowing() != null && getFollowing() && getFollowerId() != null) {
-                    if (!mapFollowingIdList.isEmpty()) {
+                    if (!mapFollowingIdList.isEmpty() || !mapCommunityMemberIdList.isEmpty()) {
                         Root<Account> accountRoot = query.from(Account.class);
+
                         List<Predicate> predicatesFollowing = new ArrayList<>();
                         for (Long key : mapFollowingIdList.keySet()) {
                             predicatesFollowing.add(cb.equal(accountRoot.get("id"), key));
                         }
+                        Root<Category> categoryRoot = query.from(Category.class);
+                        for (Long key : mapCommunityMemberIdList.keySet()) {
+                            predicatesFollowing.add(cb.equal(categoryRoot.get("id"), key));
+                        }
                         predicates.add(cb.or(predicatesFollowing.toArray(new Predicate[predicatesFollowing.size()])));
                         predicates.add(cb.equal(accountRoot.get("id"), root.get("account").get("id")));
+                        predicates.add(cb.equal(categoryRoot.get("id"), root.get("community").get("id")));
                     } else {
                         predicates.add(cb.equal(root.get("id"), 0));
                     }

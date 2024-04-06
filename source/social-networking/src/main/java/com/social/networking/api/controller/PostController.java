@@ -62,6 +62,8 @@ public class PostController extends BaseController {
     CategoryRepository categoryRepository;
     @Autowired
     PostTopicRepository postTopicRepository;
+    @Autowired
+    CommunityMemberRepository communityMemberRepository;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -203,17 +205,24 @@ public class PostController extends BaseController {
     @PreAuthorize("hasRole('POST_L')")
     public ApiMessageDto<ResponseListDto<PostDto>> listPost(PostCriteria postCriteria, Pageable pageable) {
         ApiMessageDto<ResponseListDto<PostDto>> apiMessageDto = new ApiMessageDto<>();
-        HashMap<Long, String> map = new HashMap<>();
+        HashMap<Long, String> mapFollowingList = new HashMap<>();
+        HashMap<Long, String> mapCommunityMemberList = new HashMap<>();
         if (postCriteria.getFollowing() != null && postCriteria.getFollowing()) {
             List<Relationship> followingList = relationshipRepository.findAllByFollowerId(getCurrentUser());
             if (followingList != null && !followingList.isEmpty()) {
                 for (Relationship relationship : followingList) {
-                    map.put(relationship.getAccount().getId(), "");
+                    mapFollowingList.put(relationship.getAccount().getId(), "");
+                }
+            }
+            List<CommunityMember> communityMemberList = communityMemberRepository.findAllByAccountId(getCurrentUser());
+            if (communityMemberList != null && !communityMemberList.isEmpty()) {
+                for (CommunityMember communityMember : communityMemberList) {
+                    mapCommunityMemberList.put(communityMember.getCommunity().getId(), "");
                 }
             }
             postCriteria.setFollowerId(getCurrentUser());
         }
-        Page<Post> page = postRepository.findAll(postCriteria.getSpecification(map), pageable);
+        Page<Post> page = postRepository.findAll(postCriteria.getSpecification(mapFollowingList, mapCommunityMemberList), pageable);
         ResponseListDto<PostDto> responseListDto = new ResponseListDto(postMapper.fromEntityToPostDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("Get list post success.");
