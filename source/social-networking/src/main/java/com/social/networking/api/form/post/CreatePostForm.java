@@ -15,13 +15,13 @@ public class CreatePostForm {
     @NotEmpty(message = "content cannot be null!")
     private String content;
     private Integer kind;
-    @ApiModelProperty(name = "privacy", required = true)
+    @ApiModelProperty(name = "privacy", required = true, notes = "1: public, 2: private")
     @Privacy
     private Integer privacy;
     @ApiModelProperty(name = "communityId")
     private Long communityId;
     @ApiModelProperty(name = "topics")
     private Long[] topics;
-    @ApiModelProperty(name = "status", required = true)
+    @ApiModelProperty(name = "status", required = true, notes = "1: active, 0: pending, -1: lock, -2: delete, -3: restrict")
     private Integer status;
 }

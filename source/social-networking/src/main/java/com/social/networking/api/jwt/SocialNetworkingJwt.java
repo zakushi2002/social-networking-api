@@ -13,10 +13,10 @@ public class SocialNetworkingJwt implements Serializable {
     public static final String EMPTY_STRING = "<>";
     private Long tokenId;
     private Long accountId = -1L;
-    private String kind = EMPTY_STRING;//token kind
+    private String kind = EMPTY_STRING;// token kind
     private String permission = EMPTY_STRING;
-    private Integer userKind = -1; //loại user là admin hay là gì
-    private String email = EMPTY_STRING;// username hoac order code
+    private Integer userKind = -1; // loại user là admin hay là gì
+    private String email = EMPTY_STRING;// username hoặc order code
     private Long orderId = -1L;
     private Boolean isSuperAdmin = false;
 

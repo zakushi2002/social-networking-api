@@ -21,12 +21,12 @@ public class CreateCategoryForm {
     @ApiModelProperty(name = "categoryOrdering")
     private Integer categoryOrdering;
     @CategoryKind
-    @ApiModelProperty(name = "categoryKind", required = true)
+    @ApiModelProperty(name = "categoryKind", required = true, notes = "1: Hospital, 2: Hospital Role, 3: Department, 4: Academic Degree, 5: Community, 6: Topic")
     @NotNull(message = "categoryKind cannot be null")
     private Integer categoryKind;
     @ApiModelProperty(name = "parentId")
     private Long parentId;
-    @ApiModelProperty(name = "status", required = true)
+    @ApiModelProperty(name = "status", required = true, notes = "1: active, 0: pending, -1: lock, -2: delete, -3: restrict")
     @NotNull(message = "status can not be null")
     @Status
     private Integer status;
