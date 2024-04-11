@@ -26,6 +26,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/comment")
@@ -80,10 +82,20 @@ public class CommentController extends BaseController {
         } else {
             comment.setDepth(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1);
         }
+        List<Long> taggedAccountIds = new ArrayList<>();
+        if (createCommentForm.getTaggedAccountIds() != null) {
+            for (Long taggedAccountId : createCommentForm.getTaggedAccountIds()) {
+                Account taggedAccount = accountRepository.findById(taggedAccountId).orElse(null);
+                if (taggedAccount != null) {
+                    taggedAccountIds.add(taggedAccountId);
+                }
+            }
+        }
         comment.setAccount(account);
         commentRepository.save(comment);
         CommentDto commentDto = commentMapper.fromEntityToCreateCommentDto(comment);
         commentDto.setOwnerIdOfPost(post.getAccount().getId());
+        commentDto.setTaggedAccountIds(taggedAccountIds);
         apiMessageDto.setMessage("Create comment successfully");
         apiMessageDto.setData(commentDto);
         return apiMessageDto;

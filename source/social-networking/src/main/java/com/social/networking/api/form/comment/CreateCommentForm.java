@@ -14,4 +14,6 @@ public class CreateCommentForm {
     @ApiModelProperty(name = "commentContent", required = true)
     @NotEmpty(message = "commentContent cannot be empty!")
     private String commentContent;
+    @ApiModelProperty(name = "taggedAccountIds")
+    private Long[] taggedAccountIds;
 }
