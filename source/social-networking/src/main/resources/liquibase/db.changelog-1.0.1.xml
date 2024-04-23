@@ -139,61 +139,61 @@
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696225976199-7">
         <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_comment"
-                                 constraintName="FK5d6dp19adw8o9qjqr6de6aa2h" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMENT_POST_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_post" validate="true" onDelete="CASCADE"/>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696225976199-8">
         <addForeignKeyConstraint baseColumnNames="comment_id" baseTableName="db_social_networking_comment_reaction"
-                                 constraintName="FK7lparo46v3yehjqmg0gw20uba" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMENT_REACTION_COMMENT_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_comment" validate="true" onDelete="CASCADE"/>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696225976199-9">
         <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_post_reaction"
-                                 constraintName="FKaorsfwg3kifrhct44aav0n007" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_REACTION_POST_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_post" validate="true" onDelete="CASCADE"/>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696225976199-10">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_comment_reaction"
-                                 constraintName="FKcv5r5e9ahkckjb5l7p098aa7e" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMENT_REACTION_ACCOUNT_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696225976199-11">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_post"
-                                 constraintName="FKdcwrwlhviuw7sp6fj3ms3v3f5" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_ACCOUNT_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true"/>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696225976199-12">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_expert_profile"
-                                 constraintName="FKfcp5lmljv2ywni430mffin6i7" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_EXPERT_PROFILE_ACCOUNT_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true"/>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696225976199-13">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_comment"
-                                 constraintName="FKm2ikhex49cywyjiqymoh7qrhp" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMENT_ACCOUNT_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696225976199-14">
         <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="db_social_networking_comment"
-                                 constraintName="FKnb6bujskko202go5u39ucnhpe" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMENT_PARENT_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_comment" validate="true" onDelete="CASCADE"/>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696225976199-15">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_user_profile"
-                                 constraintName="FKrgcvj0x50mf60qw6hnt5443lp" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_USER_PROFILE_ACCOUNT_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true"/>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696225976199-16">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_post_reaction"
-                                 constraintName="FKtpoylgvve8ev2rb703u9j5vtr" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_REACTION_ACCOUNT_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
     </changeSet>

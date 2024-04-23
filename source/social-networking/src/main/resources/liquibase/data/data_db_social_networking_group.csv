@@ -1,0 +1,6 @@
+id,name,kind,description,is_system_role,created_by,created_date,modified_by,modified_date,status
+1,ROLE SUPER ADMIN,1,Role for super admin,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+2,ROLE ADMIN,1,Role for admin,0,Super Admin,2023-11-25 17:05:00,Super Admin,2023-11-25 17:05:00,1
+3,ROLE USER,2,Role for user,0,Super Admin,2023-11-25 17:05:00,Super Admin,2023-11-25 17:05:00,1
+4,ROLE EXPERT,3,Role for expert,0,Super Admin,2023-11-25 17:05:00,Super Admin,2023-11-25 17:05:00,1
+

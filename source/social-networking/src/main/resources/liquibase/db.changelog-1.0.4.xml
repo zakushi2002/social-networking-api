@@ -4,65 +4,122 @@
                    xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="TOAN (generated)" id="1697530097194-1">
-        <createTable tableName="db_social_networking_relationship">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_relationshipPK"/>
-            </column>
-            <column name="account_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="follower_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created_by" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created_date" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="modified_by" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="modified_date" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="status" type="INT"/>
-        </createTable>
+        <loadData tableName="db_social_networking_group" file="./liquibase/data/data_db_social_networking_group.csv">
+            <column name="id" header="id"/>
+            <column name="name" header="name"/>
+            <column name="kind" header="kind"/>
+            <column name="description" header="description"/>
+            <column name="is_system_role" header="is_system_role"/>
+            <column name="created_by" header="created_by"/>
+            <column name="created_date" header="created_date"/>
+            <column name="modified_by" header="modified_by"/>
+            <column name="modified_date" header="modified_date"/>
+            <column name="status" header="status"/>
+        </loadData>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1697530097194-2">
-        <createTable tableName="db_social_networking_report">
-            <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_reportPK"/>
-            </column>
-            <column name="content" type="LONGTEXT"/>
-            <column name="kind" type="INT"/>
-            <column name="object_id" type="BIGINT"/>
-            <column name="quantity" type="INT"/>
-            <column name="created_by" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created_date" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="modified_by" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="modified_date" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="status" type="INT"/>
-        </createTable>
+        <loadData tableName="db_social_networking_permission"
+                  file="./liquibase/data/data_db_social_networking_permission.csv">
+            <column name="id" header="id"/>
+            <column name="name" header="name"/>
+            <column name="action" header="action"/>
+            <column name="name_group" header="name_group"/>
+            <column name="permission_code" header="permission_code"/>
+            <column name="description" header="description"/>
+            <column name="show_menu" header="show_menu"/>
+            <column name="created_by" header="created_by"/>
+            <column name="created_date" header="created_date"/>
+            <column name="modified_by" header="modified_by"/>
+            <column name="modified_date" header="modified_date"/>
+            <column name="status" header="status"/>
+        </loadData>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1697530097194-3">
-        <addForeignKeyConstraint baseColumnNames="follower_id" baseTableName="db_social_networking_relationship"
-                                 constraintName="FK3n7ak2k7ru39dyl3an4n52j5b" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+        <loadData tableName="db_social_networking_permission_group"
+                  file="./liquibase/data/data_db_social_networking_permission_group.csv">
+            <column name="group_id" header="group_id"/>
+            <column name="permission_id" header="permission_id"/>
+        </loadData>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1697530097194-4">
-        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_relationship"
-                                 constraintName="FKcm32o9xnklvvc04prufpsxeup" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+        <loadData tableName="db_social_networking_account"
+                  file="./liquibase/data/data_db_social_networking_account.csv">
+            <column name="id" header="id"/>
+            <column name="email" header="email"/>
+            <column name="password" header="password"/>
+            <column name="full_name" header="full_name"/>
+            <column name="kind" header="kind"/>
+            <column name="group_id" header="group_id"/>
+            <column name="avatar_path" header="avatar_path"/>
+            <column name="is_super_admin" header="is_super_admin"/>
+            <column name="last_login" header="last_login"/>
+            <column name="provider" header="provider"/>
+            <column name="provider_id" header="provider_id"/>
+            <column name="attempt_forget_pwd" header="attempt_forget_pwd"/>
+            <column name="attempt_login" header="attempt_login"/>
+            <column name="reset_pwd_code" header="reset_pwd_code"/>
+            <column name="reset_pwd_time" header="reset_pwd_time"/>
+            <column name="created_by" header="created_by"/>
+            <column name="created_date" header="created_date"/>
+            <column name="modified_by" header="modified_by"/>
+            <column name="modified_date" header="modified_date"/>
+            <column name="status" header="status"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-5">
+        <loadData tableName="oauth_client_details" file="./liquibase/data/data_oauth_client_details.csv">
+            <column name="client_id" header="client_id"/>
+            <column name="resource_ids" header="resource_ids"/>
+            <column name="client_secret" header="client_secret"/>
+            <column name="scope" header="scope"/>
+            <column name="authorized_grant_types" header="authorized_grant_types"/>
+            <column name="web_server_redirect_uri" header="web_server_redirect_uri"/>
+            <column name="authorities" header="authorities"/>
+            <column name="access_token_validity" header="access_token_validity"/>
+            <column name="refresh_token_validity" header="refresh_token_validity"/>
+            <column name="additional_information" header="additional_information"/>
+            <column name="autoapprove" header="autoapprove"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-6">
+        <loadData tableName="db_wfa_0_to_5_years" file="./liquibase/data/wfa_0_to_5_years_zscores.csv">
+            <column name="id" header="id"/>
+            <column name="months" header="months"/>
+            <column name="gender" header="gender"/>
+            <column name="m" header="m"/>
+            <column name="l" header="l"/>
+            <column name="s" header="s"/>
+            <column name="sd3neg" header="sd3neg"/>
+            <column name="sd2neg" header="sd2neg"/>
+            <column name="sd1neg" header="sd1neg"/>
+            <column name="sd0" header="sd0"/>
+            <column name="sd1" header="sd1"/>
+            <column name="sd2" header="sd2"/>
+            <column name="sd3" header="sd3"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-7">
+        <loadData tableName="db_lfa_0_to_5_years" file="./liquibase/data/lhfa_0_to_5_years_zscores.csv">
+            <column name="id" header="id"/>
+            <column name="months" header="months"/>
+            <column name="gender" header="gender"/>
+            <column name="m" header="m"/>
+            <column name="l" header="l"/>
+            <column name="s" header="s"/>
+            <column name="sd" header="sd"/>
+            <column name="sd3neg" header="sd3neg"/>
+            <column name="sd2neg" header="sd2neg"/>
+            <column name="sd1neg" header="sd1neg"/>
+            <column name="sd0" header="sd0"/>
+            <column name="sd1" header="sd1"/>
+            <column name="sd2" header="sd2"/>
+            <column name="sd3" header="sd3"/>
+        </loadData>
     </changeSet>
 </databaseChangeLog>

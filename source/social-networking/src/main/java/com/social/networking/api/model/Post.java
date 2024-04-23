@@ -27,7 +27,6 @@ public class Post extends Auditable<String> {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id")
     private Account account;
-    private Integer kind;
     private Integer privacy;
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PostReaction> postReactions = new ArrayList<>();

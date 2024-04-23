@@ -8,11 +8,13 @@
             <column name="provider" type="varchar(255)" afterColumn="last_login"/>
         </addColumn>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-2">
         <addColumn tableName="db_social_networking_account">
             <column name="provider_id" type="varchar(255)" afterColumn="provider"/>
         </addColumn>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-3">
         <createTable tableName="db_social_networking_notification">
             <column autoIncrement="true" name="id" type="BIGINT">
@@ -35,16 +37,19 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-4">
         <addColumn tableName="db_social_networking_post">
             <column name="moderated_date" type="datetime" afterColumn="account_id"/>
         </addColumn>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-5">
         <addColumn tableName="db_social_networking_post">
             <column name="title" type="varchar(255)" afterColumn="id"/>
         </addColumn>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-6">
         <createTable tableName="db_social_networking_announcement">
             <column name="id" type="BIGINT">
@@ -71,6 +76,7 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-7">
         <createTable tableName="db_social_networking_conversation">
             <column name="id" type="BIGINT">
@@ -95,6 +101,7 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-8">
         <createTable tableName="db_social_networking_conversation_account">
             <column name="id" type="BIGINT">
@@ -122,6 +129,7 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-9">
         <createTable tableName="db_social_networking_message">
             <column name="id" type="BIGINT">
@@ -149,43 +157,56 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-10">
         <addForeignKeyConstraint baseColumnNames="notification_id" baseTableName="db_social_networking_announcement"
-                                 constraintName="FK6ksitaiq1looa36dy1xewp9tc" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_ANNOUNCEMENT_NOTIFICATION_ID"
+                                 deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_notification" validate="true" onDelete="CASCADE"/>
+                                 referencedTableName="db_social_networking_notification" validate="true"
+                                 onDelete="CASCADE"/>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-11">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_conversation_account"
-                                 constraintName="FK7d6rwq6tgk0vrxio4jnlxy8p9" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_CONVERSATION_ACCOUNT_ACCOUNT_ID"
+                                 deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-12">
         <addForeignKeyConstraint baseColumnNames="conversation_id"
                                  baseTableName="db_social_networking_conversation_account"
-                                 constraintName="FK7wan4on3qjn3toe4bs56pskkf" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_CONVERSATION_ACCOUNT_CONVERSATION_ID"
+                                 deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_conversation" validate="true" onDelete="CASCADE"/>
+                                 referencedTableName="db_social_networking_conversation" validate="true"
+                                 onDelete="CASCADE"/>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-13">
         <addForeignKeyConstraint baseColumnNames="conversation_id" baseTableName="db_social_networking_message"
-                                 constraintName="FKiyo0u913bwocs5vrlc6cubge1" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_MESSAGE_CONVERSATION_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_conversation" validate="true" onDelete="CASCADE"/>
+                                 referencedTableName="db_social_networking_conversation" validate="true"
+                                 onDelete="CASCADE"/>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-14">
         <addForeignKeyConstraint baseColumnNames="sender_id" baseTableName="db_social_networking_message"
-                                 constraintName="FKl4668c7yh4puv3ognoewk8x3w" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_MESSAGE_SENDER_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-15">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_announcement"
-                                 constraintName="FKtk1v5m82o25xcdc1luw6q47qq" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_ANNOUNCEMENT_ACCOUNT_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1698367745919-16">
         <addColumn tableName="db_social_networking_notification">
             <column name="object_id" type="bigint" afterColumn="kind"/>

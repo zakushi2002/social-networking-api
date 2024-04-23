@@ -35,6 +35,7 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1695400755902-2">
         <createTable tableName="db_social_networking_group">
             <column name="id" type="BIGINT">
@@ -59,6 +60,7 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1695400755902-3">
         <createTable tableName="db_social_networking_permission">
             <column name="id" type="BIGINT">
@@ -85,6 +87,7 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1695400755902-4">
         <createTable tableName="db_social_networking_permission_group">
             <column name="group_id" type="BIGINT">
@@ -96,7 +99,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet author="Authentication" id="1688988515879-13">
+    <changeSet author="TOAN (generated)" id="1695400755902-5">
         <createTable tableName="oauth_access_token">
             <column name="token_id" type="VARCHAR(255)"/>
             <column name="token" type="LONGBLOB"/>
@@ -107,7 +110,7 @@
             <column name="refresh_token" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="Authentication" id="1688988515879-14">
+    <changeSet author="TOAN (generated)" id="1695400755902-6">
         <createTable tableName="oauth_approvals">
             <column name="userId" type="VARCHAR(255)"/>
             <column name="clientId" type="VARCHAR(255)"/>
@@ -117,7 +120,7 @@
             <column defaultValueComputed="CURRENT_TIMESTAMP" name="lastModifiedAt" type="timestamp"/>
         </createTable>
     </changeSet>
-    <changeSet author="Authentication" id="1688988515879-15">
+    <changeSet author="TOAN (generated)" id="1695400755902-7">
         <createTable tableName="oauth_client_details">
             <column name="client_id" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -134,7 +137,7 @@
             <column name="autoapprove" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="Authentication" id="1688988515879-16">
+    <changeSet author="TOAN (generated)" id="1695400755902-8">
         <createTable tableName="oauth_client_token">
             <column name="token_id" type="VARCHAR(255)"/>
             <column name="token" type="LONGBLOB"/>
@@ -143,13 +146,13 @@
             <column name="client_id" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="Authentication" id="1688988515879-17">
+    <changeSet author="TOAN (generated)" id="1695400755902-9">
         <createTable tableName="oauth_code">
             <column name="code" type="VARCHAR(255)"/>
             <column name="authentication" type="LONGBLOB"/>
         </createTable>
     </changeSet>
-    <changeSet author="Authentication" id="1688988515879-18">
+    <changeSet author="TOAN (generated)" id="1695400755902-10">
         <createTable tableName="oauth_refresh_token">
             <column name="token_id" type="VARCHAR(255)"/>
             <column name="token" type="LONGBLOB"/>
@@ -157,34 +160,82 @@
         </createTable>
     </changeSet>
 
-    <changeSet author="TOAN (generated)" id="1695400755902-5">
-        <addUniqueConstraint columnNames="name" constraintName="UC_DB_SOCIAL_NETWORKING_GROUPNAME_COL"
+    <changeSet author="TOAN (generated)" id="1712570095792-11">
+        <createTable tableName="db_lfa_0_to_5_years">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_lfa_0_to_5_yearsPK"/>
+            </column>
+            <column name="months" type="INT"/>
+            <column name="gender" type="INT"/>
+            <column name="m" type="DOUBLE PRECISION"/>
+            <column name="l" type="DOUBLE PRECISION"/>
+            <column name="s" type="DOUBLE PRECISION"/>
+            <column name="sd" type="DOUBLE PRECISION"/>
+            <column name="sd3neg" type="DOUBLE PRECISION"/>
+            <column name="sd2neg" type="DOUBLE PRECISION"/>
+            <column name="sd1neg" type="DOUBLE PRECISION"/>
+            <column name="sd0" type="DOUBLE PRECISION"/>
+            <column name="sd1" type="DOUBLE PRECISION"/>
+            <column name="sd2" type="DOUBLE PRECISION"/>
+            <column name="sd3" type="DOUBLE PRECISION"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1712570095792-12">
+        <createTable tableName="db_wfa_0_to_5_years">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_wfa_0_to_5_yearsPK"/>
+            </column>
+            <column name="months" type="INT"/>
+            <column name="gender" type="INT"/>
+            <column name="m" type="DOUBLE PRECISION"/>
+            <column name="l" type="DOUBLE PRECISION"/>
+            <column name="s" type="DOUBLE PRECISION"/>
+            <column name="sd3neg" type="DOUBLE PRECISION"/>
+            <column name="sd2neg" type="DOUBLE PRECISION"/>
+            <column name="sd1neg" type="DOUBLE PRECISION"/>
+            <column name="sd0" type="DOUBLE PRECISION"/>
+            <column name="sd1" type="DOUBLE PRECISION"/>
+            <column name="sd2" type="DOUBLE PRECISION"/>
+            <column name="sd3" type="DOUBLE PRECISION"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1695400755902-13">
+        <addUniqueConstraint columnNames="name" constraintName="UC_DB_SOCIAL_NETWORKING_GROUP_NAME_COL"
                              tableName="db_social_networking_group"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1695400755902-6">
-        <addUniqueConstraint columnNames="name" constraintName="UC_DB_SOCIAL_NETWORKING_PERMISSIONNAME_COL"
+
+    <changeSet author="TOAN (generated)" id="1695400755902-14">
+        <addUniqueConstraint columnNames="name" constraintName="UC_DB_SOCIAL_NETWORKING_PERMISSION_NAME_COL"
                              tableName="db_social_networking_permission"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1695400755902-7">
+
+    <changeSet author="TOAN (generated)" id="1695400755902-15">
         <addUniqueConstraint columnNames="permission_code"
-                             constraintName="UC_DB_SOCIAL_NETWORKING_PERMISSIONPERMISSION_CODE_COL"
+                             constraintName="UC_DB_SOCIAL_NETWORKING_PERMISSION_PERMISSION_CODE_COL"
                              tableName="db_social_networking_permission"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1695400755902-8">
+
+    <changeSet author="TOAN (generated)" id="1695400755902-16">
         <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="db_social_networking_account"
-                                 constraintName="FK49bvfua7qd4v7q4p7fi54wj3k" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_ACCOUNT_GROUP_ID_COL" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_group" validate="true"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1695400755902-9">
+
+    <changeSet author="TOAN (generated)" id="1695400755902-17">
         <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="db_social_networking_permission_group"
-                                 constraintName="FKkyo29cicik47yrpx6b4647iba" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_PERMISSION_GROUP_GROUP_ID_COL"
+                                 deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_group" validate="true"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1695400755902-10">
+
+    <changeSet author="TOAN (generated)" id="1695400755902-18">
         <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="db_social_networking_permission_group"
-                                 constraintName="FKn1md4o49ejp7r5bo655j8cf8i" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_PERMISSION_GROUP_PERMISSION_ID_COL"
+                                 deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_permission" validate="true"/>
     </changeSet>
