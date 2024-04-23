@@ -4,122 +4,212 @@
                    xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="TOAN (generated)" id="1697530097194-1">
-        <loadData tableName="db_social_networking_group" file="./liquibase/data/data_db_social_networking_group.csv">
-            <column name="id" header="id"/>
-            <column name="name" header="name"/>
-            <column name="kind" header="kind"/>
-            <column name="description" header="description"/>
-            <column name="is_system_role" header="is_system_role"/>
-            <column name="created_by" header="created_by"/>
-            <column name="created_date" header="created_date"/>
-            <column name="modified_by" header="modified_by"/>
-            <column name="modified_date" header="modified_date"/>
-            <column name="status" header="status"/>
-        </loadData>
+        <addColumn tableName="db_social_networking_account">
+            <column name="provider" type="varchar(255)" afterColumn="last_login"/>
+        </addColumn>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1697530097194-2">
-        <loadData tableName="db_social_networking_permission"
-                  file="./liquibase/data/data_db_social_networking_permission.csv">
-            <column name="id" header="id"/>
-            <column name="name" header="name"/>
-            <column name="action" header="action"/>
-            <column name="name_group" header="name_group"/>
-            <column name="permission_code" header="permission_code"/>
-            <column name="description" header="description"/>
-            <column name="show_menu" header="show_menu"/>
-            <column name="created_by" header="created_by"/>
-            <column name="created_date" header="created_date"/>
-            <column name="modified_by" header="modified_by"/>
-            <column name="modified_date" header="modified_date"/>
-            <column name="status" header="status"/>
-        </loadData>
+        <addColumn tableName="db_social_networking_account">
+            <column name="provider_id" type="varchar(255)" afterColumn="provider"/>
+        </addColumn>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1697530097194-3">
-        <loadData tableName="db_social_networking_permission_group"
-                  file="./liquibase/data/data_db_social_networking_permission_group.csv">
-            <column name="group_id" header="group_id"/>
-            <column name="permission_id" header="permission_id"/>
-        </loadData>
+        <createTable tableName="db_social_networking_notification">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_notificationPK"/>
+            </column>
+            <column name="content" type="LONGTEXT"/>
+            <column name="kind" type="INT"/>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1697530097194-4">
-        <loadData tableName="db_social_networking_account"
-                  file="./liquibase/data/data_db_social_networking_account.csv">
-            <column name="id" header="id"/>
-            <column name="email" header="email"/>
-            <column name="password" header="password"/>
-            <column name="full_name" header="full_name"/>
-            <column name="kind" header="kind"/>
-            <column name="group_id" header="group_id"/>
-            <column name="avatar_path" header="avatar_path"/>
-            <column name="is_super_admin" header="is_super_admin"/>
-            <column name="last_login" header="last_login"/>
-            <column name="provider" header="provider"/>
-            <column name="provider_id" header="provider_id"/>
-            <column name="attempt_forget_pwd" header="attempt_forget_pwd"/>
-            <column name="attempt_login" header="attempt_login"/>
-            <column name="reset_pwd_code" header="reset_pwd_code"/>
-            <column name="reset_pwd_time" header="reset_pwd_time"/>
-            <column name="created_by" header="created_by"/>
-            <column name="created_date" header="created_date"/>
-            <column name="modified_by" header="modified_by"/>
-            <column name="modified_date" header="modified_date"/>
-            <column name="status" header="status"/>
-        </loadData>
+        <addColumn tableName="db_social_networking_post">
+            <column name="moderated_date" type="datetime" afterColumn="account_id"/>
+        </addColumn>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1697530097194-5">
-        <loadData tableName="oauth_client_details" file="./liquibase/data/data_oauth_client_details.csv">
-            <column name="client_id" header="client_id"/>
-            <column name="resource_ids" header="resource_ids"/>
-            <column name="client_secret" header="client_secret"/>
-            <column name="scope" header="scope"/>
-            <column name="authorized_grant_types" header="authorized_grant_types"/>
-            <column name="web_server_redirect_uri" header="web_server_redirect_uri"/>
-            <column name="authorities" header="authorities"/>
-            <column name="access_token_validity" header="access_token_validity"/>
-            <column name="refresh_token_validity" header="refresh_token_validity"/>
-            <column name="additional_information" header="additional_information"/>
-            <column name="autoapprove" header="autoapprove"/>
-        </loadData>
+        <addColumn tableName="db_social_networking_post">
+            <column name="title" type="varchar(255)" afterColumn="id"/>
+        </addColumn>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1697530097194-6">
-        <loadData tableName="db_wfa_0_to_5_years" file="./liquibase/data/wfa_0_to_5_years_zscores.csv">
-            <column name="id" header="id"/>
-            <column name="months" header="months"/>
-            <column name="gender" header="gender"/>
-            <column name="m" header="m"/>
-            <column name="l" header="l"/>
-            <column name="s" header="s"/>
-            <column name="sd3neg" header="sd3neg"/>
-            <column name="sd2neg" header="sd2neg"/>
-            <column name="sd1neg" header="sd1neg"/>
-            <column name="sd0" header="sd0"/>
-            <column name="sd1" header="sd1"/>
-            <column name="sd2" header="sd2"/>
-            <column name="sd3" header="sd3"/>
-        </loadData>
+        <createTable tableName="db_social_networking_announcement">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_announcementPK"/>
+            </column>
+            <column name="notification_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1697530097194-7">
-        <loadData tableName="db_lfa_0_to_5_years" file="./liquibase/data/lhfa_0_to_5_years_zscores.csv">
-            <column name="id" header="id"/>
-            <column name="months" header="months"/>
-            <column name="gender" header="gender"/>
-            <column name="m" header="m"/>
-            <column name="l" header="l"/>
-            <column name="s" header="s"/>
-            <column name="sd" header="sd"/>
-            <column name="sd3neg" header="sd3neg"/>
-            <column name="sd2neg" header="sd2neg"/>
-            <column name="sd1neg" header="sd1neg"/>
-            <column name="sd0" header="sd0"/>
-            <column name="sd1" header="sd1"/>
-            <column name="sd2" header="sd2"/>
-            <column name="sd3" header="sd3"/>
-        </loadData>
+        <createTable tableName="db_social_networking_conversation">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_conversationPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="kind" type="INT"/>
+            <column name="image" type="LONGTEXT"/>
+            <column name="last_message" type="LONGTEXT"/>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-8">
+        <createTable tableName="db_social_networking_conversation_account">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="db_social_networking_conversation_accountPK"/>
+            </column>
+            <column name="conversation_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-9">
+        <createTable tableName="db_social_networking_message">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_messagePK"/>
+            </column>
+            <column name="conversation_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sender_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="LONGTEXT"/>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-10">
+        <addForeignKeyConstraint baseColumnNames="notification_id" baseTableName="db_social_networking_announcement"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_ANNOUNCEMENT_NOTIFICATION_ID"
+                                 deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_notification" validate="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-11">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_conversation_account"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_CONVERSATION_ACCOUNT_ACCOUNT_ID"
+                                 deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-12">
+        <addForeignKeyConstraint baseColumnNames="conversation_id"
+                                 baseTableName="db_social_networking_conversation_account"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_CONVERSATION_ACCOUNT_CONVERSATION_ID"
+                                 deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_conversation" validate="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-13">
+        <addForeignKeyConstraint baseColumnNames="conversation_id" baseTableName="db_social_networking_message"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_MESSAGE_CONVERSATION_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_conversation" validate="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-14">
+        <addForeignKeyConstraint baseColumnNames="sender_id" baseTableName="db_social_networking_message"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_MESSAGE_SENDER_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-15">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_announcement"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_ANNOUNCEMENT_ACCOUNT_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1697530097194-16">
+        <addColumn tableName="db_social_networking_notification">
+            <column name="object_id" type="bigint" afterColumn="kind"/>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
