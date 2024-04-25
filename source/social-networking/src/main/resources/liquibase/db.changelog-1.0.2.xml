@@ -4,16 +4,17 @@
                    xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="TOAN (generated)" id="1696350615645-1">
-        <createTable tableName="db_social_networking_category">
-            <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_categoryPK"/>
+        <createTable tableName="db_social_networking_expert_profile">
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_expert_profilePK"/>
             </column>
-            <column name="name" type="VARCHAR(255)"/>
-            <column name="kind" type="INT"/>
-            <column name="description" type="VARCHAR(255)"/>
-            <column name="image" type="VARCHAR(255)"/>
-            <column name="ordering" type="INT"/>
-            <column name="parent_id" type="BIGINT"/>
+            <column name="hospital_id" type="BIGINT"/>
+            <column name="hospital_role_id" type="BIGINT"/>
+            <column name="department_id" type="BIGINT"/>
+            <column name="academic_degree_id" type="BIGINT"/>
+            <column name="dob" type="datetime"/>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="bio" type="LONGTEXT"/>
             <column name="created_by" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -29,57 +30,104 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1696350615645-2">
-        <addColumn tableName="db_social_networking_expert_profile">
-            <column name="department_id" type="bigint" afterColumn="account_id"/>
-        </addColumn>
+        <createTable tableName="db_social_networking_comment_reaction">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="db_social_networking_comment_reactionPK"/>
+            </column>
+            <column name="kind" type="INT"/>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1696350615645-3">
-        <addColumn tableName="db_social_networking_expert_profile">
-            <column name="hospital_id" type="bigint" afterColumn="department_id"/>
-        </addColumn>
+        <createTable tableName="db_social_networking_post_reaction">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_post_reactionPK"/>
+            </column>
+            <column name="kind" type="INT"/>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1696350615645-4">
-        <addColumn tableName="db_social_networking_expert_profile">
-            <column name="hospital_role_id" type="bigint" afterColumn="hospital_id"/>
-        </addColumn>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1696350615645-5">
-        <addColumn tableName="db_social_networking_expert_profile">
-            <column name="academic_degree_id" type="bigint" afterColumn="hospital_role_id"/>
-        </addColumn>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1696350615645-6">
-        <addForeignKeyConstraint baseColumnNames="department_id" baseTableName="db_social_networking_expert_profile"
-                                 constraintName="FK_DB_SOCIAL_NETWORKING_EXPERT_PROFILE_DEPARTMENT_ID"
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_comment_reaction"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMENT_REACTION_ACCOUNT_ID_COL"
                                  deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1696350615645-5">
+        <addForeignKeyConstraint baseColumnNames="comment_id" baseTableName="db_social_networking_comment_reaction"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMENT_REACTION_COMMENT_ID_COL"
+                                 deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_comment" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1696350615645-6">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_post_reaction"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_REACTION_ACCOUNT_ID_COL"
+                                 deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1696350615645-7">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_post_reaction"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_REACTION_POST_ID_COL" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_post" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1696350615645-8">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_expert_profile"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_EXPERT_PROFILE_ACCOUNT_ID_COL"
+                                 deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_account" validate="true"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1696350615645-9">
+        <addForeignKeyConstraint baseColumnNames="hospital_id" baseTableName="db_social_networking_expert_profile"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_EXPERT_PROFILE_HOSPITAL_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_category" validate="true"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1696350615645-7">
+
+    <changeSet author="TOAN (generated)" id="1696350615645-10">
         <addForeignKeyConstraint baseColumnNames="hospital_role_id" baseTableName="db_social_networking_expert_profile"
                                  constraintName="FK_DB_SOCIAL_NETWORKING_EXPERT_PROFILE_HOSPITAL_ROLE_ID"
                                  deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_category" validate="true"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1696350615645-8">
-        <addForeignKeyConstraint baseColumnNames="hospital_id" baseTableName="db_social_networking_expert_profile"
-                                 constraintName="FK_DB_SOCIAL_NETWORKING_EXPERT_PROFILE_HOSPITAL_ID" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_category" validate="true"/>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1696350615645-9">
-        <addForeignKeyConstraint baseColumnNames="academic_degree_id"
-                                 baseTableName="db_social_networking_expert_profile"
-                                 constraintName="FK_DB_SOCIAL_NETWORKING_EXPERT_PROFILE_ACADEMIC_DEGREE_ID"
+
+    <changeSet author="TOAN (generated)" id="1696350615645-11">
+        <addForeignKeyConstraint baseColumnNames="department_id" baseTableName="db_social_networking_expert_profile"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_EXPERT_PROFILE_DEPARTMENT_ID"
                                  deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_category" validate="true"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1696350615645-10">
-        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="db_social_networking_category"
-                                 constraintName="FK_DB_SOCIAL_NETWORKING_CATEGORY_PARENT_ID" deferrable="false"
+
+    <changeSet author="TOAN (generated)" id="1696350615645-12">
+        <addForeignKeyConstraint baseColumnNames="academic_degree_id"
+                                 baseTableName="db_social_networking_expert_profile"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_EXPERT_PROFILE_ACADEMIC_DEGREE_ID"
+                                 deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_category" validate="true"/>
     </changeSet>
