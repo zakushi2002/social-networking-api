@@ -29,5 +29,6 @@ public class Course {
     private Date endDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
-    private Category topic_id;
+    private Category topic;
+    private Integer fee = 0;
 }
