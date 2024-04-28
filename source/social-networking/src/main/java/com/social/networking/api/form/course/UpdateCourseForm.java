@@ -1,5 +1,6 @@
 package com.social.networking.api.form.course;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Future;
@@ -14,9 +15,10 @@ public class UpdateCourseForm {
     private String description;
     private Integer slots;
     @Future(message = "Start date must be in the future")
+    @ApiModelProperty(example = "dd/MM/yyyy HH:mm:ss")
     private Date startDate;
     @Future(message = "End date must be in the future")
+    @ApiModelProperty(example = "dd/MM/yyyy HH:mm:ss")
     private Date endDate;
-    private Long topicId;
     private Integer fee;
 }

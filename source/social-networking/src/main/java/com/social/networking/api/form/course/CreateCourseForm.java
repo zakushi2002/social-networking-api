@@ -28,4 +28,5 @@ public class CreateCourseForm {
     private Date endDate;
     private Long topicId;
     private Integer fee;
+    private Integer status;
 }

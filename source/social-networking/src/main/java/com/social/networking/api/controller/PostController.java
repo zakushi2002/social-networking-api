@@ -1,6 +1,7 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.form.notification.NotificationService;
 import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.BookmarkCriteria;
 import com.social.networking.api.model.criteria.PostCriteria;
@@ -64,6 +65,8 @@ public class PostController extends BaseController {
     PostTopicRepository postTopicRepository;
     @Autowired
     CommunityMemberRepository communityMemberRepository;
+    @Autowired
+    NotificationService notificationService;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -380,6 +383,8 @@ public class PostController extends BaseController {
             return apiMessageDto;
         }
         postRepository.deleteById(handlePostForm.getId());
+        apiMessageDto.setMessage("Reject post successfully.");
+        apiMessageDto.setData(handlePostForm.getId());
         return apiMessageDto;
     }
 }

@@ -19,6 +19,7 @@ public interface CourseMapper {
     @Mapping(source = "startDate", target = "startDate")
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "fee", target = "fee")
+    @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
     Course fromCreateCourseFormToEntity(CreateCourseForm createCourseForm);
 
@@ -40,10 +41,15 @@ public interface CourseMapper {
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "topic", target = "topic", qualifiedByName = "fromEntityToShortDto")
     @Mapping(source = "fee", target = "fee")
+    @Mapping(source = "createdDate", target = "createdDate")
+    @Mapping(source = "modifiedDate", target = "modifiedDate")
+    @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
+    @Named("fromEntityToCourseDto")
     CourseDto fromEntityToCourseDto(Course course);
 
     @IterableMapping(elementTargetType = CourseDto.class, qualifiedByName = "fromEntityToCourseDto")
+    @Named("fromEntityListToCourseDtoList")
     List<CourseDto> fromEntityListToCourseDtoList(List<Course> courses);
 
     @Mapping(source = "id", target = "id")
@@ -54,6 +60,7 @@ public interface CourseMapper {
     @Mapping(source = "slots", target = "slots")
     @Mapping(source = "topic", target = "topic", qualifiedByName = "fromEntityToShortDto")
     @Mapping(source = "fee", target = "fee")
+    @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToShortDto")
     CourseDto fromEntityToShortDto(Course course);

@@ -1,5 +1,6 @@
 package com.social.networking.api.model;
 
+import com.social.networking.api.model.audit.Auditable;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -13,7 +14,7 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class Course {
+public class Course extends Auditable<String> {
     @Id
     @GenericGenerator(name = "idGenerator", strategy = "com.social.networking.api.service.id.IdGenerator")
     @GeneratedValue(generator = "idGenerator")
