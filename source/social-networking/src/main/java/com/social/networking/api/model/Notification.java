@@ -20,6 +20,11 @@ public class Notification extends Auditable<String> {
     @GenericGenerator(name = "idGenerator", strategy = "com.social.networking.api.service.id.IdGenerator")
     @GeneratedValue(generator = "idGenerator")
     private Long id;
+    @Column(name = "id_user")
+    private Long idUser;
+    @Column(name = "ref_id")
+    private String refId;
+    private Integer state;
     private Integer kind;
     @Column(columnDefinition = "LONGTEXT")
     private String content;

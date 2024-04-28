@@ -9,6 +9,12 @@ import java.util.List;
 
 @Data
 public class NotificationDto extends InfoAdminDto {
+    @ApiModelProperty(name = "idUser")
+    private Long idUser;
+    @ApiModelProperty(name = "state")
+    private Integer state;
+    @ApiModelProperty(name = "refId")
+    private String refId;
     @ApiModelProperty(name = "content")
     private String content;
     @ApiModelProperty(name = "kind")
