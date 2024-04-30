@@ -190,6 +190,13 @@ public class CourseController extends BaseController {
         return apiMessageDto;
     }
 
+    /**
+     * Creates a JSON message for the given course and notification.
+     *
+     * @param course       the course for which to create the message
+     * @param notification the notification for which to create the message
+     * @return the JSON message
+     */
     private String getJsonMessage(Course course, Notification notification) {
         CourseNotificationMessage courseNotificationMessage = new CourseNotificationMessage();
         courseNotificationMessage.setNotificationId(notification.getId());
@@ -202,6 +209,15 @@ public class CourseController extends BaseController {
         return notificationService.convertObjectToJson(courseNotificationMessage);
     }
 
+    /**
+     * Creates a notification for the given course and notification kind.
+     *
+     * @param course            the course for which to create the notification
+     * @param notificationState the state of the notification
+     * @param notificationKind  the kind of notification to create
+     * @param accountId         the ID of the account for which to create the notification
+     * @return the created notification
+     */
     private Notification createNotification(Course course, Integer notificationState, Integer notificationKind, Long accountId) {
         Notification notification = notificationService.createNotification(notificationState, notificationKind);
         String jsonMessage = getJsonMessage(course, notification);
@@ -214,14 +230,25 @@ public class CourseController extends BaseController {
         return notification;
     }
 
+
+    /**
+     * Creates a notification and sends a message for the given course and notification kind.
+     *
+     * @param notificationState the state of the notification
+     * @param course            the course for which to create the notification
+     * @param notificationKind  the kind of notification to create
+     */
     private void createNotificationAndSendMessage(Integer notificationState, Course course, Integer notificationKind) {
         List<Notification> notifications = new ArrayList<>();
         if (isExpert()) {
             if (course.getExpert() != null) {
+                // Creates a notification for the given course and notification kind
                 Notification notification = createNotification(course, notificationState, notificationKind, course.getExpert().getAccount().getId());
                 notifications.add(notification);
             }
+            // Saves the notifications to the database
             notificationRepository.saveAll(notifications);
+            // Sends a message for each notification
             for (Notification notification : notifications) {
                 notificationService.sendMessage(notification.getContent(), notificationKind, notification.getIdUser());
             }
