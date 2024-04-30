@@ -20,9 +20,12 @@ public class CourseCriteria implements Serializable {
     private Long fromDate;
     private Long toDate;
     private Long topicId;
+    private Integer status;
+
     public Specification<Course> getSpecification() {
         return new Specification<Course>() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public Predicate toPredicate(Root<Course> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<>();
@@ -45,6 +48,9 @@ public class CourseCriteria implements Serializable {
                 }
                 if (getToDate() != null) {
                     predicates.add(cb.lessThanOrEqualTo(root.get("startDate"), new Date(getToDate())));
+                }
+                if (getStatus() != null) {
+                    predicates.add(cb.equal(root.get("status"), getStatus()));
                 }
                 query.orderBy(cb.desc(root.get("startDate")));
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));

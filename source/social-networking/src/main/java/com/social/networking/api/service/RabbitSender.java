@@ -25,17 +25,17 @@ public class RabbitSender {
     /**
      * Sends a message to a RabbitMQ queue.
      *
-     * @param message the message to send
+     * @param message   the message to send
      * @param queueName the name of the queue to send the message to
      */
     public void send(String message, String queueName) {
         createQueueIfNotExist(queueName);
         if (message == null || StringUtils.isBlank(message)) {
-            log.info("-------> Can not send an empty or null message.");
+            log.info("[WARN] Message is null or empty, not sending to queue: " + queueName);
             return;
         }
         template.convertAndSend(queueName, message);
-        log.info(" [x] Sent '" + message + "', queueName: " + queueName);
+        log.info("[INFO] Sent message: " + message + " to queue: " + queueName);
     }
 
     /**
@@ -46,8 +46,7 @@ public class RabbitSender {
      */
     public boolean isQueueExist(String queueName) {
         Properties properties = rabbitAdmin.getQueueProperties(queueName);
-
-        return properties!= null;
+        return properties != null;
     }
 
     /**
@@ -57,7 +56,7 @@ public class RabbitSender {
      */
     public void createQueueIfNotExist(String queueName) {
         if (!isQueueExist(queueName)) {
-            log.info("-------> Create queue name: " + queueName);
+            log.info("[INFO] Creating queue: " + queueName);
             rabbitAdmin.declareQueue(new Queue(queueName));
         }
     }
@@ -69,7 +68,7 @@ public class RabbitSender {
      */
     public void removeQueue(String queueName) {
         if (isQueueExist(queueName)) {
-            log.info("-------> Delete queue name: " + queueName);
+            log.info("[INFO] Deleting queue: " + queueName);
             rabbitAdmin.deleteQueue(queueName);
         }
     }

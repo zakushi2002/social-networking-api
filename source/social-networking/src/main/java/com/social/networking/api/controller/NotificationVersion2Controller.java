@@ -35,33 +35,31 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 @Validated
-
 public class NotificationVersion2Controller extends BaseController {
     @Autowired
     NotificationRepository notificationRepository;
     @Autowired
     NotificationMapper notificationMapper;
     @Autowired
-    AccountRepository studentRepository;
+    AccountRepository accountRepository;
 
     @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiMessageDto<String> delete(@PathVariable("id") Long id) {
+    public ApiMessageDto<String> deleteNotification(@PathVariable("id") Long id) {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Notification notification = notificationRepository.findById(id).orElse(null);
         if (notification == null) {
             apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Notification not found");
+            apiMessageDto.setMessage("Notification not found!");
             apiMessageDto.setCode(ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
             return apiMessageDto;
         }
         notificationRepository.delete(notification);
-        apiMessageDto.setMessage("delete notification success");
+        apiMessageDto.setMessage("Delete notification success.");
         return apiMessageDto;
     }
 
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiMessageDto<ResponseListDto<List<NotificationDto>>> list(NotificationCriteria notificationCriteria, Pageable pageable) {
-
+    public ApiMessageDto<ResponseListDto<List<NotificationDto>>> listNotification(NotificationCriteria notificationCriteria, Pageable pageable) {
         ApiMessageDto<ResponseListDto<List<NotificationDto>>> apiMessageDto = new ApiMessageDto<>();
         ResponseListDto<List<NotificationDto>> responseListDto = new ResponseListDto<>();
         Page<Notification> listNotification = notificationRepository.findAll(notificationCriteria.getSpecification(null), pageable);
@@ -70,27 +68,23 @@ public class NotificationVersion2Controller extends BaseController {
         responseListDto.setTotalElements(listNotification.getTotalElements());
 
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("get list sucess");
+        apiMessageDto.setMessage("List notification success.");
         return apiMessageDto;
-
-
     }
 
     @GetMapping(value = "/auto-complete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiMessageDto<ResponseListDto<List<NotificationDto>>> ListAutoComplete(NotificationCriteria notificationCriteria) {
-
+    public ApiMessageDto<ResponseListDto<List<NotificationDto>>> listAutoComplete(NotificationCriteria notificationCriteria) {
         ApiMessageDto<ResponseListDto<List<NotificationDto>>> apiMessageDto = new ApiMessageDto<>();
         ResponseListDto<List<NotificationDto>> responseListDto = new ResponseListDto<>();
         notificationCriteria.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
         Pageable pageable = PageRequest.of(0, 10);
         Page<Notification> listNotification = notificationRepository.findAll(notificationCriteria.getSpecification(null), pageable);
-
         responseListDto.setContent(notificationMapper.fromEntityToNotiListDtoAuto(listNotification.getContent()));
         responseListDto.setTotalPages(listNotification.getTotalPages());
         responseListDto.setTotalElements(listNotification.getTotalElements());
 
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("get list sucess");
+        apiMessageDto.setMessage("Auto complete notification success.");
         return apiMessageDto;
 
     }
@@ -102,102 +96,95 @@ public class NotificationVersion2Controller extends BaseController {
         Notification notification = notificationRepository.findById(id).orElse(null);
         if (notification == null) {
             apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Notification not found");
+            apiMessageDto.setMessage("Notification not found!");
             apiMessageDto.setCode(ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
             return apiMessageDto;
         }
         apiMessageDto.setData(notificationMapper.fromEntityToNotificatonDto(notification));
-        apiMessageDto.setMessage("get notification success");
+        apiMessageDto.setMessage("Get notification success.");
         return apiMessageDto;
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('NT_U')")
-    public ApiMessageDto<String> update(@Valid @RequestBody UpdateNotificationForm updateNotificationForm, BindingResult bindingResult) {
-
+    public ApiMessageDto<String> updateNotification(@Valid @RequestBody UpdateNotificationForm updateNotificationForm, BindingResult bindingResult) {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Notification notification = notificationRepository.findById(updateNotificationForm.getId()).orElse(null);
         if (notification == null) {
             apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Notification not found");
+            apiMessageDto.setMessage("Notification not found!");
             apiMessageDto.setCode(ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
             return apiMessageDto;
         }
-        Account account = studentRepository.findById(updateNotificationForm.getIdUser()).orElse(null);
+        Account account = accountRepository.findById(updateNotificationForm.getIdUser()).orElse(null);
         if (account == null) {
             apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Account not found");
+            apiMessageDto.setMessage("Account not found!");
             apiMessageDto.setCode(ErrorCode.NOTIFICATION_ACCOUNT_ERROR_NOT_FOUND);
             return apiMessageDto;
         }
         notificationMapper.fromUpdateNotiToEntity(updateNotificationForm, notification);
         notificationRepository.save(notification);
-        apiMessageDto.setMessage("update notification success");
+        apiMessageDto.setMessage("Update notification success.");
         return apiMessageDto;
     }
 
     @PutMapping(value = "/change-state", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('NT_CS')")
-    public ApiMessageDto<String> changeState(@Valid @RequestBody ChangeStateNotification changeStateNotification, BindingResult bindingResult) {
+    public ApiMessageDto<String> changeStateNotification(@Valid @RequestBody ChangeStateNotification changeStateNotification, BindingResult bindingResult) {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Notification notification = notificationRepository.findById(changeStateNotification.getId()).orElse(null);
-        if (notification==null)
-        {
+        if (notification == null) {
             apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("notification not found");
+            apiMessageDto.setMessage("Notification not found!");
             apiMessageDto.setCode(ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
             return apiMessageDto;
         }
-        if (notification.getState().equals(SocialNetworkingConstant.NOTIFICATION_STATE_SENT))
-        {
+        if (notification.getState().equals(SocialNetworkingConstant.NOTIFICATION_STATE_SENT)) {
             notification.setState(SocialNetworkingConstant.NOTIFICATION_STATE_READ);
         }
-
         notificationRepository.save(notification);
-        apiMessageDto.setMessage("change to state read success");
+        apiMessageDto.setMessage("Change state notification success.");
         return apiMessageDto;
     }
 
     @GetMapping(value = "/my-notification", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiMessageDto<MynotificationDto> getMyNotification(@PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable , @RequestParam(value = "state", required = false) Integer state) {
-
+    public ApiMessageDto<MynotificationDto> getMyNotification(@PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam(value = "state", required = false) Integer state) {
         ApiMessageDto<MynotificationDto> apiMessageDto = new ApiMessageDto<>();
         Long userId = getCurrentUser();
         MynotificationDto mynotificationDto = new MynotificationDto();
-        Page<Notification> notificationPage ;
-        if (state!=null)
-        {
-            notificationPage = notificationRepository.findAllByIdUserAndState(userId,state,pageable);
-        }else {
-            notificationPage = notificationRepository.findAllByIdUser(userId,pageable);
-
+        Page<Notification> notificationPage;
+        if (state != null) {
+            notificationPage = notificationRepository.findAllByIdUserAndState(userId, state, pageable);
+        } else {
+            notificationPage = notificationRepository.findAllByIdUser(userId, pageable);
         }
         mynotificationDto.setContent(notificationMapper.fromEntityToNotiListDto(notificationPage.getContent()));
         mynotificationDto.setTotalPages(notificationPage.getTotalPages());
         mynotificationDto.setTotalElements(notificationPage.getTotalElements());
         mynotificationDto.setTotalUnread(notificationRepository.countByIdUserAndState(userId, SocialNetworkingConstant.NOTIFICATION_STATE_SENT));
         apiMessageDto.setData(mynotificationDto);
-        apiMessageDto.setMessage("get my notification success");
+        apiMessageDto.setMessage("Get my notification success.");
         return apiMessageDto;
     }
 
     @PutMapping(value = "/read-all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiMessageDto<String> readAll() {
-
         Long userId = getCurrentUser();
-        List<Notification> notifications = notificationRepository.findAllByIdUserAndState(userId,SocialNetworkingConstant.NOTIFICATION_STATE_SENT);
-        notifications.forEach(noti -> noti.setState(SocialNetworkingConstant.NOTIFICATION_STATE_READ));
+        List<Notification> notifications = notificationRepository.findAllByIdUserAndState(userId, SocialNetworkingConstant.NOTIFICATION_STATE_SENT);
+        notifications.forEach(notification -> notification.setState(SocialNetworkingConstant.NOTIFICATION_STATE_READ));
         notificationRepository.saveAll(notifications);
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
-        apiMessageDto.setMessage("Has moved to the fully read state");
+        apiMessageDto.setMessage("Has moved to the fully read state.");
         return apiMessageDto;
     }
+
     @DeleteMapping(value = "/delete-all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiMessageDto<String> deleteAll() {
+    public ApiMessageDto<String> deleteAllNotification() {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Long userId = getCurrentUser();
         notificationRepository.deleteAllByIdUser(userId);
-        apiMessageDto.setMessage("Delete all success");
+        apiMessageDto.setMessage("Delete all notification success.");
         return apiMessageDto;
     }
 }
