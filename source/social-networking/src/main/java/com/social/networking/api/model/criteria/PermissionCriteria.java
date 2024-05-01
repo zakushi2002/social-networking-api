@@ -33,16 +33,16 @@ public class PermissionCriteria implements Serializable {
                     predicates.add(cb.equal(root.get("id"), getId()));
                 }
                 if (getName() != null) {
-                    predicates.add(cb.like(cb.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
+                    predicates.add(cb.like(cb.upper(root.get("name")), "%" + getName().toUpperCase() + "%"));
                 }
                 if (getPermissionCode() != null) {
-                    predicates.add(cb.like(cb.lower(root.get("permissionCode")), "%" + getPermissionCode().toUpperCase() + "%"));
+                    predicates.add(cb.like(cb.upper(root.get("permissionCode")), "%" + getPermissionCode().toUpperCase() + "%"));
                 }
                 if (getNameGroup() != null) {
-                    predicates.add(cb.like(cb.lower(root.get("nameGroup")), "%" + getNameGroup().toUpperCase() + "%"));
+                    predicates.add(cb.like(cb.upper(root.get("nameGroup")), "%" + getNameGroup().toUpperCase() + "%"));
                 }
                 if (getAction() != null) {
-                    predicates.add(cb.like(cb.lower(root.get("action")), "%" + getAction().toUpperCase() + "%"));
+                    predicates.add(cb.like(cb.upper(root.get("action")), "%" + getAction().toUpperCase() + "%"));
                 }
                 if (getShowMenu() != null) {
                     predicates.add(cb.equal(root.get("showMenu"), getShowMenu()));

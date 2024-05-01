@@ -1,0 +1,3 @@
+CREATE USER 'toan'@'%' IDENTIFIED BY '2002';
+GRANT ALL PRIVILEGES ON family_circle.* TO 'toan'@'%';
+FLUSH PRIVILEGES;

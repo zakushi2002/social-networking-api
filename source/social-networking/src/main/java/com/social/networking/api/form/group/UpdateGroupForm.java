@@ -16,7 +16,7 @@ public class UpdateGroupForm {
     private String name;
     @ApiModelProperty(name = "description")
     private String description;
-    @ApiModelProperty(name = "permissions", required = true)
+    /*@ApiModelProperty(name = "permissions", required = true)
     @NotNull(message = "permissions cannot be null!")
-    private Long[] permissions;
+    private Long[] permissions;*/
 }

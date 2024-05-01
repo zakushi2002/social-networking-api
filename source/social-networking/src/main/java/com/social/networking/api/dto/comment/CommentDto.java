@@ -25,4 +25,6 @@ public class CommentDto extends InfoAdminDto {
     private List<CommentReactionDto> commentReactions;
     @ApiModelProperty(name = "ownerIdOfPost")
     private Long ownerIdOfPost;
+    @ApiModelProperty(name = "taggedAccountIds")
+    private List<Long> taggedAccountIds;
 }

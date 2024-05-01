@@ -1,6 +1,8 @@
 package com.social.networking.api;
 
 import com.social.networking.api.model.audit.AuditorAwareImpl;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -44,5 +46,13 @@ public class SocialNetworkingApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SocialNetworkingApplication.class, args);
+    }
+
+    /**
+     * RabbitMQ configuration
+     */
+    @Bean
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
     }
 }

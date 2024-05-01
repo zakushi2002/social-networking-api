@@ -12,7 +12,7 @@ public class CreateConversationForm {
     private String name;
     @ApiModelProperty(name = "image")
     private String image;
-    @ApiModelProperty(name = "kind", required = true)
+    @ApiModelProperty(name = "kind", required = true, notes = "1: PRIVATE, 2: GROUP")
     @ConversationKind
     private Integer kind;
     @ApiModelProperty(name = "lastMessage")

@@ -70,4 +70,22 @@ public interface ExpertProfileMapper {
     @Mapping(source = "bio", target = "bio")
     @BeanMapping(ignoreByDefault = true)
     void mappingUpdateExpertAccountFormToEntity(UpdateExpertAccountForm updateExpertAccountForm, @MappingTarget ExpertProfile expertProfile);
+
+    @Mapping(source = "account.id", target = "id")
+    @Mapping(source = "account.kind", target = "expertKind")
+    @Mapping(source = "account.email", target = "expertEmail")
+    @Mapping(source = "account.fullName", target = "expertFullName")
+    @Mapping(source = "account.avatarPath", target = "expertAvatar")
+    @Mapping(source = "phone", target = "phone")
+    @BeanMapping(ignoreByDefault = true)
+    @Named("fromEntityToShortProfileDto")
+    ExpertProfileDto fromEntityToShortProfileDto(ExpertProfile expertProfile);
+
+
+    @Mapping(source = "account.id", target = "id")
+    @Mapping(source = "account.fullName", target = "expertFullName")
+    @Mapping(source = "account.avatarPath", target = "expertAvatar")
+    @BeanMapping(ignoreByDefault = true)
+    @Named("fromEntityToAutoCompleteDto")
+    ExpertProfileDto fromEntityToAutoCompleteDto(ExpertProfile expertProfile);
 }

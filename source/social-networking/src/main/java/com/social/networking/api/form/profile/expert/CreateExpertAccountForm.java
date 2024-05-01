@@ -29,16 +29,16 @@ public class CreateExpertAccountForm {
     @NotEmpty(message = "phone cannot be empty!")
     @Size(min = 10, max = 11, message = "phone must be at least 10 characters and at most 11 characters")
     private String phone;
-    @ApiModelProperty(name = "hospitalId", required = true)
+    @ApiModelProperty(name = "hospitalId", required = true, notes = "Category kind: 1")
     @NotNull(message = "hospitalId cannot be null!")
     private Long hospitalId;
-    @ApiModelProperty(name = "hospitalRoleId", required = true)
+    @ApiModelProperty(name = "hospitalRoleId", required = true, notes = "Category kind: 2")
     @NotNull(message = "hospitalRoleId cannot be null!")
     private Long hospitalRoleId;
-    @ApiModelProperty(name = "academicDegreeId", required = true)
+    @ApiModelProperty(name = "academicDegreeId", required = true, notes = "Category kind: 4")
     @NotNull(message = "academicDegreeId cannot be null!")
     private Long academicDegreeId;
-    @ApiModelProperty(name = "departmentId", required = true)
+    @ApiModelProperty(name = "departmentId", required = true, notes = "Category kind: 3")
     @NotNull(message = "departmentId cannot be null!")
     private Long departmentId;
     @ApiModelProperty(name = "bio")

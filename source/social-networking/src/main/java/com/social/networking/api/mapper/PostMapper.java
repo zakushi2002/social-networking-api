@@ -11,11 +11,10 @@ import java.util.List;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {AccountMapper.class, ReactionMapper.class, CommentMapper.class, CategoryMapper.class})
+        uses = {AccountMapper.class, ReactionMapper.class, CommentMapper.class, CategoryMapper.class, PostTopicMapper.class})
 public interface PostMapper {
     @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
-    @Mapping(source = "kind", target = "kind")
     @Mapping(source = "privacy", target = "privacy")
     @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
@@ -31,9 +30,8 @@ public interface PostMapper {
     @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
-    @Mapping(source = "kind", target = "kind")
-    @Mapping(source = "community", target = "community", qualifiedByName = "fromEntityToShortDto")
-    @Mapping(source = "topics", target = "topics", qualifiedByName = "fromEntityListToShortDtoList")
+    @Mapping(source = "community", target = "community", qualifiedByName = "adminAutoCompleteMapping")
+    @Mapping(source = "topics", target = "topics", qualifiedByName = "fromEntityToPostTopicDtoList")
     @Mapping(source = "privacy", target = "privacy")
     @Mapping(source = "postReactions", target = "postReactions", qualifiedByName = "fromEntitiesToPostReactionDtoShortList")
     @Mapping(source = "commentList", target = "commentList", qualifiedByName = "fromEntityToCountListComment")
@@ -53,7 +51,6 @@ public interface PostMapper {
     @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
-    @Mapping(source = "kind", target = "kind")
     @Mapping(source = "privacy", target = "privacy")
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "modifiedDate", target = "modifiedDate")
@@ -67,7 +64,6 @@ public interface PostMapper {
     List<PostDto> fromEntityToPostDtoListForAdmin(List<Post> posts);
 
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "kind", target = "kind")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToAutoCompleteDto")
     PostDto fromEntityToAutoCompleteDto(Post post);
@@ -81,7 +77,6 @@ public interface PostMapper {
     @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
-    @Mapping(source = "kind", target = "kind")
     @Mapping(source = "postReactions", target = "postReactions", qualifiedByName = "fromEntitiesToPostReactionDtoShortList")
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "modifiedDate", target = "modifiedDate")
@@ -94,7 +89,6 @@ public interface PostMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "title", target = "title")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
-    @Mapping(source = "kind", target = "kind")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToPostDtoForBookmarkAdmin")
     PostDto fromEntityToPostDtoForBookmarkAdmin(Post post);

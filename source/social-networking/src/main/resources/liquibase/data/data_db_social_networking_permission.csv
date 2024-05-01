@@ -1,0 +1,65 @@
+id,name,action,name_group,permission_code,description,show_menu,created_by,created_date,modified_by,modified_date,status
+1,Create Permission,/v1/permission/create,Permission,PER_C,Create a new permission,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+2,Delete Permission,/v1/permission/delete,Permission,PER_D,Delete a permission,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+3,List Permission,/v1/permission/list,Permission,PER_L,List permission,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+4,Create Group,/v1/group/create,Group,GR_C,Create a new Group - Role of the SYSTEM,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+5,Update Group,/v1/group/update,Group,GR_U,Update a group,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+6,List Group,/v1/group/list,Group,GR_L,List group,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+7,Get Group,/v1/group/get,Group,GR_V,Get a group,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+8,Create Admin,/v1/account/create-admin,Account,ACC_C_AD,Create a new admin,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+9,Update Admin,/v1/account/update-admin,Account,ACC_U_AD,Update an admin,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+10,Delete Admin,/v1/account/delete-admin,Account,ACC_D_AD,Delete an admin,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+11,Get Account,/v1/account/get,Account,ACC_V,Get an account,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+12,Get Account Profile,/v1/account/get-profile,Account,PROFILE_V,Get an account profile,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+13,List Account,/v1/account/list,Account,ACC_L,List account,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+14,List Account For Client,/v1/account/list-for-client,Account,ACC_L_CLIENT,List account for client(Conversation & Message),1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+15,Get Info User,/v1/user-account/get,Account,USER_V,Get info user,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+16,Delete User,/v1/user-account/delete,Account,USER_D,Delete an user,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+17,List User For Server,/v1/user-account/list,Account,USER_L,List user for server,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+18,Get Info Expert,/v1/expert-account/get,Account,EXP_V,Get info expert,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+19,Delete Expert,/v1/expert-account/delete,Account,EXP_D,Delete an expert,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+20,List Expert For Server,/v1/expert-account/list,Account,EXP_L,List expert for server,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+21,Register Expert,/v1/expert-account/register,Account,EXP_C,Admin registers an account for New Expert,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+22,Create Category,/v1/category/create,Category,CATE_C,Create a new category,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+23,Update Category,/v1/category/update,Category,CATE_U,Update a category,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+24,Delete Category,/v1/category/delete,Category,CATE_D,Delete a category,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+25,Get Category,/v1/category/get,Category,CATE_V,Get a category,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+26,List Category,/v1/category/list,Category,CATE_L,List category,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+27,Create Post,/v1/post/create,Post,POST_C,Create a new post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+28,Update Post,/v1/post/update,Post,POST_U,Update a post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+29,Delete Post,/v1/post/delete,Post,POST_D,Delete a post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+30,Get Post,/v1/post/get,Post,POST_V,Get a post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+31,List Post,/v1/post/list,Post,POST_L,List post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+32,Approve Post,/v1/post/approve,Post,POST_APPROVE,Approve a new post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+33,Reject Post,/v1/post/reject,Post,POST_REJECT,Reject a new post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+34,Bookmark Post,/v1/post/add-bookmark,Post,BOOKMARK_C,Bookmark a post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+35,Unbookmark Post,/v1/post/remove-bookmark,Post,BOOKMARK_D,Unbookmark a post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+36,List Bookmark Post,/v1/post/list-bookmark,Post,BOOKMARK_L,List bookmark post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+37,React/Unreact Post,/v1/post/react,Post,REACT_POST,React/Unreact a post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+38,List Reaction of Post,/v1/post/list-reaction,Post,REACT_POST_L,List reaction of post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+39,Create Comment,/v1/comment/create,Comment,CMT_C,Create a new comment,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+40,Update Comment,/v1/comment/update,Comment,CMT_U,Update a comment,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+41,Delete Comment,/v1/comment/delete,Comment,CMT_D,Delete a comment,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+42,Get Comment,/v1/comment/get,Comment,CMT_V,Get a comment,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+43,List Comment,/v1/comment/list,Comment,CMT_L,List comment,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+44,React/Unreact Comment,/v1/comment/react,Comment,REACT_CMT,React/Unreact a comment,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+45,List Reaction of Comment,/v1/comment/list-reaction,Comment,REACT_CMT_L,List reaction of comment,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+46,List Comment of Post,/v1/comment/list/{postId},Comment,CMT_POST_L,List comment of post,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+47,Create Report,/v1/report/create,Report,REPORT_C,Create a new report,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+48,Approve Report,/v1/report/approve,Report,REPORT_APPROVE,Approve a new report,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+49,Reject Report,/v1/report/reject,Report,REPORT_REJECT,Reject a new report,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+50,List Report,/v1/report/list,Report,REPORT_L,List report,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+51,Follow,/v1/relationship/create,Relationship,FL_C,Follow a user,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+52,Unfollow,/v1/relationship/unfollow,Relationship,FL_D,Unfollow a user,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+53,List Following,/v1/relationship/list-following,Relationship,FL_TO_L,List following,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+54,List Follower,/v1/relationship/list-follower,Relationship,FL_FORM_L,List follower,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+55,Get Relationship,/v1/relationship/get,Relationship,FL_V,Get a relationship,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+56,Create Conversation,/v1/conversation/create,Conversation,CONVERSATION_C,Create a new conversation,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+57,Update Conversation,/v1/conversation/update,Conversation,CONVERSATION_U,Update a conversation,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+58,Delete Conversation,/v1/conversation/delete,Conversation,CONVERSATION_D,Delete a conversation,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+59,Get Conversation,/v1/conversation/get,Conversation,CONVERSATION_V,Get a conversation,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+60,List Conversation,/v1/conversation/list,Conversation,CONVERSATION_L,List conversation,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+61,List Conversation Account,/v1/conversation/list-account,Conversation,CONVERSATION_USER_L,List conversation of account,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1 
+62,Send Message,/v1/message/send,Message,MESSAGE_SEND,Send a new message,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+63,Get Message,/v1/message/get,Message,MESSAGE_V,Get a message,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+64,List Message,/v1/message/list,Message,MESSAGE_L,List message,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1

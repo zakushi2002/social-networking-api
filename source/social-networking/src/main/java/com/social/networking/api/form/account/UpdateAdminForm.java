@@ -21,7 +21,7 @@ public class UpdateAdminForm {
     private String fullName;
     @ApiModelProperty(name = "avatarPath")
     private String avatarPath;
-    @ApiModelProperty(name = "status")
+    @ApiModelProperty(name = "status", notes = "1: active, 0: pending, -1: lock, -2: delete, -3: restrict")
     @Status(allowNull = true)
     private Integer status;
 }

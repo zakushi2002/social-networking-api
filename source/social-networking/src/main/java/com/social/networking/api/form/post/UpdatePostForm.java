@@ -17,7 +17,7 @@ public class UpdatePostForm {
     @ApiModelProperty(name = "content", required = true)
     @NotEmpty(message = "content cannot be null!")
     private String content;
-    @ApiModelProperty(name = "privacy")
+    @ApiModelProperty(name = "privacy", notes = "1: public, 2: private")
     @Privacy(allowNull = true)
     private Integer privacy;
     @ApiModelProperty(name = "topics")

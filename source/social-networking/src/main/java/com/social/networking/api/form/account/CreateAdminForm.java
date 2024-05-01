@@ -25,7 +25,7 @@ public class CreateAdminForm {
     private String fullName;
     @ApiModelProperty(name = "avatarPath")
     private String avatarPath;
-    @ApiModelProperty(name = "groupId", required = true)
+    @ApiModelProperty(name = "groupId", required = true, notes = "Group kind: 1 - Admin")
     @NotNull(message = "groupId cannot be null!")
     private Long groupId;
 }

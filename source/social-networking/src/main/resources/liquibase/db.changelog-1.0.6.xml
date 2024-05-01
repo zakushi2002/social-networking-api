@@ -27,31 +27,12 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1710484995942-2">
-        <addColumn tableName="db_social_networking_post">
-            <column name="community_id" type="bigint" afterColumn="kind"/>
-        </addColumn>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-3">
-        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_community_member"
-                                 constraintName="FK7r2lvmv6q3gubnlqaqa9m4jdk" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-4">
-        <addForeignKeyConstraint baseColumnNames="community_id" baseTableName="db_social_networking_community_member"
-                                 constraintName="FKo1s5i3jbhokbyah1vh5i2ae0k" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_category" validate="true" onDelete="CASCADE"/>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-5">
-        <addForeignKeyConstraint baseColumnNames="community_id" baseTableName="db_social_networking_post"
-                                 constraintName="FKr5vp33eo4uw9971ehqjq79am1" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_category" validate="true" onDelete="SET NULL"/>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-6">
         <createTable tableName="db_social_networking_post_topic">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_post_topicPK"/>
+            </column>
             <column name="post_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -60,94 +41,52 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-7">
-        <addForeignKeyConstraint baseColumnNames="topic_id" baseTableName="db_social_networking_post_topic"
-                                 constraintName="FK63qcd16xyv0ssi07kv5m2of93" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_category" validate="true"/>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-3">
+        <addColumn tableName="db_social_networking_post">
+            <column name="community_id" type="bigint" afterColumn="kind"/>
+        </addColumn>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-8">
-        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_post_topic"
-                                 constraintName="FKbhjnumqewi8h73p5fkk0e549p" deferrable="false"
+
+    <changeSet author="TOAN (generated)" id="1710484995942-4">
+        <dropColumn columnName="kind" tableName="db_social_networking_post"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-5">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_community_member"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMUNITY_MEMBER_ACCOUNT_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_post" validate="true"/>
+                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-6">
+        <addForeignKeyConstraint baseColumnNames="community_id" baseTableName="db_social_networking_community_member"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMUNITY_MEMBER_COMMUNITY_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_category" validate="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-7">
+        <addForeignKeyConstraint baseColumnNames="community_id" baseTableName="db_social_networking_post"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_COMMUNITY_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_category" validate="true"
+                                 onDelete="SET NULL"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-8">
+        <addForeignKeyConstraint baseColumnNames="topic_id" baseTableName="db_social_networking_post_topic"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_TOPIC_TOPIC_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_category" validate="true"
+                                 onDelete="CASCADE"/>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1710484995942-9">
-        <createTable tableName="db_lfa_0_to_5_years">
-            <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="db_lfa_0_to_5_yearsPK"/>
-            </column>
-            <column name="months" type="INT"/>
-            <column name="gender" type="INT"/>
-            <column name="m" type="DOUBLE PRECISION"/>
-            <column name="l" type="DOUBLE PRECISION"/>
-            <column name="s" type="DOUBLE PRECISION"/>
-            <column name="sd" type="DOUBLE PRECISION"/>
-            <column name="sd3neg" type="DOUBLE PRECISION"/>
-            <column name="sd2neg" type="DOUBLE PRECISION"/>
-            <column name="sd1neg" type="DOUBLE PRECISION"/>
-            <column name="sd0" type="DOUBLE PRECISION"/>
-            <column name="sd1" type="DOUBLE PRECISION"/>
-            <column name="sd2" type="DOUBLE PRECISION"/>
-            <column name="sd3" type="DOUBLE PRECISION"/>
-        </createTable>
-    </changeSet>
-
-    <changeSet author="TOAN (generated)" id="1710484995942-10">
-        <createTable tableName="db_wfa_0_to_5_years">
-            <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="db_wfa_0_to_5_yearsPK"/>
-            </column>
-            <column name="months" type="INT"/>
-            <column name="gender" type="INT"/>
-            <column name="m" type="DOUBLE PRECISION"/>
-            <column name="l" type="DOUBLE PRECISION"/>
-            <column name="s" type="DOUBLE PRECISION"/>
-            <column name="sd3neg" type="DOUBLE PRECISION"/>
-            <column name="sd2neg" type="DOUBLE PRECISION"/>
-            <column name="sd1neg" type="DOUBLE PRECISION"/>
-            <column name="sd0" type="DOUBLE PRECISION"/>
-            <column name="sd1" type="DOUBLE PRECISION"/>
-            <column name="sd2" type="DOUBLE PRECISION"/>
-            <column name="sd3" type="DOUBLE PRECISION"/>
-
-        </createTable>
-    </changeSet>
-    <changeSet author="TOAN (generated)" id="1710484995942-11">
-        <loadData tableName="db_wfa_0_to_5_years" file="./liquibase/data/wfa_0_to_5_years_zscores.csv">
-            <column name="id" header="id"/>
-            <column name="months" header="months"/>
-            <column name="gender" header="gender"/>
-            <column name="m" header="m"/>
-            <column name="l" header="l"/>
-            <column name="s" header="s"/>
-            <column name="sd3neg" header="sd3neg"/>
-            <column name="sd2neg" header="sd2neg"/>
-            <column name="sd1neg" header="sd1neg"/>
-            <column name="sd0" header="sd0"/>
-            <column name="sd1" header="sd1"/>
-            <column name="sd2" header="sd2"/>
-            <column name="sd3" header="sd3"/>
-        </loadData>
-    </changeSet>
-
-    <changeSet author="TOAN (generated)" id="1710484995942-12">
-        <loadData tableName="db_lfa_0_to_5_years" file="./liquibase/data/lhfa_0_to_5_years_zscores.csv">
-            <column name="id" header="id"/>
-            <column name="months" header="months"/>
-            <column name="gender" header="gender"/>
-            <column name="m" header="m"/>
-            <column name="l" header="l"/>
-            <column name="s" header="s"/>
-            <column name="sd" header="sd"/>
-            <column name="sd3neg" header="sd3neg"/>
-            <column name="sd2neg" header="sd2neg"/>
-            <column name="sd1neg" header="sd1neg"/>
-            <column name="sd0" header="sd0"/>
-            <column name="sd1" header="sd1"/>
-            <column name="sd2" header="sd2"/>
-            <column name="sd3" header="sd3"/>
-        </loadData>
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_post_topic"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_TOPIC_POST_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_post" validate="true" onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

@@ -13,7 +13,7 @@ import java.util.List;
 public interface CommunityMemberMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "account", target = "account", qualifiedByName = "fromAccountToAutoCompleteDto")
-    @Mapping(source = "community", target = "community", qualifiedByName = "fromEntityToShortDto")
+    @Mapping(source = "community", target = "community", qualifiedByName = "adminAutoCompleteMapping")
     @Mapping(source = "kind", target = "kind")
     @Mapping(source = "createdDate", target = "createdDate")
     @BeanMapping(ignoreByDefault = true)

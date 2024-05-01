@@ -12,7 +12,7 @@ public class CreateReportForm {
     @ApiModelProperty(name = "objectId", required = true)
     @NotNull(message = "objectId cannot be null!")
     private Long objectId;
-    @ApiModelProperty(name = "kind", required = true)
+    @ApiModelProperty(name = "kind", required = true, notes = "1: post, 2: comment, 3: user")
     @ReportKind
     private Integer kind;
     @ApiModelProperty(name = "content", required = true)

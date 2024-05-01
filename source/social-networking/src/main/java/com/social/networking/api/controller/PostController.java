@@ -1,6 +1,7 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.form.notification.NotificationService;
 import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.BookmarkCriteria;
 import com.social.networking.api.model.criteria.PostCriteria;
@@ -60,6 +61,12 @@ public class PostController extends BaseController {
     RelationshipRepository relationshipRepository;
     @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
+    PostTopicRepository postTopicRepository;
+    @Autowired
+    CommunityMemberRepository communityMemberRepository;
+    @Autowired
+    NotificationService notificationService;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -74,24 +81,29 @@ public class PostController extends BaseController {
             return apiMessageDto;
         }
         Category community = categoryRepository.findById(createPostForm.getCommunityId()).orElse(null);
-        if (community == null) {
+        if (community == null || !community.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_COMMUNITY)) {
             apiMessageDto.setResult(false);
             apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Community is not exist.");
+            apiMessageDto.setMessage("This category is not community or not exist.");
             return apiMessageDto;
         }
         Post post = postMapper.fromCreatePostFormToEntity(createPostForm);
-        List<Category> topics = new ArrayList<>();
-        for (Long topicId : createPostForm.getTopics()) {
-            Category category = categoryRepository.findById(topicId).orElse(null);
-            if (category != null) {
-                topics.add(category);
-            }
-        }
-        post.setTopics(topics);
         post.setCommunity(community);
         post.setAccount(account);
         postRepository.save(post);
+        List<PostTopic> topics = new ArrayList<>();
+        for (Long topicId : createPostForm.getTopics()) {
+            Category category = categoryRepository.findById(topicId).orElse(null);
+            if (category != null && category.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_TOPIC)) {
+                PostTopic postTopic = new PostTopic();
+                postTopic.setPost(post);
+                postTopic.setTopic(category);
+                topics.add(postTopic);
+            }
+        }
+        if (createPostForm.getTopics().length != 0) {
+            postTopicRepository.saveAll(topics);
+        }
         apiMessageDto.setMessage("Create a post successfully.");
         apiMessageDto.setData(post.getId());
         return apiMessageDto;
@@ -109,13 +121,6 @@ public class PostController extends BaseController {
             apiMessageDto.setMessage("Post is not exist.");
             return apiMessageDto;
         }
-        if (post.getKind().equals(SocialNetworkingConstant.POST_KIND_NORMAL) && StringUtils.isEmpty(updatePostForm.getTitle().trim()))
-        {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_TITLE_REQUIRED);
-            apiMessageDto.setMessage("Title is required.");
-            return apiMessageDto;
-        }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
             apiMessageDto.setResult(false);
@@ -129,16 +134,24 @@ public class PostController extends BaseController {
             apiMessageDto.setMessage("You are not owner of this post.");
             return apiMessageDto;
         }
-        List<Category> topics = new ArrayList<>();
-        for (Long topicId : updatePostForm.getTopics()) {
-            Category category = categoryRepository.findById(topicId).orElse(null);
-            if (category != null) {
-                topics.add(category);
-            }
-        }
-        post.setTopics(topics);
         postMapper.mappingUpdatePostFormToEntity(updatePostForm, post);
         postRepository.save(post);
+
+        List<PostTopic> topics = postTopicRepository.findAllByPostId(updatePostForm.getId());
+        postTopicRepository.deleteAll(topics);
+        topics = new ArrayList<>();
+        for (Long topicId : updatePostForm.getTopics()) {
+            Category category = categoryRepository.findById(topicId).orElse(null);
+            if (category != null && category.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_TOPIC)) {
+                PostTopic postTopic = new PostTopic();
+                postTopic.setPost(post);
+                postTopic.setTopic(category);
+                topics.add(postTopic);
+            }
+        }
+        if (updatePostForm.getTopics().length != 0) {
+            postTopicRepository.saveAll(topics);
+        }
         apiMessageDto.setMessage("Update a post successfully.");
         apiMessageDto.setData(post.getId());
         return apiMessageDto;
@@ -195,17 +208,24 @@ public class PostController extends BaseController {
     @PreAuthorize("hasRole('POST_L')")
     public ApiMessageDto<ResponseListDto<PostDto>> listPost(PostCriteria postCriteria, Pageable pageable) {
         ApiMessageDto<ResponseListDto<PostDto>> apiMessageDto = new ApiMessageDto<>();
-        HashMap<Long, String> map = new HashMap<>();
+        HashMap<Long, String> mapFollowingList = new HashMap<>();
+        HashMap<Long, String> mapCommunityMemberList = new HashMap<>();
         if (postCriteria.getFollowing() != null && postCriteria.getFollowing()) {
             List<Relationship> followingList = relationshipRepository.findAllByFollowerId(getCurrentUser());
             if (followingList != null && !followingList.isEmpty()) {
                 for (Relationship relationship : followingList) {
-                    map.put(relationship.getAccount().getId(), "");
+                    mapFollowingList.put(relationship.getAccount().getId(), "");
+                }
+            }
+            List<CommunityMember> communityMemberList = communityMemberRepository.findAllByAccountId(getCurrentUser());
+            if (communityMemberList != null && !communityMemberList.isEmpty()) {
+                for (CommunityMember communityMember : communityMemberList) {
+                    mapCommunityMemberList.put(communityMember.getCommunity().getId(), "");
                 }
             }
             postCriteria.setFollowerId(getCurrentUser());
         }
-        Page<Post> page = postRepository.findAll(postCriteria.getSpecification(map), pageable);
+        Page<Post> page = postRepository.findAll(postCriteria.getSpecification(mapFollowingList, mapCommunityMemberList), pageable);
         ResponseListDto<PostDto> responseListDto = new ResponseListDto(postMapper.fromEntityToPostDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("Get list post success.");
@@ -363,6 +383,8 @@ public class PostController extends BaseController {
             return apiMessageDto;
         }
         postRepository.deleteById(handlePostForm.getId());
+        apiMessageDto.setMessage("Reject post successfully.");
+        apiMessageDto.setData(handlePostForm.getId());
         return apiMessageDto;
     }
 }

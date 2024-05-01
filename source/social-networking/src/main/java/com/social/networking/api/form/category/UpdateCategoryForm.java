@@ -21,7 +21,7 @@ public class UpdateCategoryForm {
     private String categoryImage;
     @ApiModelProperty(name = "categoryOrdering")
     private Integer categoryOrdering;
-    @ApiModelProperty(name = "status", required = true)
+    @ApiModelProperty(name = "status", required = true, notes = "1: active, 0: pending, -1: lock, -2: delete, -3: restrict")
     @NotNull(message = "status cannot be null!")
     @Status
     private Integer status;
