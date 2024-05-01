@@ -21,6 +21,7 @@ pipeline {
             steps {
                 sh 'mvn --version'
                 sh 'java -version'
+                sh 'cd /source/social-networking'
                 sh 'mvn clean package -Dmaven.test.failure.ignore=true'
             }
         }
