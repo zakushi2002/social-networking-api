@@ -84,6 +84,7 @@ public class SocialNetworkingConstant {
     public static final Integer NOTIFICATION_KIND_REACTION_MY_COMMENT = 4;
     public static final Integer NOTIFICATION_KIND_NEW_FOLLOWER = 5;
     public static final Integer NOTIFICATION_KIND_COURSE_APPROVED = 6;
+    public static final Integer NOTIFICATION_KIND_TAGGED_IN_COMMENT = 7;
 
     /**
      * Notification state constant
