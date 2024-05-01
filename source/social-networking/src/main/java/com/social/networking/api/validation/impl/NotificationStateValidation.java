@@ -8,7 +8,6 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class NotificationStateValidation implements ConstraintValidator<NotificationState, Integer> {
-
     private boolean allowNull;
 
     @Override
@@ -17,11 +16,11 @@ public class NotificationStateValidation implements ConstraintValidator<Notifica
     }
 
     @Override
-    public boolean isValid(Integer integer, ConstraintValidatorContext constraintValidatorContext) {
-        if (integer == null && allowNull) {
+    public boolean isValid(Integer notificationState, ConstraintValidatorContext constraintValidatorContext) {
+        if (notificationState == null && allowNull) {
             return true;
         }
-        return ObjectUtils.equals(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, integer) ||
-                ObjectUtils.equals(SocialNetworkingConstant.NOTIFICATION_STATE_READ, integer);
+        return ObjectUtils.equals(notificationState, SocialNetworkingConstant.NOTIFICATION_STATE_SENT)
+                || ObjectUtils.equals(notificationState, SocialNetworkingConstant.NOTIFICATION_STATE_READ);
     }
 }
