@@ -240,7 +240,7 @@ public class CourseController extends BaseController {
      */
     private void createNotificationAndSendMessage(Integer notificationState, Course course, Integer notificationKind) {
         List<Notification> notifications = new ArrayList<>();
-        if (isExpert()) {
+        if (isAdmin()) {
             if (course.getExpert() != null) {
                 // Creates a notification for the given course and notification kind
                 Notification notification = createNotification(course, notificationState, notificationKind, course.getExpert().getAccount().getId());
