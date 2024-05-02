@@ -52,7 +52,7 @@ id,name,action,name_group,permission_code,description,show_menu,created_by,creat
 51,Follow,/v1/relationship/create,Relationship,FL_C,Follow a user,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
 52,Unfollow,/v1/relationship/unfollow,Relationship,FL_D,Unfollow a user,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
 53,List Following,/v1/relationship/list-following,Relationship,FL_TO_L,List following,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
-54,List Follower,/v1/relationship/list-follower,Relationship,FL_FORM_L,List follower,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+54,List Follower,/v1/relationship/list-follower,Relationship,FL_FROM_L,List follower,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
 55,Get Relationship,/v1/relationship/get,Relationship,FL_V,Get a relationship,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
 56,Create Conversation,/v1/conversation/create,Conversation,CONVERSATION_C,Create a new conversation,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
 57,Update Conversation,/v1/conversation/update,Conversation,CONVERSATION_U,Update a conversation,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
@@ -63,3 +63,6 @@ id,name,action,name_group,permission_code,description,show_menu,created_by,creat
 62,Send Message,/v1/message/send,Message,MESSAGE_SEND,Send a new message,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
 63,Get Message,/v1/message/get,Message,MESSAGE_V,Get a message,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
 64,List Message,/v1/message/list,Message,MESSAGE_L,List message,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+65,Get Notification,/v2/notification/get,Notification,NT_V,Get a notification,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+66,Update Notification,/v2/notification/update,Notification,NT_U,Update a notification,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+67,Change State Notification,/v2/notification/change-state,Notification,NT_CS,Change state of a notification,1,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
