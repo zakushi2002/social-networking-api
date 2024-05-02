@@ -114,7 +114,9 @@ public class AccountController extends BaseController {
             apiMessageDto.setMessage("Password is invalid.");
             return apiMessageDto;
         }
-        if (updateAdminForm.getAvatarPath() != null && !updateAdminForm.getAvatarPath().trim().isEmpty()) {
+        if (updateAdminForm.getAvatarPath() != null
+                && !updateAdminForm.getAvatarPath().trim().isEmpty()
+                && !updateAdminForm.getAvatarPath().equals(account.getAvatarPath())) {
             // socialNetworkingApiService.deleteFileS3(account.getAvatarPath());
             account.setAvatarPath(updateAdminForm.getAvatarPath());
         }

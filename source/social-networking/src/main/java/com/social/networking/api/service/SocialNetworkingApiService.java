@@ -73,11 +73,13 @@ public class SocialNetworkingApiService {
 
     public void deleteFileS3(String avatarPath) {
         String awsEndpoint = endpointUrl + bucketName + "/";
+        log.info("awsEndpoint: " + awsEndpoint + "- avatarPath: " + avatarPath);
         if (!avatarPath.contains(awsEndpoint)) {
+            log.error("[AWS S3] File not found!");
             return;
         }
         String key = avatarPath.replace(awsEndpoint, "");
-        System.out.println("AWS S3: Do you want to delete file " + key);
+        log.info("AWS S3: Do you want to delete file " + key + " in bucket " + bucketName + "?");
         awsCloudUtil.deleteFile(key, accessKey, secretKey, bucketName);
         log.info("AWS S3: Delete file success " + key);
     }
