@@ -7,14 +7,11 @@ import com.social.networking.api.dto.aws.FileS3Dto;
 import com.social.networking.api.form.UploadFileForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.CacheControl;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/v1/file")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
+@ApiIgnore
 public class FileController {
     @Autowired
     SocialNetworkingApiService socialNetworkingApiService;
@@ -33,7 +31,6 @@ public class FileController {
     }
 
     @GetMapping(value = "/load/s3/{fileName:.+}")
-    @Cacheable("images")
     public ResponseEntity<?> loadFileS3(@PathVariable String fileName) {
         FileS3Dto fileS3Dto = socialNetworkingApiService.loadFileAsResource(fileName);
         if (fileS3Dto == null) {
@@ -47,7 +44,6 @@ public class FileController {
     }
 
     @GetMapping(value = "/download/s3/{fileName:.+}")
-    @Cacheable("images")
     public ResponseEntity<ByteArrayResource> downloadFileS3(@PathVariable String fileName) {
         byte[] data = socialNetworkingApiService.loadFileAsResource(fileName).getFileByte();
         if (data == null) {
@@ -60,5 +56,11 @@ public class FileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .cacheControl(CacheControl.maxAge(7776000, TimeUnit.SECONDS))
                 .body(resource);
+    }
+
+    @DeleteMapping(value = "/delete/s3/{fileName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
+        socialNetworkingApiService.deleteFileS3(fileName);
+        return ResponseEntity.ok("File deleted successfully");
     }
 }

@@ -19,7 +19,7 @@
     <properties>
         <java.version>11</java.version>
         <spring-boot-version>2.3.0.RELEASE</spring-boot-version>
-        <spring-cloud.version>1.2.0.BUILD-SNAPSHOT</spring-cloud.version>
+        <!--<spring-cloud.version>1.2.0.BUILD-SNAPSHOT</spring-cloud.version>-->
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <lombok.version>1.18.20</lombok.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
@@ -30,7 +30,7 @@
         <liquibase-hibernate5.version>4.1.0</liquibase-hibernate5.version>
         <hibernate-core.version>5.6.14.Final</hibernate-core.version>
         <javassist.version>3.24.0-GA</javassist.version>
-        <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+        <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
         <aws.java.sdk.version>1.11.1000</aws.java.sdk.version>
         <liquibase.changeLogFile>/src/main/resources/liquibase/db.changelog-master.xml</liquibase.changeLogFile>
     </properties>
@@ -243,6 +243,13 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
             <version>2.4.6</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.11.486</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

@@ -117,7 +117,7 @@ public class AccountController extends BaseController {
         if (updateAdminForm.getAvatarPath() != null
                 && !updateAdminForm.getAvatarPath().trim().isEmpty()
                 && !updateAdminForm.getAvatarPath().equals(account.getAvatarPath())) {
-            // socialNetworkingApiService.deleteFileS3(account.getAvatarPath());
+            socialNetworkingApiService.deleteFileS3(account.getAvatarPath());
             account.setAvatarPath(updateAdminForm.getAvatarPath());
         }
         accountMapper.mappingUpdateAdminFormToAccount(updateAdminForm, account);
