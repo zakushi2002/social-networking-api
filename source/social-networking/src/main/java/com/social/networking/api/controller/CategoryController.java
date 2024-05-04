@@ -13,7 +13,6 @@ import com.social.networking.api.form.category.CreateCategoryForm;
 import com.social.networking.api.form.category.UpdateCategoryForm;
 import com.social.networking.api.mapper.CategoryMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +36,7 @@ public class CategoryController extends BaseController {
     @Autowired
     CategoryMapper categoryMapper;
     @Autowired
-    SocialNetworkingApiService apiService;
+    SocialNetworkingApiService socialNetworkingApiService;
 
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CATE_L')")
@@ -126,7 +125,10 @@ public class CategoryController extends BaseController {
             category.getCategoryList().forEach(child -> child.setStatus(updateCategoryForm.getStatus()));
             categoryRepository.saveAll(category.getCategoryList());
         }
-        if (StringUtils.isNoneBlank(updateCategoryForm.getCategoryImage()) && !updateCategoryForm.getCategoryImage().equals(category.getImage())) {
+        if (updateCategoryForm.getCategoryImage() != null
+                && !updateCategoryForm.getCategoryImage().trim().isEmpty()
+                && !updateCategoryForm.getCategoryImage().equals(category.getImage())) {
+            socialNetworkingApiService.deleteFileS3(updateCategoryForm.getCategoryImage());
             category.setImage(updateCategoryForm.getCategoryImage());
         }
         categoryMapper.fromUpdateCategoryFormToEntity(updateCategoryForm, category);
@@ -148,6 +150,7 @@ public class CategoryController extends BaseController {
             apiMessageDto.setMessage("Category not found.");
             return apiMessageDto;
         }
+        socialNetworkingApiService.deleteFileS3(category.getImage());
         categoryRepository.deleteById(id);
         apiMessageDto.setData(id);
         apiMessageDto.setMessage("Delete a category success.");
