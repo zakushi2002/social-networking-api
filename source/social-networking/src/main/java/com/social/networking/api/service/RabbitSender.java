@@ -31,11 +31,11 @@ public class RabbitSender {
     public void send(String message, String queueName) {
         createQueueIfNotExist(queueName);
         if (message == null || StringUtils.isBlank(message)) {
-            log.info("[WARN] Message is null or empty, not sending to queue: " + queueName);
+            log.warn("[RabbitMQ] Message is null or empty, not sending to queue: {}", queueName);
             return;
         }
         template.convertAndSend(queueName, message);
-        log.info("[INFO] Sent message: " + message + " to queue: " + queueName);
+        log.info("[RabbitMQ] Sent message: {} to queue: {}", message, queueName);
     }
 
     /**
@@ -56,7 +56,7 @@ public class RabbitSender {
      */
     public void createQueueIfNotExist(String queueName) {
         if (!isQueueExist(queueName)) {
-            log.info("[INFO] Creating queue: " + queueName);
+            log.info("[RabbitMQ] Creating queue: {}", queueName);
             rabbitAdmin.declareQueue(new Queue(queueName));
         }
     }
@@ -68,7 +68,7 @@ public class RabbitSender {
      */
     public void removeQueue(String queueName) {
         if (isQueueExist(queueName)) {
-            log.info("[INFO] Deleting queue: " + queueName);
+            log.info("[RabbitMQ] Deleting queue: {}", queueName);
             rabbitAdmin.deleteQueue(queueName);
         }
     }

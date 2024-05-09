@@ -244,7 +244,7 @@ public class CommentController extends BaseController {
         commentReactionRepository.save(commentReaction);
         comment.getCommentReactions().add(commentReaction);
         commentRepository.save(comment);
-        createNotificationAndSendMessage(SocialNetworkingConstant.STATUS_ACTIVE, commentReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT);
+        createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT);
         apiMessageDto.setMessage("React comment successfully");
         apiMessageDto.setData(reactionMapper.fromEntityToCommentReactionDto(commentReaction));
         return apiMessageDto;
@@ -297,8 +297,8 @@ public class CommentController extends BaseController {
         notification.setIdUser(accountId);
         notification.setContent(jsonMessage);
         if (notificationKind.equals(SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT)) {
-            notificationRepository.deleteAllByIdUserAndKindAndRefId(accountId, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT, reaction.getId().toString());
-            notification.setRefId(reaction.getId().toString());
+            notificationRepository.deleteAllByIdUserAndKindAndRefId(accountId, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT, reaction.getComment().getId().toString());
+            notification.setRefId(reaction.getComment().getId().toString());
         }
         return notification;
     }
@@ -313,9 +313,9 @@ public class CommentController extends BaseController {
     private void createNotificationAndSendMessage(Integer notificationState, CommentReaction reaction, Integer notificationKind) {
         List<Notification> notifications = new ArrayList<>();
         if (!isAdmin()) {
-            if (reaction.getAccount() != null) {
+            if (reaction.getComment().getAccount() != null) {
                 // Creates a notification for the given reaction and notification kind
-                Notification notification = createNotification(reaction, notificationState, notificationKind, reaction.getAccount().getId());
+                Notification notification = createNotification(reaction, notificationState, notificationKind, reaction.getComment().getAccount().getId());
                 notifications.add(notification);
             }
             // Saves the notifications to the database

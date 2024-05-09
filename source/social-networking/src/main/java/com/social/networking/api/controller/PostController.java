@@ -425,8 +425,8 @@ public class PostController extends BaseController {
         notification.setIdUser(accountId);
         notification.setContent(jsonMessage);
         if (notificationKind.equals(SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST)) {
-            notificationRepository.deleteAllByIdUserAndKindAndRefId(accountId, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST, reaction.getId().toString());
-            notification.setRefId(reaction.getId().toString());
+            notificationRepository.deleteAllByIdUserAndKindAndRefId(accountId, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST, reaction.getPost().getId().toString());
+            notification.setRefId(reaction.getPost().getId().toString());
         }
         return notification;
     }
@@ -441,9 +441,9 @@ public class PostController extends BaseController {
     private void createNotificationAndSendMessage(Integer notificationState, PostReaction reaction, Integer notificationKind) {
         List<Notification> notifications = new ArrayList<>();
         if (!isAdmin()) {
-            if (reaction.getAccount() != null) {
+            if (reaction.getPost().getAccount() != null) {
                 // Creates a notification for the given reaction and notification kind
-                Notification notification = createNotification(reaction, notificationState, notificationKind, reaction.getAccount().getId());
+                Notification notification = createNotification(reaction, notificationState, notificationKind, reaction.getPost().getAccount().getId());
                 notifications.add(notification);
             }
             // Saves the notifications to the database
