@@ -43,7 +43,7 @@ public class CustomTokenGranter extends AbstractTokenGranter {
             if (SocialNetworkingConstant.GRANT_TYPE_GOOGLE.equalsIgnoreCase(tokenRequest.getGrantType())) {
                 Map<String, Object> attributes = new ObjectMapper().readValue(tokenRequest.getRequestParameters().get("google"), Map.class);
                 OAuth2ProfileDto oAuth2ProfileDto = OAuth2ProfileDtoFactory.getOAuth2UserInfo(SocialNetworkingConstant.GRANT_TYPE_GOOGLE, attributes);
-                return userService.getAccessTokenForGoogle(client, tokenRequest, oAuth2ProfileDto, this.getTokenServices());
+                return userService.getAccessTokenForGoogle(authenticationManager, client, tokenRequest, oAuth2ProfileDto, this.getTokenServices());
             }
             String email = tokenRequest.getRequestParameters().get("email");
             String password = tokenRequest.getRequestParameters().get("password");

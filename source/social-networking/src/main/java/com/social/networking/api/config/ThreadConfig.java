@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 
 @Configuration
 @Slf4j
@@ -24,7 +25,7 @@ public class ThreadConfig implements AsyncConfigurer {
         executor.setQueueCapacity(threadQueuePoolSize);
         executor.setThreadNamePrefix("social-networking-invoke-");
         executor.initialize();
-        return executor;
+        return new DelegatingSecurityContextAsyncTaskExecutor(executor);
     }
 
     /**

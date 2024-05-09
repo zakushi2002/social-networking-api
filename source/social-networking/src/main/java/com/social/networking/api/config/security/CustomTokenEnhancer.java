@@ -32,8 +32,8 @@ public class CustomTokenEnhancer implements TokenEnhancer {
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
         Map<String, Object> additionalInfo = new HashMap<>();
         String grantType = authentication.getOAuth2Request().getRequestParameters().get("grantType");
-        if (!Objects.equals(grantType, SocialNetworkingConstant.GRANT_TYPE_GOOGLE)) {
-            grantType = SocialNetworkingConstant.GRANT_TYPE_PASSWORD;
+        if (Objects.equals(grantType, SocialNetworkingConstant.GRANT_TYPE_GOOGLE)) {
+            return handleGrantGoogle(accessToken, authentication);
         }
         String email = authentication.getName();
         AccountForTokenDto a = getAccountByEmail(email);
@@ -47,7 +47,7 @@ public class CustomTokenEnhancer implements TokenEnhancer {
             Boolean isSuperAdmin = a.getIsSuperAdmin();
             additionalInfo.put("user_id", a.getId());
             additionalInfo.put("user_kind", a.getKind());
-            additionalInfo.put("grant_type", grantType);
+            additionalInfo.put("grant_type", SocialNetworkingConstant.GRANT_TYPE_PASSWORD);
             String DELIM = "|";
             String additionalInfoStr = ZipUtils.zipString(accountId + DELIM
                     + kind + DELIM
@@ -59,6 +59,36 @@ public class CustomTokenEnhancer implements TokenEnhancer {
             additionalInfo.put("additional_info", additionalInfoStr);
         }
 
+        ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
+        return accessToken;
+    }
+
+    private OAuth2AccessToken handleGrantGoogle(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
+        Map<String, Object> additionalInfo = new HashMap<>();
+        String email = authentication.getName();
+        AccountForTokenDto a = getAccountByEmail(email);
+
+        if (a != null) {
+            Long accountId = a.getId();
+            String kind = a.getKind() + ""; // token kind
+            String permission = "<>"; // empty string
+            Integer userKind = a.getKind(); // USER / EXPERT / ADMIN
+            Long orderId = -1L;
+            Boolean isSuperAdmin = false;
+
+            additionalInfo.put("user_id", a.getId());
+            additionalInfo.put("user_kind", a.getKind());
+            additionalInfo.put("grant_type", SocialNetworkingConstant.GRANT_TYPE_GOOGLE);
+            String DELIM = "|";
+            String additionalInfoStr = ZipUtils.zipString(accountId + DELIM
+                    + kind + DELIM
+                    + permission + DELIM
+                    + userKind + DELIM
+                    + email + DELIM
+                    + orderId + DELIM
+                    + isSuperAdmin);
+            additionalInfo.put("additional_info", additionalInfoStr);
+        }
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
         return accessToken;
     }
