@@ -42,4 +42,12 @@ public class BaseController {
         }
         return false;
     }
+
+    public boolean isAdmin(){
+        SocialNetworkingJwt socialNetworkingJwt = userService.getAdditionalInfo();
+        if (socialNetworkingJwt != null){
+            return Objects.equals(socialNetworkingJwt.getUserKind(), SocialNetworkingConstant.ACCOUNT_KIND_ADMIN);
+        }
+        return false;
+    }
 }

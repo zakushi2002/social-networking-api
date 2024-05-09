@@ -197,8 +197,10 @@ public class ExpertProfileController extends BaseController {
             apiMessageDto.setMessage("Department not found or not category kind department");
             return apiMessageDto;
         }
-        if (updateExpertAccountForm.getAvatarPath() != null && !updateExpertAccountForm.getAvatarPath().trim().isEmpty()) {
-            // socialNetworkingApiService.deleteFileS3(expertProfile.getAccount().getAvatarPath());
+        if (updateExpertAccountForm.getAvatarPath() != null
+                && !updateExpertAccountForm.getAvatarPath().trim().isEmpty()
+                && !updateExpertAccountForm.getAvatarPath().equals(expertProfile.getAccount().getAvatarPath())) {
+            socialNetworkingApiService.deleteFileS3(expertProfile.getAccount().getAvatarPath());
             expertProfile.getAccount().setAvatarPath(updateExpertAccountForm.getAvatarPath().trim());
         }
         accountRepository.save(expertProfile.getAccount());

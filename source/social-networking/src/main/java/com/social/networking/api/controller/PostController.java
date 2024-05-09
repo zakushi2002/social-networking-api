@@ -1,6 +1,7 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.dto.reaction.PostReactionNotificationMessage;
 import com.social.networking.api.form.notification.NotificationService;
 import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.BookmarkCriteria;
@@ -22,7 +23,6 @@ import com.social.networking.api.mapper.BookmarkMapper;
 import com.social.networking.api.mapper.PostMapper;
 import com.social.networking.api.mapper.ReactionMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -67,6 +67,8 @@ public class PostController extends BaseController {
     CommunityMemberRepository communityMemberRepository;
     @Autowired
     NotificationService notificationService;
+    @Autowired
+    NotificationRepository notificationRepository;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -270,6 +272,7 @@ public class PostController extends BaseController {
         postReactionRepository.save(postReaction);
         post.getPostReactions().add(postReaction);
         postRepository.save(post);
+        createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, postReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST);
         apiMessageDto.setMessage("React post successfully");
         apiMessageDto.setData(reactionMapper.fromEntityToPostReactionDto(postReaction));
         return apiMessageDto;
@@ -386,5 +389,69 @@ public class PostController extends BaseController {
         apiMessageDto.setMessage("Reject post successfully.");
         apiMessageDto.setData(handlePostForm.getId());
         return apiMessageDto;
+    }
+
+    /**
+     * Creates a JSON message for the given reaction and notification.
+     *
+     * @param reaction       the reaction for which to create the message
+     * @param notification the notification for which to create the message
+     * @return the JSON message
+     */
+    private String getJsonMessage(PostReaction reaction, Notification notification) {
+        PostReactionNotificationMessage postReactionNotificationMessage = new PostReactionNotificationMessage();
+        postReactionNotificationMessage.setNotificationId(notification.getId());
+        postReactionNotificationMessage.setPostReactionId(reaction.getId());
+        postReactionNotificationMessage.setReactionKind(reaction.getKind());
+        postReactionNotificationMessage.setPostId(reaction.getPost().getId());
+        postReactionNotificationMessage.setPostTitle(reaction.getPost().getTitle());
+        postReactionNotificationMessage.setAccountId(reaction.getAccount().getId());
+        postReactionNotificationMessage.setAccountName(reaction.getAccount().getFullName());
+        return notificationService.convertObjectToJson(postReactionNotificationMessage);
+    }
+
+    /**
+     * Creates a notification for the given reaction and notification kind.
+     *
+     * @param reaction            the reaction for which to create the notification
+     * @param notificationState the state of the notification
+     * @param notificationKind  the kind of notification to create
+     * @param accountId         the ID of the account for which to create the notification
+     * @return the created notification
+     */
+    private Notification createNotification(PostReaction reaction, Integer notificationState, Integer notificationKind, Long accountId) {
+        Notification notification = notificationService.createNotification(notificationState, notificationKind);
+        String jsonMessage = getJsonMessage(reaction, notification);
+        notification.setIdUser(accountId);
+        notification.setContent(jsonMessage);
+        if (notificationKind.equals(SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST)) {
+            notificationRepository.deleteAllByIdUserAndKindAndRefId(accountId, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST, reaction.getPost().getId().toString());
+            notification.setRefId(reaction.getPost().getId().toString());
+        }
+        return notification;
+    }
+
+    /**
+     * Creates a notification and sends a message for the given course and notification kind.
+     *
+     * @param notificationState the state of the notification
+     * @param reaction            the course for which to create the notification
+     * @param notificationKind  the kind of notification to create
+     */
+    private void createNotificationAndSendMessage(Integer notificationState, PostReaction reaction, Integer notificationKind) {
+        List<Notification> notifications = new ArrayList<>();
+        if (!isAdmin()) {
+            if (reaction.getPost().getAccount() != null) {
+                // Creates a notification for the given reaction and notification kind
+                Notification notification = createNotification(reaction, notificationState, notificationKind, reaction.getPost().getAccount().getId());
+                notifications.add(notification);
+            }
+            // Saves the notifications to the database
+            notificationRepository.saveAll(notifications);
+            // Sends a message for each notification
+            for (Notification notification : notifications) {
+                notificationService.sendMessage(notification.getContent(), notificationKind, notification.getIdUser());
+            }
+        }
     }
 }

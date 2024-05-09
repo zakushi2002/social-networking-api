@@ -132,8 +132,10 @@ public class UserProfileController extends BaseController {
             apiMessageDto.setMessage("Phone cannot be empty");
             return apiMessageDto;
         }
-        if (updateUserAccountForm.getAvatarPath() != null && !updateUserAccountForm.getAvatarPath().trim().isEmpty()) {
-            // socialNetworkingApiService.deleteFileS3(userProfile.getAccount().getAvatarPath());
+        if (updateUserAccountForm.getAvatarPath() != null
+                && !updateUserAccountForm.getAvatarPath().trim().isEmpty()
+                && !updateUserAccountForm.getAvatarPath().equals(userProfile.getAccount().getAvatarPath())) {
+            socialNetworkingApiService.deleteFileS3(userProfile.getAccount().getAvatarPath());
             userProfile.getAccount().setAvatarPath(updateUserAccountForm.getAvatarPath());
         }
         accountRepository.save(userProfile.getAccount());

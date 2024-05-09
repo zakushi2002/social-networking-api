@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,14 +36,7 @@ import java.io.IOException;
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Value("${social.networking.signing.key}")
-    private String signingKey;
-    @Autowired
     private JwtAccessTokenConverter jwtAccessTokenConverter;
-    @Autowired
-    private TokenStore tokenStore;
 
     @Autowired
     JsonToUrlEncodedAuthenticationFilter jsonFilter;
@@ -69,7 +63,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .requestMatchers()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**", "/swagger-ui.html", "/index", "/pub/**", "/api/token", "/api/auth/pwd/verify-token",
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .antMatchers("/v2/api-docs", "/api-docs/**", "/configuration/ui", "/swagger-resources/**", "/configuration/**", "/swagger-ui.html",
+                        "/index", "/pub/**", "/api/token", "/api/auth/pwd/verify-token",
                         "/api/auth/activate/resend", "/api/auth/pwd", "/api/auth/logout", "/actuator/**").permitAll()
                 .antMatchers("/v1/user-account/register").permitAll()
                 .antMatchers("/v1/account/send-otp-code", "/v1/account/check-otp-code", "/v1/account/change-password-forgot").permitAll()

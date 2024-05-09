@@ -13,7 +13,7 @@ public class UpdateAdminForm {
     @ApiModelProperty(name = "id", required = true)
     @NotNull(message = "id cannot be null!")
     private Long id;
-    @ApiModelProperty(name = "password", required = true)
+    @ApiModelProperty(name = "password", required = false)
     @Size(min = 8, message = "password must be at least 8 characters")
     private String password;
     @ApiModelProperty(name = "fullName", required = true)

@@ -1,4 +1,5 @@
 package com.social.networking.api.config.security;
+
 import com.social.networking.api.service.id.IdGenerator;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -16,9 +17,7 @@ import java.util.Map;
 @Component
 public class CustomAuthenticationKeyGenerator implements AuthenticationKeyGenerator {
     private static final String CLIENT_ID = "client_id";
-
     private static final String SCOPE = "scope";
-
     private static final String USERNAME = "username";
     private static final String DEVICE_ID = "device_id";
 
@@ -51,5 +50,4 @@ public class CustomAuthenticationKeyGenerator implements AuthenticationKeyGenera
         byte[] bytes = digest.digest(values.toString().getBytes(StandardCharsets.UTF_8));
         return String.format("%032x", new BigInteger(1, bytes));
     }
-
 }

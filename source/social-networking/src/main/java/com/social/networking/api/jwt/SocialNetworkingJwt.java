@@ -45,9 +45,7 @@ public class SocialNetworkingJwt implements Serializable {
                 result.setUserKind(parserInt(items[3]));
                 result.setEmail(checkString(items[4]));
                 result.setOrderId(parserLong(items[5]));
-                if (items.length > 6) {
-                    result.setIsSuperAdmin(checkBoolean(items[6]));
-                }
+                result.setIsSuperAdmin(checkBoolean(items[6]));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
