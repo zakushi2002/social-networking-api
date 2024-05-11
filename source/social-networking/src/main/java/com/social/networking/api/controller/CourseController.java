@@ -17,7 +17,6 @@ import com.social.networking.api.model.criteria.CourseCriteria;
 import com.social.networking.api.repository.CategoryRepository;
 import com.social.networking.api.repository.CourseRepository;
 import com.social.networking.api.repository.ExpertProfileRepository;
-import com.social.networking.api.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,8 +27,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/courses")
@@ -44,6 +41,8 @@ public class CourseController extends BaseController {
     ExpertProfileRepository expertProfileRepository;
     @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
+    CourseMessage courseMessage;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -156,8 +155,7 @@ public class CourseController extends BaseController {
         course.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
         courseRepository.save(course);
         if (isAdmin()) {
-            MessageService<Course> messageService = new CourseMessage();
-            messageService.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, course, SocialNetworkingConstant.NOTIFICATION_KIND_COURSE_APPROVED);
+            courseMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, course, SocialNetworkingConstant.NOTIFICATION_KIND_COURSE_APPROVED);
         }
         apiMessageDto.setMessage("Course approved successfully!");
         apiMessageDto.setData(course.getId());

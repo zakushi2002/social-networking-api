@@ -21,7 +21,6 @@ import com.social.networking.api.form.reaction.post.ReactPostForm;
 import com.social.networking.api.mapper.BookmarkMapper;
 import com.social.networking.api.mapper.PostMapper;
 import com.social.networking.api.mapper.ReactionMapper;
-import com.social.networking.api.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -65,6 +64,8 @@ public class PostController extends BaseController {
     PostTopicRepository postTopicRepository;
     @Autowired
     CommunityMemberRepository communityMemberRepository;
+    @Autowired
+    PostReactionMessage postReactionMessage;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -269,8 +270,7 @@ public class PostController extends BaseController {
         post.getPostReactions().add(postReaction);
         postRepository.save(post);
         if (!isAdmin()) {
-            MessageService<PostReaction> messageService = new PostReactionMessage();
-            messageService.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, postReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST);
+            postReactionMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, postReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST);
         }
         apiMessageDto.setMessage("React post successfully");
         apiMessageDto.setData(reactionMapper.fromEntityToPostReactionDto(postReaction));
