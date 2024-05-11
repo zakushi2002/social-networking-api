@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class PostReactionMessage extends BaseController implements MessageService<PostReaction> {
+public class PostReactionMessage implements MessageService<PostReaction> {
     @Autowired
     NotificationService notificationService;
     @Autowired
@@ -24,18 +24,16 @@ public class PostReactionMessage extends BaseController implements MessageServic
     @Override
     public void createNotificationAndSendMessage(Integer notificationState, PostReaction data, Integer notificationKind) {
         List<Notification> notifications = new ArrayList<>();
-        if (!isAdmin()) {
-            if (data.getPost().getAccount() != null) {
-                // Creates a notification for the given reaction and notification kind
-                Notification notification = createNotification(data, notificationState, notificationKind, data.getPost().getAccount().getId());
-                notifications.add(notification);
-            }
-            // Saves the notifications to the database
-            notificationRepository.saveAll(notifications);
-            // Sends a message for each notification
-            for (Notification notification : notifications) {
-                notificationService.sendMessage(notification.getContent(), notificationKind, notification.getIdUser());
-            }
+        if (data.getPost().getAccount() != null) {
+            // Creates a notification for the given reaction and notification kind
+            Notification notification = createNotification(data, notificationState, notificationKind, data.getPost().getAccount().getId());
+            notifications.add(notification);
+        }
+        // Saves the notifications to the database
+        notificationRepository.saveAll(notifications);
+        // Sends a message for each notification
+        for (Notification notification : notifications) {
+            notificationService.sendMessage(notification.getContent(), notificationKind, notification.getIdUser());
         }
     }
 

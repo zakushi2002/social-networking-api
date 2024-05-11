@@ -268,8 +268,10 @@ public class PostController extends BaseController {
         postReactionRepository.save(postReaction);
         post.getPostReactions().add(postReaction);
         postRepository.save(post);
-        MessageService<PostReaction> messageService = new PostReactionMessage();
-        messageService.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, postReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST);
+        if (!isAdmin()) {
+            MessageService<PostReaction> messageService = new PostReactionMessage();
+            messageService.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, postReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST);
+        }
         apiMessageDto.setMessage("React post successfully");
         apiMessageDto.setData(reactionMapper.fromEntityToPostReactionDto(postReaction));
         return apiMessageDto;
