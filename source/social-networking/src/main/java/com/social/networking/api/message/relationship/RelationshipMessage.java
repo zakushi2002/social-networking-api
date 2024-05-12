@@ -23,9 +23,9 @@ public class RelationshipMessage implements MessageService<Relationship> {
     @Override
     public void createNotificationAndSendMessage(Integer notificationState, Relationship data, Integer notificationKind) {
         List<Notification> notifications = new ArrayList<>();
-        if (data.getFollower() != null) {
+        if (data.getAccount() != null) {
             // Create notification for the account that is being followed
-            Notification notification = createNotification(data, notificationState, notificationKind, data.getFollower().getId());
+            Notification notification = createNotification(data, notificationState, notificationKind, data.getAccount().getId());
             notifications.add(notification);
         }
         // Save the notifications to the database
