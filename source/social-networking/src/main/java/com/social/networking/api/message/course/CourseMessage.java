@@ -57,6 +57,7 @@ public class CourseMessage implements MessageService<Course> {
         courseNotificationMessage.setCourseId(data.getId());
         courseNotificationMessage.setCourseTitle(data.getTitle());
         courseNotificationMessage.setExpertName(data.getExpert().getAccount().getFullName());
+        courseNotificationMessage.setExpertAvatar(data.getExpert().getAccount().getAvatarPath());
         courseNotificationMessage.setStartDate(data.getStartDate());
         courseNotificationMessage.setEndDate(data.getEndDate());
         return notificationService.convertObjectToJson(courseNotificationMessage);

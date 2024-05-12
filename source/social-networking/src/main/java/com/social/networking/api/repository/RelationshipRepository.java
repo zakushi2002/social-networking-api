@@ -14,4 +14,5 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Long
     Page<Relationship> findAllByAccountId(Long accountId, Pageable pageable);
     Page<Relationship> findAllByFollowerId(Long followerId, Pageable pageable);
     List<Relationship> findAllByFollowerId(Long followerId);
+    List<Relationship> findAllByAccountId(Long accountId);
 }

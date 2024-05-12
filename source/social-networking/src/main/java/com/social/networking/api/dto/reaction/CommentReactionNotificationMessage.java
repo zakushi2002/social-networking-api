@@ -12,4 +12,5 @@ public class CommentReactionNotificationMessage {
     private String commentContent;
     private Long accountId;
     private String accountName;
+    private String accountAvatar;
 }

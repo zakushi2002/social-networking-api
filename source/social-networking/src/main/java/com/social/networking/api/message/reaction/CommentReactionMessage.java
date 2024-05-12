@@ -58,6 +58,7 @@ public class CommentReactionMessage implements MessageService<CommentReaction> {
         commentReactionNotificationMessage.setCommentContent(data.getComment().getContent());
         commentReactionNotificationMessage.setAccountId(data.getAccount().getId());
         commentReactionNotificationMessage.setAccountName(data.getAccount().getFullName());
+        commentReactionNotificationMessage.setAccountAvatar(data.getAccount().getAvatarPath());
         return notificationService.convertObjectToJson(commentReactionNotificationMessage);
     }
 }

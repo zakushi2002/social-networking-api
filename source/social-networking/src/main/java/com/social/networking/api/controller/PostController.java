@@ -1,6 +1,7 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.message.post.PostMessage;
 import com.social.networking.api.message.reaction.PostReactionMessage;
 import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.BookmarkCriteria;
@@ -66,6 +67,8 @@ public class PostController extends BaseController {
     CommunityMemberRepository communityMemberRepository;
     @Autowired
     PostReactionMessage postReactionMessage;
+    @Autowired
+    PostMessage postMessage;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -361,6 +364,9 @@ public class PostController extends BaseController {
         post.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
         post.setModeratedDate(new Date());
         postRepository.save(post);
+        if (isAdmin()) {
+            postMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, post, SocialNetworkingConstant.NOTIFICATION_KIND_NEW_POST_OF_FOLLOWING);
+        }
         apiMessageDto.setMessage("Approve post successfully.");
         apiMessageDto.setData(post.getId());
         return apiMessageDto;

@@ -1,7 +1,6 @@
 package com.social.networking.api.message.reaction;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
-import com.social.networking.api.controller.BaseController;
 import com.social.networking.api.dto.reaction.PostReactionNotificationMessage;
 import com.social.networking.api.form.notification.NotificationService;
 import com.social.networking.api.model.Notification;
@@ -60,6 +59,7 @@ public class PostReactionMessage implements MessageService<PostReaction> {
         postReactionNotificationMessage.setPostTitle(data.getPost().getTitle());
         postReactionNotificationMessage.setAccountId(data.getAccount().getId());
         postReactionNotificationMessage.setAccountName(data.getAccount().getFullName());
+        postReactionNotificationMessage.setAccountAvatar(data.getAccount().getAvatarPath());
         return notificationService.convertObjectToJson(postReactionNotificationMessage);
     }
 }
