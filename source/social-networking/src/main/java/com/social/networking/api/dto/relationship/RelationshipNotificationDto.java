@@ -8,5 +8,6 @@ public class RelationshipNotificationDto {
     private Long relationshipId;
     private Long userFollowingId; // user who is following
     private String userFollowingName;
+    private String userFollowingAvatar;
     private Long userFollowedId; // user who is followed
 }
