@@ -1,6 +1,7 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.message.comment.CommentMessage;
 import com.social.networking.api.message.reaction.CommentReactionMessage;
 import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.CommentCriteria;
@@ -49,6 +50,8 @@ public class CommentController extends BaseController {
     CommentReactionRepository commentReactionRepository;
     @Autowired
     CommentReactionMessage commentReactionMessage;
+    @Autowired
+    CommentMessage commentMessage;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CMT_C')")
@@ -95,6 +98,7 @@ public class CommentController extends BaseController {
         }
         comment.setAccount(account);
         commentRepository.save(comment);
+        commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST);
         CommentDto commentDto = commentMapper.fromEntityToCreateCommentDto(comment);
         commentDto.setOwnerIdOfPost(post.getAccount().getId());
         commentDto.setTaggedAccountIds(taggedAccountIds);
