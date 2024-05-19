@@ -2,6 +2,7 @@ package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.message.comment.CommentMessage;
+import com.social.networking.api.message.comment.TaggedCommentMessage;
 import com.social.networking.api.message.reaction.CommentReactionMessage;
 import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.CommentCriteria;
@@ -53,6 +54,8 @@ public class CommentController extends BaseController {
     CommentReactionMessage commentReactionMessage;
     @Autowired
     CommentMessage commentMessage;
+    @Autowired
+    TaggedCommentMessage taggedCommentMessage;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CMT_C')")
@@ -103,28 +106,7 @@ public class CommentController extends BaseController {
         CommentDto commentDto = commentMapper.fromEntityToCreateCommentDto(comment);
         commentDto.setOwnerIdOfPost(post.getAccount().getId());
         commentDto.setTaggedAccountIds(taggedAccountIds);
-        if (taggedAccountIds.isEmpty()) { // No tagged account
-            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)) {
-                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST);
-            } else {
-                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
-            }
-        } else if (tagOwnerOfPost) { // Tag owner of post and other account
-            if (!taggedAccountIds.contains(comment.getParent().getAccount().getId()) && Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2)) { // Not tag owner of parent comment
-                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
-            }
-            commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
-        } else { // Only tag other account
-            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)) {
-                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST);
-                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
-            } else {
-                if (!taggedAccountIds.contains(comment.getParent().getAccount().getId())) { // Not tag owner of parent comment
-                    commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
-                }
-                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
-            }
-        }
+        handleSendMessage(taggedAccountIds, comment, commentDto, tagOwnerOfPost);
         apiMessageDto.setMessage("Create comment successfully");
         apiMessageDto.setData(commentDto);
         return apiMessageDto;
@@ -284,5 +266,31 @@ public class CommentController extends BaseController {
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("Get list comment reaction success");
         return apiMessageDto;
+    }
+
+    private void handleSendMessage(List<Long> taggedAccountIds, Comment comment, CommentDto commentDto, boolean tagOwnerOfPost) {
+        if (taggedAccountIds.isEmpty()) { // No tagged account
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)) {
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST);
+            } else {
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
+            }
+        } else if (tagOwnerOfPost) { // Tag owner of post and other account
+            if (!taggedAccountIds.contains(comment.getParent().getAccount().getId())
+                    && Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2)) { // Not tag owner of parent comment
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT); // Notify owner of parent comment
+            }
+            taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT); // Notify tagged accounts including owner of post
+        } else { // Only tag other account
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)) {
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST); // Notify owner of post
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
+            } else {
+                if (!taggedAccountIds.contains(comment.getParent().getAccount().getId())) { // Not tag owner of parent comment
+                    taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
+                }
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
+            }
+        }
     }
 }
