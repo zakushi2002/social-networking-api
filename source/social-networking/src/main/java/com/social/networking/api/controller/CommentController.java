@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1/comment")
@@ -96,12 +97,34 @@ public class CommentController extends BaseController {
                 }
             }
         }
+        boolean tagOwnerOfPost = taggedAccountIds.contains(post.getAccount().getId());
         comment.setAccount(account);
         commentRepository.save(comment);
-        commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST);
         CommentDto commentDto = commentMapper.fromEntityToCreateCommentDto(comment);
         commentDto.setOwnerIdOfPost(post.getAccount().getId());
         commentDto.setTaggedAccountIds(taggedAccountIds);
+        if (taggedAccountIds.isEmpty()) { // No tagged account
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)) {
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST);
+            } else {
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
+            }
+        } else if (tagOwnerOfPost) { // Tag owner of post and other account
+            if (!taggedAccountIds.contains(comment.getParent().getAccount().getId()) && Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2)) { // Not tag owner of parent comment
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
+            }
+            commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
+        } else { // Only tag other account
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)) {
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST);
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
+            } else {
+                if (!taggedAccountIds.contains(comment.getParent().getAccount().getId())) { // Not tag owner of parent comment
+                    commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
+                }
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, comment, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
+            }
+        }
         apiMessageDto.setMessage("Create comment successfully");
         apiMessageDto.setData(commentDto);
         return apiMessageDto;
