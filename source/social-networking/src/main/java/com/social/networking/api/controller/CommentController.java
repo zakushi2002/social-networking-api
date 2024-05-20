@@ -106,6 +106,7 @@ public class CommentController extends BaseController {
         CommentDto commentDto = commentMapper.fromEntityToCreateCommentDto(comment);
         commentDto.setOwnerIdOfPost(post.getAccount().getId());
         commentDto.setTaggedAccountIds(taggedAccountIds);
+        commentDto.setParentComment(comment.getParent() == null ? null : commentMapper.fromEntityToCommentDto(comment.getParent()));
         handleSendMessage(taggedAccountIds, comment, commentDto, tagOwnerOfPost);
         apiMessageDto.setMessage("Create comment successfully");
         apiMessageDto.setData(commentDto);
@@ -276,8 +277,8 @@ public class CommentController extends BaseController {
                 commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
             }
         } else if (tagOwnerOfPost) { // Tag owner of post and other account
-            if (!taggedAccountIds.contains(comment.getParent().getAccount().getId())
-                    && Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2)) { // Not tag owner of parent comment
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2)
+                    && !taggedAccountIds.contains(comment.getParent().getAccount().getId())) { // Not tag owner of parent comment
                 taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT); // Notify owner of parent comment
             }
             taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT); // Notify tagged accounts including owner of post
