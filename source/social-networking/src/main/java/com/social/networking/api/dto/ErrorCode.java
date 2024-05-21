@@ -127,4 +127,9 @@ public class ErrorCode {
      */
     public static final String COURSE_ERROR_NOT_FOUND = "ERROR-COURSE-000";
     public static final String COURSE_ERROR_HANDLED = "ERROR-COURSE-001";
+
+    /**
+     * CourseRequest error code
+     */
+    public static final String COURSE_REQUEST_ERROR_NOT_FOUND = "ERROR-COURSE-REQUEST-000";
 }

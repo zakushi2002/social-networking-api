@@ -47,7 +47,7 @@ public class ThymeleafServiceImpl implements ThymeleafService {
     }
 
     @Override
-    public String createContentGetOTP(String template, Map<String, Object> variables) {
+    public String createContent(String template, Map<String, Object> variables) {
         final Context context = new Context();
         context.setVariables(variables);
         return templateEngine.process(template, context);

@@ -5,6 +5,8 @@ import com.social.networking.api.dto.ApiMessageDto;
 import com.social.networking.api.dto.ErrorCode;
 import com.social.networking.api.dto.ResponseListDto;
 import com.social.networking.api.dto.course.CourseDto;
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.form.course.CreateCourseForm;
 import com.social.networking.api.form.course.HandleCourseForm;
 import com.social.networking.api.form.course.UpdateCourseForm;
@@ -50,10 +52,7 @@ public class CourseController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         ExpertProfile expertProfile = expertProfileRepository.findById(createCourseForm.getExpertId()).orElse(null);
         if (expertProfile == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Expert not found!");
-            apiMessageDto.setCode(ErrorCode.EXPERT_PROFILE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Expert not found!", ErrorCode.EXPERT_PROFILE_ERROR_NOT_FOUND);
         }
         Category topic = categoryRepository.findById(createCourseForm.getTopicId()).orElse(null);
         Course course = courseMapper.fromCreateCourseFormToEntity(createCourseForm);
@@ -71,10 +70,7 @@ public class CourseController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Course course = courseRepository.findById(updateCourseForm.getId()).orElse(null);
         if (course == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course not found!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
         courseMapper.updateCourseFromCreateCourseForm(updateCourseForm, course);
         courseRepository.save(course);
@@ -89,10 +85,7 @@ public class CourseController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Course course = courseRepository.findById(id).orElse(null);
         if (course == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course not found!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
         courseRepository.delete(course);
         apiMessageDto.setMessage("Course deleted successfully!");
@@ -105,10 +98,7 @@ public class CourseController extends BaseController {
         ApiMessageDto<CourseDto> apiMessageDto = new ApiMessageDto<>();
         Course course = courseRepository.findById(id).orElse(null);
         if (course == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course not found!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
         apiMessageDto.setMessage("Get a course successfully!");
         apiMessageDto.setData(courseMapper.fromEntityToCourseDto(course));
@@ -141,16 +131,10 @@ public class CourseController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Course course = courseRepository.findById(handleCourseForm.getId()).orElse(null);
         if (course == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course not found!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
         if (!course.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course is not pending!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_HANDLED);
-            return apiMessageDto;
+            throw new BadRequestException("[Course] Course is not pending!", ErrorCode.COURSE_ERROR_HANDLED);
         }
         course.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
         courseRepository.save(course);
@@ -168,16 +152,10 @@ public class CourseController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Course course = courseRepository.findById(handleCourseForm.getId()).orElse(null);
         if (course == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course not found!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
         if (!course.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course is not pending!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_HANDLED);
-            return apiMessageDto;
+            throw new BadRequestException("[Course] Course is not pending!", ErrorCode.COURSE_ERROR_HANDLED);
         }
         courseRepository.delete(course);
         apiMessageDto.setMessage("Course rejected successfully!");

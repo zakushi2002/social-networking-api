@@ -29,4 +29,6 @@ public class CreateCourseForm {
     private Long topicId;
     private Integer fee;
     private Integer status;
+    @NotEmpty(message = "Join URL cannot be empty")
+    private String joinUrl;
 }
