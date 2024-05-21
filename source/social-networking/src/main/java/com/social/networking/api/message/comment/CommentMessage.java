@@ -52,6 +52,7 @@ public class CommentMessage implements MessageService<CommentDto> {
         CommentNotificationMessage commentNotificationMessage = new CommentNotificationMessage();
         commentNotificationMessage.setNotificationId(notification.getId());
         commentNotificationMessage.setCommentId(data.getId());
+        commentNotificationMessage.setCommentContent(data.getCommentContent());
         commentNotificationMessage.setPostId(data.getPost().getId());
         commentNotificationMessage.setCommentDepth(data.getCommentDepth());
         commentNotificationMessage.setAccountId(data.getOwner().getId());

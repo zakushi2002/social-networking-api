@@ -40,7 +40,7 @@ public interface CommentMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "post", target = "post", qualifiedByName = "fromEntityToCreateCommentNotificationDto")
-    // @Mapping(source = "content", target = "commentContent")
+    @Mapping(source = "content", target = "commentContent")
     @Mapping(source = "depth", target = "commentDepth")
     @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
     @Mapping(source = "parent", target = "parentComment", qualifiedByName = "fromEntityToCountComment")

@@ -6,6 +6,7 @@ import lombok.Data;
 public class CommentNotificationMessage {
     private Long notificationId;
     private Long commentId;
+    private String commentContent;
     private Long postId;
     private Integer commentDepth;
     private Long accountId;

@@ -67,6 +67,7 @@ public class TaggedCommentMessage implements MessageService<CommentDto> {
         TaggedCommentNotificationMessage taggedCommentNotificationMessage = new TaggedCommentNotificationMessage();
         taggedCommentNotificationMessage.setNotificationId(notification.getId());
         taggedCommentNotificationMessage.setCommentId(data.getId());
+        taggedCommentNotificationMessage.setCommentContent(data.getCommentContent());
         taggedCommentNotificationMessage.setPostId(data.getPost().getId());
         taggedCommentNotificationMessage.setCommentDepth(data.getCommentDepth());
         taggedCommentNotificationMessage.setAccountId(data.getOwner().getId());

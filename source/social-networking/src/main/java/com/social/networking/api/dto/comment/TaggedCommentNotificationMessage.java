@@ -8,6 +8,7 @@ import java.util.List;
 public class TaggedCommentNotificationMessage {
     private Long notificationId;
     private Long commentId;
+    private String commentContent;
     private Long postId;
     private Integer commentDepth;
     private Long accountId;
