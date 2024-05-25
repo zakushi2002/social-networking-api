@@ -1,6 +1,7 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Announcement;
 import com.social.networking.api.model.Notification;
@@ -61,10 +62,7 @@ public class NotificationController extends BaseController {
         ApiMessageDto<NotificationDto> apiMessageDto = new ApiMessageDto<>();
         Notification notification = notificationRepository.findById(createAnnouncementForm.getNotificationId()).orElse(null);
         if (notification == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Notification not found!");
-            return apiMessageDto;
+            throw new NotFoundException("[Notification] Notification not found!", ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
         }
         List<Announcement> receiverList = new ArrayList<>();
         for (Long receiverId : createAnnouncementForm.getReceivers()) {

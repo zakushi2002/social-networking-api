@@ -1,6 +1,8 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Comment;
 import com.social.networking.api.model.Post;
@@ -53,32 +55,20 @@ public class ReportController extends BaseController {
         if (createReportForm.getKind().equals(SocialNetworkingConstant.REPORT_KIND_POST)) {
             Post post = postRepository.findById(createReportForm.getObjectId()).orElse(null);
             if (post == null) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("Post not found!");
-                return apiMessageDto;
+                throw new NotFoundException("[Report] Post not found!", ErrorCode.POST_ERROR_NOT_FOUND);
             }
         } else if (createReportForm.getKind().equals(SocialNetworkingConstant.REPORT_KIND_COMMENT)) {
             Comment comment = commentRepository.findById(createReportForm.getObjectId()).orElse(null);
             if (comment == null) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.COMMENT_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("Comment not found!");
-                return apiMessageDto;
+                throw new NotFoundException("[Report] Comment not found!", ErrorCode.COMMENT_ERROR_NOT_FOUND);
             }
         } else if (createReportForm.getKind().equals(SocialNetworkingConstant.REPORT_KIND_ACCOUNT)) {
             if (createReportForm.getObjectId().equals(getCurrentUser())) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.REPORT_ERROR_REPORT_YOURSELF);
-                apiMessageDto.setMessage("You cannot report yourself!");
-                return apiMessageDto;
+                throw new BadRequestException("[Report] You cannot report yourself!", ErrorCode.REPORT_ERROR_REPORT_YOURSELF);
             }
             Account account = accountRepository.findById(createReportForm.getObjectId()).orElse(null);
             if (account == null) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("Account not found!");
-                return apiMessageDto;
+                throw new NotFoundException("[Report] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
             }
         }
         Report report = reportRepository.findByObjectIdAndKindAndStatus(createReportForm.getObjectId(), createReportForm.getKind(), SocialNetworkingConstant.STATUS_PENDING).orElse(null);
@@ -93,7 +83,7 @@ public class ReportController extends BaseController {
         }
         reportRepository.save(report);
         apiMessageDto.setData(report.getId());
-        apiMessageDto.setMessage("Report successfully!");
+        apiMessageDto.setMessage("Report successfully.");
         return apiMessageDto;
     }
 
@@ -104,42 +94,27 @@ public class ReportController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Report report = reportRepository.findById(handleReportForm.getId()).orElse(null);
         if (report == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.REPORT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Report not found!");
-            return apiMessageDto;
+            throw new NotFoundException("[Report] Report not found!", ErrorCode.REPORT_ERROR_NOT_FOUND);
         }
         if (!report.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.REPORT_ERROR_APPROVED_OR_REJECTED);
-            apiMessageDto.setMessage("Report has been approved or rejected!");
-            return apiMessageDto;
+            throw new BadRequestException("[Report] Report has been approved or rejected!", ErrorCode.REPORT_ERROR_APPROVED_OR_REJECTED);
         }
         if (report.getKind().equals(SocialNetworkingConstant.REPORT_KIND_POST)) {
             Post post = postRepository.findById(report.getObjectId()).orElse(null);
             if (post == null) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("Post not found!");
-                return apiMessageDto;
+                throw new NotFoundException("[Report] Post not found!", ErrorCode.POST_ERROR_NOT_FOUND);
             }
             postRepository.deleteById(report.getObjectId());
         } else if (report.getKind().equals(SocialNetworkingConstant.REPORT_KIND_COMMENT)) {
             Comment comment = commentRepository.findById(report.getObjectId()).orElse(null);
             if (comment == null) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.COMMENT_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("Comment not found!");
-                return apiMessageDto;
+                throw new NotFoundException("[Report] Comment not found!", ErrorCode.COMMENT_ERROR_NOT_FOUND);
             }
             commentRepository.deleteById(report.getObjectId());
         } else if (report.getKind().equals(SocialNetworkingConstant.REPORT_KIND_ACCOUNT)) {
             Account account = accountRepository.findById(report.getObjectId()).orElse(null);
             if (account == null) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("Account not found!");
-                return apiMessageDto;
+                throw new NotFoundException("[Report] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
             }
             account.setStatus(SocialNetworkingConstant.STATUS_LOCK);
             accountRepository.save(account);
@@ -158,20 +133,14 @@ public class ReportController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Report report = reportRepository.findById(handleReportForm.getId()).orElse(null);
         if (report == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.REPORT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Report not found!");
-            return apiMessageDto;
+            throw new NotFoundException("[Report] Report not found!", ErrorCode.REPORT_ERROR_NOT_FOUND);
         }
         if (!report.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.REPORT_ERROR_APPROVED_OR_REJECTED);
-            apiMessageDto.setMessage("Report has been approved or rejected!");
-            return apiMessageDto;
+            throw new BadRequestException("[Report] Report has been approved or rejected!", ErrorCode.REPORT_ERROR_APPROVED_OR_REJECTED);
         }
         report.setStatus(SocialNetworkingConstant.STATUS_DELETE);
         reportRepository.save(report);
-        apiMessageDto.setMessage("Reject successfully");
+        apiMessageDto.setMessage("Reject successfully.");
         apiMessageDto.setData(report.getId());
         return apiMessageDto;
     }
@@ -183,7 +152,7 @@ public class ReportController extends BaseController {
         Page<Report> page = reportRepository.findAll(reportCriteria.getSpecification(), pageable);
         ResponseListDto<ReportDto> responseListDto = new ResponseListDto(reportMapper.fromEntityListToReportDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("List report success");
+        apiMessageDto.setMessage("List report success.");
         return apiMessageDto;
     }
 }

@@ -1,5 +1,7 @@
 package com.social.networking.api.controller;
 
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.exception.UnauthorizationException;
 import com.social.networking.api.model.Group;
 import com.social.networking.api.model.Permission;
@@ -49,15 +51,12 @@ public class GroupController extends BaseController {
     @Transactional
     public ApiMessageDto<String> createGroup(@Valid @RequestBody CreateGroupForm createGroupForm, BindingResult bindingResult) {
         if (!isSuperAdmin()) {
-            throw new UnauthorizationException("Not allowed create.");
+            throw new UnauthorizationException("[Group] Not allowed create.");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Group group = groupRepository.findFirstByName(createGroupForm.getName());
         if (group != null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NAME_EXIST);
-            apiMessageDto.setMessage("Group name is exist");
-            return apiMessageDto;
+            throw new BadRequestException("[Group] Group name is exist!", ErrorCode.GROUP_ERROR_NAME_EXIST);
         }
         group = groupMapper.fromCreateGroupFormToEntity(createGroupForm);
         List<Permission> permissionList = new ArrayList<>();
@@ -69,7 +68,7 @@ public class GroupController extends BaseController {
         }
         group.setPermissions(permissionList);
         groupRepository.save(group);
-        apiMessageDto.setMessage("Create group success");
+        apiMessageDto.setMessage("Create group success.");
         return apiMessageDto;
     }
 
@@ -77,22 +76,16 @@ public class GroupController extends BaseController {
     @PreAuthorize("hasRole('GR_U')")
     public ApiMessageDto<String> updateGroup(@Valid @RequestBody UpdateGroupForm updateGroupForm, BindingResult bindingResult) {
         if (!isSuperAdmin()) {
-            throw new UnauthorizationException("Not allowed update.");
+            throw new UnauthorizationException("[Group] Not allowed update.");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Group group = groupRepository.findById(updateGroupForm.getId()).orElse(null);
         if (group == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Group name doesn't exist");
-            return apiMessageDto;
+            throw new NotFoundException("[Group] Group not found!", ErrorCode.GROUP_ERROR_NOT_FOUND);
         }
         Group groupCheck = groupRepository.findFirstByName(updateGroupForm.getName());
         if (groupCheck != null && !Objects.equals(groupCheck.getId(), group.getId())) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NAME_EXIST);
-            apiMessageDto.setMessage("Group name is exist");
-            return apiMessageDto;
+            throw new BadRequestException("[Group] Group name is exist!", ErrorCode.GROUP_ERROR_NAME_EXIST);
         }
         if (StringUtils.isNoneBlank(updateGroupForm.getName())) {
             group.setName(updateGroupForm.getName());
@@ -101,7 +94,7 @@ public class GroupController extends BaseController {
             group.setDescription(updateGroupForm.getDescription());
         }
         groupRepository.save(group);
-        apiMessageDto.setMessage("Update group success");
+        apiMessageDto.setMessage("Update group success.");
         return apiMessageDto;
     }
 
@@ -109,13 +102,13 @@ public class GroupController extends BaseController {
     @PreAuthorize("hasRole('GR_L')")
     public ApiMessageDto<ResponseListDto<GroupDto>> listGroup(@Valid GroupCriteria groupCriteria, Pageable pageable) {
         if (!isSuperAdmin()) {
-            throw new UnauthorizationException("Not allowed list.");
+            throw new UnauthorizationException("[Group] Not allowed list!");
         }
         Page<Group> page = groupRepository.findAll(groupCriteria.getSpecification(), pageable);
         ResponseListDto<GroupDto> responseListDto = new ResponseListDto(groupMapper.fromEntityToGroupDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         ApiMessageDto<ResponseListDto<GroupDto>> apiMessageDto = new ApiMessageDto<>();
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("List group success");
+        apiMessageDto.setMessage("List group success.");
         return apiMessageDto;
     }
 
@@ -123,10 +116,13 @@ public class GroupController extends BaseController {
     @PreAuthorize("hasRole('GR_V')")
     public ApiMessageDto<GroupDto> getGroup(@PathVariable("id") Long id) {
         if (!isSuperAdmin()) {
-            throw new UnauthorizationException("Not allowed to get.");
+            throw new UnauthorizationException("[Group] Not allowed to get.");
         }
         ApiMessageDto<GroupDto> apiMessageDto = new ApiMessageDto<>();
         Group group = groupRepository.findById(id).orElse(null);
+        if (group == null) {
+            throw new NotFoundException("[Group] Group not found!", ErrorCode.GROUP_ERROR_NOT_FOUND);
+        }
         apiMessageDto.setData(groupMapper.fromEntityToGroupDto(group));
         apiMessageDto.setMessage("Get group success");
         return apiMessageDto;
@@ -137,15 +133,12 @@ public class GroupController extends BaseController {
     @Transactional
     public ApiMessageDto<String> addPermission(@Valid @RequestBody AddPermissionForm addPermissionForm, BindingResult bindingResult) {
         if (!isSuperAdmin()) {
-            throw new UnauthorizationException("Not allowed add permission.");
+            throw new UnauthorizationException("[Group] Not allowed add permission.");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Group group = groupRepository.findById(addPermissionForm.getId()).orElse(null);
         if (group == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Group not found");
-            return apiMessageDto;
+            throw new NotFoundException("[Group] Group not found!", ErrorCode.GROUP_ERROR_NOT_FOUND);
         }
         List<Permission> permissionList = new ArrayList<>();
         for (long permissionId : addPermissionForm.getPermissions()) {
@@ -156,7 +149,7 @@ public class GroupController extends BaseController {
         }
         group.getPermissions().addAll(permissionList);
         groupRepository.save(group);
-        apiMessageDto.setMessage("Add permission success");
+        apiMessageDto.setMessage("Add permission success.");
         return apiMessageDto;
     }
 
@@ -165,15 +158,12 @@ public class GroupController extends BaseController {
     @Transactional
     public ApiMessageDto<String> removePermission(@Valid @RequestBody AddPermissionForm addPermissionForm, BindingResult bindingResult) {
         if (!isSuperAdmin()) {
-            throw new UnauthorizationException("Not allowed remove permission.");
+            throw new UnauthorizationException("[Group] Not allowed remove permission.");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Group group = groupRepository.findById(addPermissionForm.getId()).orElse(null);
         if (group == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Group not found");
-            return apiMessageDto;
+            throw new NotFoundException("[Group] Group not found!", ErrorCode.GROUP_ERROR_NOT_FOUND);
         }
         List<Permission> permissionList = new ArrayList<>();
         for (long permissionId : addPermissionForm.getPermissions()) {
@@ -184,7 +174,7 @@ public class GroupController extends BaseController {
         }
         group.getPermissions().removeIf(permission -> permissionList.stream().anyMatch(p -> p.getId().equals(permission.getId())));
         groupRepository.save(group);
-        apiMessageDto.setMessage("Remove permission success");
+        apiMessageDto.setMessage("Remove permission success.");
         return apiMessageDto;
     }
 }

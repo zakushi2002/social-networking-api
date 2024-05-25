@@ -6,6 +6,7 @@ import com.social.networking.api.dto.ErrorCode;
 import com.social.networking.api.dto.ResponseListDto;
 import com.social.networking.api.dto.notification.MynotificationDto;
 import com.social.networking.api.dto.notification.NotificationDto;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.form.notification.ChangeStateNotification;
 import com.social.networking.api.form.notification.UpdateNotificationForm;
 import com.social.networking.api.mapper.NotificationMapper;
@@ -48,10 +49,7 @@ public class NotificationVersion2Controller extends BaseController {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Notification notification = notificationRepository.findById(id).orElse(null);
         if (notification == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Notification not found!");
-            apiMessageDto.setCode(ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Notification Version 2] Notification not found!", ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
         }
         notificationRepository.delete(notification);
         apiMessageDto.setMessage("Delete notification success.");
@@ -95,10 +93,7 @@ public class NotificationVersion2Controller extends BaseController {
         ApiMessageDto<NotificationDto> apiMessageDto = new ApiMessageDto<>();
         Notification notification = notificationRepository.findById(id).orElse(null);
         if (notification == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Notification not found!");
-            apiMessageDto.setCode(ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Notification Version 2] Notification not found!", ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(notificationMapper.fromEntityToNotificatonDto(notification));
         apiMessageDto.setMessage("Get notification success.");
@@ -111,17 +106,11 @@ public class NotificationVersion2Controller extends BaseController {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Notification notification = notificationRepository.findById(updateNotificationForm.getId()).orElse(null);
         if (notification == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Notification not found!");
-            apiMessageDto.setCode(ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Notification Version 2] Notification not found!", ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
         }
         Account account = accountRepository.findById(updateNotificationForm.getIdUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Account not found!");
-            apiMessageDto.setCode(ErrorCode.NOTIFICATION_ACCOUNT_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Notification Version 2] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         notificationMapper.fromUpdateNotiToEntity(updateNotificationForm, notification);
         notificationRepository.save(notification);
@@ -135,10 +124,7 @@ public class NotificationVersion2Controller extends BaseController {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Notification notification = notificationRepository.findById(changeStateNotification.getId()).orElse(null);
         if (notification == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Notification not found!");
-            apiMessageDto.setCode(ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Notification Version 2] Notification not found!", ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
         }
         if (notification.getState().equals(SocialNetworkingConstant.NOTIFICATION_STATE_SENT)) {
             notification.setState(SocialNetworkingConstant.NOTIFICATION_STATE_READ);

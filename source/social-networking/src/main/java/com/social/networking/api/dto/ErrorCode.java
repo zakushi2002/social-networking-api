@@ -114,7 +114,6 @@ public class ErrorCode {
      * Notification error code
      */
     public static final String NOTIFICATION_ERROR_NOT_FOUND = "ERROR-NOTIFICATION-000";
-    public static final String NOTIFICATION_ACCOUNT_ERROR_NOT_FOUND = "ERROR-NOTIFICATION-ERROR-001";
 
     /**
      * CommunityMember error code

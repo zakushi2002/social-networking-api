@@ -1,14 +1,12 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
-import com.social.networking.api.dto.relationship.RelationshipNotificationDto;
-import com.social.networking.api.form.notification.NotificationService;
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.message.relationship.RelationshipMessage;
 import com.social.networking.api.model.Account;
-import com.social.networking.api.model.Notification;
 import com.social.networking.api.model.Relationship;
 import com.social.networking.api.repository.AccountRepository;
-import com.social.networking.api.repository.NotificationRepository;
 import com.social.networking.api.repository.RelationshipRepository;
 import com.social.networking.api.dto.ApiMessageDto;
 import com.social.networking.api.dto.ErrorCode;
@@ -27,8 +25,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/relationship")
@@ -44,7 +40,6 @@ public class RelationshipController extends BaseController {
     @Autowired
     RelationshipMessage relationshipMessage;
 
-
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FL_C')")
     @Transactional
@@ -52,30 +47,18 @@ public class RelationshipController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findById(createRelationshipForm.getAccountId()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account (whom the current user wants to follow) not found!");
-            return apiMessageDto;
+            throw new NotFoundException("[Relationship] Account (whom the current user wants to follow) not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         Account follower = accountRepository.findById(getCurrentUser()).orElse(null);
         if (follower == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Follower (current user) not found!");
-            return apiMessageDto;
+            throw new NotFoundException("[Relationship] Follower (current user) not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         if (account.getId().equals(follower.getId())) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.RELATIONSHIP_ERROR_NOT_FOLLOW_YOURSELF);
-            apiMessageDto.setMessage("You cannot follow yourself!");
-            return apiMessageDto;
+            throw new BadRequestException("[Relationship] You cannot follow yourself!", ErrorCode.RELATIONSHIP_ERROR_NOT_FOLLOW_YOURSELF);
         }
         Relationship relationship = relationshipRepository.findByAccountIdAndFollowerId(createRelationshipForm.getAccountId(), getCurrentUser()).orElse(null);
         if (relationship != null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.RELATIONSHIP_ERROR_ALREADY_FOLLOWED);
-            apiMessageDto.setMessage("You already followed this account!");
-            return apiMessageDto;
+            throw new BadRequestException("[Relationship] You already followed this account!", ErrorCode.RELATIONSHIP_ERROR_ALREADY_FOLLOWED);
         }
         relationship = new Relationship();
         relationship.setAccount(account);
@@ -84,7 +67,7 @@ public class RelationshipController extends BaseController {
         if (!isAdmin()) {
             relationshipMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, relationship, SocialNetworkingConstant.NOTIFICATION_KIND_NEW_FOLLOWER);
         }
-        apiMessageDto.setMessage("Followed successfully!");
+        apiMessageDto.setMessage("Followed successfully.");
         apiMessageDto.setData(relationship.getId());
         return apiMessageDto;
     }
@@ -96,10 +79,7 @@ public class RelationshipController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findById(accountId).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found!");
-            return apiMessageDto;
+            throw new NotFoundException("[Relationship] Account (whom the current user wants to unfollow) not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         Relationship relationship = relationshipRepository.findByAccountIdAndFollowerId(accountId, getCurrentUser()).orElse(null);
         if (relationship == null) {
@@ -109,7 +89,7 @@ public class RelationshipController extends BaseController {
             return apiMessageDto;
         }
         relationshipRepository.deleteById(relationship.getId());
-        apiMessageDto.setMessage("Unfollowed successfully!");
+        apiMessageDto.setMessage("Unfollowed successfully.");
         apiMessageDto.setData(relationship.getId());
         return apiMessageDto;
     }
@@ -121,19 +101,13 @@ public class RelationshipController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Relationship relationship = relationshipRepository.findById(id).orElse(null);
         if (relationship == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.RELATIONSHIP_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Relationship not found!");
-            return apiMessageDto;
+            throw new NotFoundException("[Relationship] Relationship not found!", ErrorCode.RELATIONSHIP_ERROR_NOT_FOUND);
         }
         if (!relationship.getFollower().getId().equals(getCurrentUser())) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.RELATIONSHIP_ERROR_NO_OWNERSHIP);
-            apiMessageDto.setMessage("You are not owner of this relationship!");
-            return apiMessageDto;
+            throw new BadRequestException("[Relationship] You are not owner of this relationship!", ErrorCode.RELATIONSHIP_ERROR_NO_OWNERSHIP);
         }
         relationshipRepository.deleteById(id);
-        apiMessageDto.setMessage("Deleted successfully!");
+        apiMessageDto.setMessage("Deleted successfully.");
         apiMessageDto.setData(relationship.getId());
         return apiMessageDto;
     }
@@ -150,7 +124,7 @@ public class RelationshipController extends BaseController {
         Page<Relationship> followers = relationshipRepository.findAllByAccountId(getCurrentUser(), pageable);
         ResponseListDto<RelationshipDto> responseListDto = new ResponseListDto(relationshipMapper.viewMyFollowerList(followers.getContent()), followers.getTotalElements(), followers.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get follower list successfully!");
+        apiMessageDto.setMessage("List follower successfully.");
         return apiMessageDto;
     }
 
@@ -166,7 +140,7 @@ public class RelationshipController extends BaseController {
         Page<Relationship> followings = relationshipRepository.findAllByFollowerId(getCurrentUser(), pageable);
         ResponseListDto<RelationshipDto> responseListDto = new ResponseListDto(relationshipMapper.viewMyFollowingList(followings.getContent()), followings.getTotalElements(), followings.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get following list successfully!");
+        apiMessageDto.setMessage("List following successfully.");
         return apiMessageDto;
     }
 
@@ -198,14 +172,11 @@ public class RelationshipController extends BaseController {
         ApiMessageDto<RelationshipDto> apiMessageDto = new ApiMessageDto<>();
         Relationship relationship = relationshipRepository.findById(id).orElse(null);
         if (relationship == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.RELATIONSHIP_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Relationship not found!");
-            return apiMessageDto;
+            throw new NotFoundException("[Relationship] Relationship not found!", ErrorCode.RELATIONSHIP_ERROR_NOT_FOUND);
         }
         RelationshipDto relationshipDto = relationshipMapper.fromEntityToRelationshipDto(relationship);
         apiMessageDto.setData(relationshipDto);
-        apiMessageDto.setMessage("Get relationship successfully!");
+        apiMessageDto.setMessage("Get relationship successfully.");
         return apiMessageDto;
     }
 }
