@@ -15,6 +15,7 @@ import com.social.networking.api.model.criteria.CourseRequestCriteria;
 import com.social.networking.api.repository.CourseRepository;
 import com.social.networking.api.repository.CourseRequestRepository;
 import com.social.networking.api.service.SocialNetworkingApiService;
+import com.social.networking.api.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,14 +52,18 @@ public class CourseRequestController extends BaseController {
         if (course == null) {
             throw new NotFoundException("[CourseRequest] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
+        CourseRequest checkDuplicate = courseRequestRepository.findByCourseIdAndEmail(createCourseRequest.getCourseId(), createCourseRequest.getEmail()).orElse(null);
+        if (checkDuplicate != null) {
+            throw new BadRequestException("[CourseRequest] Course request already exists!", ErrorCode.COURSE_REQUEST_ERROR_DUPLICATE);
+        }
         CourseRequest courseRequest = courseRequestMapper.fromCreateCourseRequestToEntity(createCourseRequest);
         courseRequest.setCourse(course);
         if (!Objects.equals(course.getFee(), 0) && !Objects.equals(course.getSlots(), 0)) {
             courseRequest.setStatus(SocialNetworkingConstant.STATUS_PENDING);
         }
-        /*Map<String, Object> variables = getVariables(createCourseRequest, course);
-        String subjectEmail = "[" + course.getTopic().getName() + "]" + course.getTitle();
-        socialNetworkingApiService.sendEmail(createCourseRequest.getEmail(), variables, subjectEmail);*/
+        Map<String, Object> variables = getVariables(createCourseRequest, course);
+        String subjectEmail = "[" + course.getTopic().getName() + "] " + course.getTitle();
+        socialNetworkingApiService.sendEmail(createCourseRequest.getEmail(), variables, subjectEmail);
         courseRequestRepository.save(courseRequest);
         apiMessageDto.setMessage("Course request created successfully.");
         apiMessageDto.setData(courseRequest.getId());
@@ -112,7 +117,7 @@ public class CourseRequestController extends BaseController {
         variables.put("courseFee", course.getFee());
         variables.put("courseSlots", course.getSlots());
         variables.put("courseDescription", course.getDescription());
-        variables.put("courseStartDate", course.getStartDate());
+        variables.put("courseStartDate", DateUtils.formatDate(course.getStartDate()));
         variables.put("courseEndDate", course.getEndDate());
         double diffInHours = (double) (course.getEndDate().getTime() - course.getStartDate().getTime()) / (60 * 60 * 1000);
         int totalMinute = (int) diffInHours * 60;
@@ -120,12 +125,12 @@ public class CourseRequestController extends BaseController {
         variables.put("courseJoinUrl", course.getJoinUrl());
         variables.put("expertName", course.getExpert().getAccount().getFullName());
         variables.put("expertEmail", course.getExpert().getAccount().getEmail());
-        variables.put("expertPhone", course.getExpert().getPhone());
-        variables.put("expertAvatar", course.getExpert().getAccount().getAvatarPath());
-        variables.put("expertHospital", course.getExpert().getHospital().getName());
-        variables.put("expertHospitalRole", course.getExpert().getHospitalRole().getName());
-        variables.put("expertAcademicDegree", course.getExpert().getAcademicDegree().getName());
-        variables.put("expertDepartment", course.getExpert().getDepartment().getName());
+//        variables.put("expertPhone", course.getExpert().getPhone());
+//        variables.put("expertAvatar", course.getExpert().getAccount().getAvatarPath());
+//        variables.put("expertHospital", course.getExpert().getHospital().getName());
+//        variables.put("expertHospitalRole", course.getExpert().getHospitalRole().getName());
+//        variables.put("expertAcademicDegree", course.getExpert().getAcademicDegree().getName());
+//        variables.put("expertDepartment", course.getExpert().getDepartment().getName());
         return variables;
     }
 }

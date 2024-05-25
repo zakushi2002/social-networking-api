@@ -31,6 +31,7 @@ public class EmailService {
                 message.setContent(thymeleafService.createContent(template, variables), "text/html; charset=utf-8");
             }
             emailSender.send(message);
+            log.info("Send email to {} with subject {}", email, subject);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

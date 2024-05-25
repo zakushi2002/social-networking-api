@@ -120,7 +120,7 @@ public class ErrorCode {
      * CommunityMember error code
      */
     public static final String COMMUNITY_MEMBER_JOINED = "ERROR-COMMUNITY-MEMBER-000";
-    public static final String COMMUNITY_MEMBER_NOT_JOINED = "ERROR-COMMUNITY-MEMBER-001";
+    public static final String COMMUNITY_MEMBER_ERROR_NOT_FOUND = "ERROR-COMMUNITY-MEMBER-001";
 
     /**
      * Course error code
@@ -132,4 +132,5 @@ public class ErrorCode {
      * CourseRequest error code
      */
     public static final String COURSE_REQUEST_ERROR_NOT_FOUND = "ERROR-COURSE-REQUEST-000";
+    public static final String COURSE_REQUEST_ERROR_DUPLICATE = "ERROR-COURSE-REQUEST-001";
 }
