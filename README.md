@@ -39,4 +39,8 @@ Nguyễn Huỳnh Thanh Toàn - Email: [toannguyenit239@gmail.com](mailto:toanngu
 
 Project Link: [https://github.com/zakushi2002/social-networking-api](https://github.com/zakushi2002/social-networking-api)
 
+Front-end Project Link: [https://github.com/KhanhTran297/FamilyCircle](https://github.com/KhanhTran297/FamilyCircle)
+
+Link to app interface design: [https://www.figma.com/design/iXu1duPqYVoDj3Ve14eyI5/FamilyCircle?node-id=12-1668&t=f2zV18x7n4BPW3Lp-1](https://www.figma.com/design/iXu1duPqYVoDj3Ve14eyI5/FamilyCircle?node-id=12-1668&t=f2zV18x7n4BPW3Lp-1)
+
 Please replace the placeholders with the actual values.
