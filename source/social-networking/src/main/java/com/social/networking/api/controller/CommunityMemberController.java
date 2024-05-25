@@ -1,6 +1,8 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.mapper.CommunityMemberMapper;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Category;
@@ -44,24 +46,15 @@ public class CommunityMemberController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         CommunityMember communityMember = communityMemberRepository.findByAccountIdAndCommunityId(getCurrentUser(), createCommunityMemberForm.getCommunityId()).orElse(null);
         if (communityMember != null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.COMMUNITY_MEMBER_JOINED);
-            apiMessageDto.setMessage("You have joined this community!");
-            return apiMessageDto;
+            throw new BadRequestException("[Community Member] You have joined this community!", ErrorCode.COMMUNITY_MEMBER_JOINED);
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("You are not logged in!");
-            return apiMessageDto;
+            throw new NotFoundException("[Community Member] You are not logged in!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
-        Category community = categoryRepository.findById(createCommunityMemberForm.getCommunityId()).orElse(null);
-        if (community == null || community.getKind() != 5) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_COMMUNITY_KIND);
-            apiMessageDto.setMessage("This is not a Community!");
-            return apiMessageDto;
+        Category community = categoryRepository.findByIdAndKind(createCommunityMemberForm.getCommunityId(), SocialNetworkingConstant.CATEGORY_KIND_COMMUNITY).orElse(null);
+        if (community == null) {
+            throw new BadRequestException("[Community Member] Not found community!", ErrorCode.CATEGORY_ERROR_NOT_COMMUNITY_KIND);
         }
         communityMember = new CommunityMember();
         communityMember.setAccount(account);
@@ -69,7 +62,7 @@ public class CommunityMemberController extends BaseController {
         communityMember.setKind(SocialNetworkingConstant.COMMUNITY_MEMBER_KIND);
         communityMemberRepository.save(communityMember);
         apiMessageDto.setData(community.getId());
-        apiMessageDto.setMessage("You have joined the " + community.getName() +" community.");
+        apiMessageDto.setMessage("You have joined the " + community.getName() + " community.");
         return apiMessageDto;
     }
 
@@ -79,14 +72,11 @@ public class CommunityMemberController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         CommunityMember communityMember = communityMemberRepository.findByAccountIdAndCommunityId(getCurrentUser(), createCommunityMemberForm.getCommunityId()).orElse(null);
         if (communityMember == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.COMMUNITY_MEMBER_NOT_JOINED);
-            apiMessageDto.setMessage("You have not joined this community yet!");
-            return apiMessageDto;
+            throw new NotFoundException("[Community Member] You have not joined this community yet!", ErrorCode.COMMUNITY_MEMBER_ERROR_NOT_FOUND);
         }
         communityMemberRepository.delete(communityMember);
         apiMessageDto.setData(communityMember.getId());
-        apiMessageDto.setMessage("You have left the " + communityMember.getCommunity().getName() +" community.");
+        apiMessageDto.setMessage("You have left the " + communityMember.getCommunity().getName() + " community.");
         return apiMessageDto;
     }
 
@@ -95,10 +85,7 @@ public class CommunityMemberController extends BaseController {
         ApiMessageDto<CommunityMemberDto> apiMessageDto = new ApiMessageDto<>();
         CommunityMember communityMember = communityMemberRepository.findById(id).orElse(null);
         if (communityMember == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.COMMUNITY_MEMBER_NOT_JOINED);
-            apiMessageDto.setMessage("Not found community member.");
-            return apiMessageDto;
+            throw new NotFoundException("[Community Member] Community member not found!", ErrorCode.COMMUNITY_MEMBER_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(communityMemberMapper.fromEntityToDto(communityMember));
         apiMessageDto.setMessage("Get a community member success.");

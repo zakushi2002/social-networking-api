@@ -1,9 +1,9 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
-import com.social.networking.api.dto.reaction.CommentReactionNotificationMessage;
-import com.social.networking.api.dto.reaction.PostReactionNotificationMessage;
-import com.social.networking.api.form.notification.NotificationService;
+import com.social.networking.api.message.comment.CommentMessage;
+import com.social.networking.api.message.comment.TaggedCommentMessage;
+import com.social.networking.api.message.reaction.CommentReactionMessage;
 import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.CommentCriteria;
 import com.social.networking.api.model.criteria.CommentReactionCriteria;
@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1/comment")
@@ -50,9 +51,11 @@ public class CommentController extends BaseController {
     @Autowired
     CommentReactionRepository commentReactionRepository;
     @Autowired
-    NotificationRepository notificationRepository;
+    CommentReactionMessage commentReactionMessage;
     @Autowired
-    NotificationService notificationService;
+    CommentMessage commentMessage;
+    @Autowired
+    TaggedCommentMessage taggedCommentMessage;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CMT_C')")
@@ -81,8 +84,7 @@ public class CommentController extends BaseController {
             }
             if (parent.getDepth().equals(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2)) {
                 comment.setParent(parent.getParent());
-            }
-            else {
+            } else {
                 comment.setParent(parent);
             }
             comment.setDepth(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2);
@@ -98,11 +100,14 @@ public class CommentController extends BaseController {
                 }
             }
         }
+        boolean tagOwnerOfPost = taggedAccountIds.contains(post.getAccount().getId());
         comment.setAccount(account);
         commentRepository.save(comment);
         CommentDto commentDto = commentMapper.fromEntityToCreateCommentDto(comment);
         commentDto.setOwnerIdOfPost(post.getAccount().getId());
         commentDto.setTaggedAccountIds(taggedAccountIds);
+        commentDto.setParentComment(comment.getParent() == null ? null : commentMapper.fromEntityToCommentDto(comment.getParent()));
+        handleSendMessage(taggedAccountIds, comment, commentDto, tagOwnerOfPost);
         apiMessageDto.setMessage("Create comment successfully");
         apiMessageDto.setData(commentDto);
         return apiMessageDto;
@@ -244,7 +249,9 @@ public class CommentController extends BaseController {
         commentReactionRepository.save(commentReaction);
         comment.getCommentReactions().add(commentReaction);
         commentRepository.save(comment);
-        createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT);
+        if (!isAdmin()) {
+            commentReactionMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT);
+        }
         apiMessageDto.setMessage("React comment successfully");
         apiMessageDto.setData(reactionMapper.fromEntityToCommentReactionDto(commentReaction));
         return apiMessageDto;
@@ -262,67 +269,28 @@ public class CommentController extends BaseController {
         return apiMessageDto;
     }
 
-    /**
-     * Creates a JSON message for the given reaction and notification.
-     *
-     * @param reaction       the reaction for which to create the message
-     * @param notification the notification for which to create the message
-     * @return the JSON message
-     */
-    private String getJsonMessage(CommentReaction reaction, Notification notification) {
-        CommentReactionNotificationMessage commentReactionNotificationMessage = new CommentReactionNotificationMessage();
-        commentReactionNotificationMessage.setNotificationId(notification.getId());
-        commentReactionNotificationMessage.setCommentReactionId(reaction.getId());
-        commentReactionNotificationMessage.setReactionKind(reaction.getKind());
-        commentReactionNotificationMessage.setPostId(reaction.getComment().getPost().getId());
-        commentReactionNotificationMessage.setCommentId(reaction.getComment().getId());
-        commentReactionNotificationMessage.setCommentContent(reaction.getComment().getContent());
-        commentReactionNotificationMessage.setAccountId(reaction.getAccount().getId());
-        commentReactionNotificationMessage.setAccountName(reaction.getAccount().getFullName());
-        return notificationService.convertObjectToJson(commentReactionNotificationMessage);
-    }
-
-    /**
-     * Creates a notification for the given reaction and notification kind.
-     *
-     * @param reaction            the reaction for which to create the notification
-     * @param notificationState the state of the notification
-     * @param notificationKind  the kind of notification to create
-     * @param accountId         the ID of the account for which to create the notification
-     * @return the created notification
-     */
-    private Notification createNotification(CommentReaction reaction, Integer notificationState, Integer notificationKind, Long accountId) {
-        Notification notification = notificationService.createNotification(notificationState, notificationKind);
-        String jsonMessage = getJsonMessage(reaction, notification);
-        notification.setIdUser(accountId);
-        notification.setContent(jsonMessage);
-        if (notificationKind.equals(SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT)) {
-            notificationRepository.deleteAllByIdUserAndKindAndRefId(accountId, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT, reaction.getComment().getId().toString());
-            notification.setRefId(reaction.getComment().getId().toString());
-        }
-        return notification;
-    }
-
-    /**
-     * Creates a notification and sends a message for the given course and notification kind.
-     *
-     * @param notificationState the state of the notification
-     * @param reaction            the course for which to create the notification
-     * @param notificationKind  the kind of notification to create
-     */
-    private void createNotificationAndSendMessage(Integer notificationState, CommentReaction reaction, Integer notificationKind) {
-        List<Notification> notifications = new ArrayList<>();
-        if (!isAdmin()) {
-            if (reaction.getComment().getAccount() != null) {
-                // Creates a notification for the given reaction and notification kind
-                Notification notification = createNotification(reaction, notificationState, notificationKind, reaction.getComment().getAccount().getId());
-                notifications.add(notification);
+    private void handleSendMessage(List<Long> taggedAccountIds, Comment comment, CommentDto commentDto, boolean tagOwnerOfPost) {
+        if (taggedAccountIds.isEmpty()) { // No tagged account
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)) {
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST);
+            } else {
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
             }
-            // Saves the notifications to the database
-            notificationRepository.saveAll(notifications);
-            // Sends a message for each notification
-            for (Notification notification : notifications) {
-                notificationService.sendMessage(notification.getContent(), notificationKind, notification.getIdUser());
+        } else if (tagOwnerOfPost) { // Tag owner of post and other account
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2)
+                    && !taggedAccountIds.contains(comment.getParent().getAccount().getId())) { // Not tag owner of parent comment
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT); // Notify owner of parent comment
+            }
+            taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT); // Notify tagged accounts including owner of post
+        } else { // Only tag other account
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)) {
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST); // Notify owner of post
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
+            } else {
+                if (!taggedAccountIds.contains(comment.getParent().getAccount().getId())) { // Not tag owner of parent comment
+                    taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
+                }
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
             }
         }
     }

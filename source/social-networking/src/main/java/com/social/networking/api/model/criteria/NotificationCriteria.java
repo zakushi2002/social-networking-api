@@ -41,7 +41,7 @@ public class NotificationCriteria implements Serializable {
                     predicates.add(cb.equal(root.get("kind"), getKind()));
                 }
                 if (!StringUtils.isBlank(getContent())) {
-                    predicates.add(cb.like(cb.lower(root.get("content")), "%" + getContent() + "%"));
+                    predicates.add(cb.like(cb.lower(root.get("content")), "%" + getContent().toLowerCase() + "%"));
                 }
                 if (getStatus() != null) {
                     predicates.add(cb.equal(root.get("status"), getStatus()));

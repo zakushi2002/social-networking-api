@@ -26,7 +26,7 @@ public class ConversationCriteria implements Serializable {
                     predicates.add(cb.equal(root.get("id"), id));
                 }
                 if (name != null) {
-                    predicates.add(cb.like(root.get("name"), "%" + name + "%"));
+                    predicates.add(cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
                 }
                 if (kind != null) {
                     predicates.add(cb.equal(root.get("kind"), kind));

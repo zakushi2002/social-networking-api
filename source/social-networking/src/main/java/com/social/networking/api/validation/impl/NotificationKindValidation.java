@@ -25,6 +25,8 @@ public class NotificationKindValidation implements ConstraintValidator<Notificat
                 || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT)
                 || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_NEW_FOLLOWER)
                 || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_COURSE_APPROVED)
-                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
+                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT)
+                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT)
+                || Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_NEW_POST_IN_COMMUNITY);
     }
 }

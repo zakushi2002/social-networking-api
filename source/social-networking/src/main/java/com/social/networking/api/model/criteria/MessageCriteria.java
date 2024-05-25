@@ -39,7 +39,7 @@ public class MessageCriteria implements Serializable {
                     predicates.add(cb.equal(senderJoin.get("id"), senderId));
                 }
                 if (content != null) {
-                    predicates.add(cb.like(root.get("content"), "%" + content + "%"));
+                    predicates.add(cb.like(cb.lower(root.get("content")), "%" + content.toLowerCase() + "%"));
                 }
                 query.orderBy(cb.desc(root.get("createdDate")));
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));

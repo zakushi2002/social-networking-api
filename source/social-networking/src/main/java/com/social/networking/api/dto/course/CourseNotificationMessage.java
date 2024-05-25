@@ -11,6 +11,7 @@ public class CourseNotificationMessage {
     private String courseTitle;
     private Long expertId;
     private String expertName;
+    private String expertAvatar;
     private Date startDate;
     private Date endDate;
 }

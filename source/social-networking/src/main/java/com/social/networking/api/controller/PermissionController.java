@@ -1,5 +1,7 @@
 package com.social.networking.api.controller;
 
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.exception.UnauthorizationException;
 import com.social.networking.api.model.Group;
 import com.social.networking.api.model.Permission;
@@ -46,26 +48,20 @@ public class PermissionController extends BaseController {
     @Transactional
     public ApiMessageDto<String> createPermission(@Valid @RequestBody CreatePermissionForm createPermissionForm, BindingResult bindingResult) {
         if(!isSuperAdmin()){
-            throw new UnauthorizationException("Not allowed create.");
+            throw new UnauthorizationException("[Permission] Not allowed create.");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Permission permission = permissionRepository.findFirstByName(createPermissionForm.getName());
         if (permission != null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.PERMISSION_ERROR_NAME_EXIST);
-            apiMessageDto.setMessage("Permission name is exist");
-            return apiMessageDto;
+            throw new BadRequestException("[Permission] Permission name is exist!", ErrorCode.PERMISSION_ERROR_NAME_EXIST);
         }
         permission = permissionRepository.findByPermissionCode(createPermissionForm.getCode());
         if (permission != null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.PERMISSION_ERROR_CODE_EXIST);
-            apiMessageDto.setMessage("Permission code is exist");
-            return apiMessageDto;
+            throw new BadRequestException("[Permission] Permission code is exist!", ErrorCode.PERMISSION_ERROR_CODE_EXIST);
         }
         permission = permissionMapper.fromCreatePermissionFormToEntity(createPermissionForm);
         permissionRepository.save(permission);
-        apiMessageDto.setMessage("Create permission success");
+        apiMessageDto.setMessage("Create permission success.");
         return apiMessageDto;
     }
 
@@ -73,13 +69,13 @@ public class PermissionController extends BaseController {
     @PreAuthorize("hasRole('PER_L')")
     public ApiMessageDto<ResponseListDto<PermissionDto>> listPermission(PermissionCriteria permissionCriteria, @PageableDefault(size = 1000) Pageable pageable) {
         if(!isSuperAdmin()){
-            throw new UnauthorizationException("Not allowed list.");
+            throw new UnauthorizationException("[Permission] Not allowed list.");
         }
         Page<Permission> page = permissionRepository.findAll(permissionCriteria.getSpecification(), pageable);
         ResponseListDto<PermissionDto> responseListDto = new ResponseListDto(permissionMapper.fromEntityToPermissionDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         ApiMessageDto<ResponseListDto<PermissionDto>> apiMessageDto = new ApiMessageDto<>();
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("List permission success");
+        apiMessageDto.setMessage("List permission success.");
         return apiMessageDto;
     }
 
@@ -88,15 +84,12 @@ public class PermissionController extends BaseController {
     @Transactional
     public ApiMessageDto<String> deletePermission(@PathVariable("id") Long id) {
         if(!isSuperAdmin()){
-            throw new UnauthorizationException("Not allowed delete.");
+            throw new UnauthorizationException("[Permission] Not allowed delete.");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Permission permission = permissionRepository.findById(id).orElse(null);
         if (permission == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.PERMISSION_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Permission not found");
-            return apiMessageDto;
+            throw new NotFoundException("[Permission] Permission not found!", ErrorCode.PERMISSION_ERROR_NOT_FOUND);
         }
         if (permission.getGroups() != null && !permission.getGroups().isEmpty()) {
             for (Group group : permission.getGroups()) {
@@ -105,7 +98,7 @@ public class PermissionController extends BaseController {
             groupRepository.saveAll(permission.getGroups());
         }
         permissionRepository.deleteById(id);
-        apiMessageDto.setMessage("Delete permission success");
+        apiMessageDto.setMessage("Delete permission.");
         return apiMessageDto;
     }
 }

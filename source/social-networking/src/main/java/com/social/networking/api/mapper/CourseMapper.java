@@ -20,6 +20,7 @@ public interface CourseMapper {
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "fee", target = "fee")
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "joinUrl", target = "joinUrl")
     @BeanMapping(ignoreByDefault = true)
     Course fromCreateCourseFormToEntity(CreateCourseForm createCourseForm);
 

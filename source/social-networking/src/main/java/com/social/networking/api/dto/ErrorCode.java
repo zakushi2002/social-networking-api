@@ -114,17 +114,22 @@ public class ErrorCode {
      * Notification error code
      */
     public static final String NOTIFICATION_ERROR_NOT_FOUND = "ERROR-NOTIFICATION-000";
-    public static final String NOTIFICATION_ACCOUNT_ERROR_NOT_FOUND = "ERROR-NOTIFICATION-ERROR-001";
 
     /**
      * CommunityMember error code
      */
     public static final String COMMUNITY_MEMBER_JOINED = "ERROR-COMMUNITY-MEMBER-000";
-    public static final String COMMUNITY_MEMBER_NOT_JOINED = "ERROR-COMMUNITY-MEMBER-001";
+    public static final String COMMUNITY_MEMBER_ERROR_NOT_FOUND = "ERROR-COMMUNITY-MEMBER-001";
 
     /**
      * Course error code
      */
     public static final String COURSE_ERROR_NOT_FOUND = "ERROR-COURSE-000";
     public static final String COURSE_ERROR_HANDLED = "ERROR-COURSE-001";
+
+    /**
+     * CourseRequest error code
+     */
+    public static final String COURSE_REQUEST_ERROR_NOT_FOUND = "ERROR-COURSE-REQUEST-000";
+    public static final String COURSE_REQUEST_ERROR_DUPLICATE = "ERROR-COURSE-REQUEST-001";
 }

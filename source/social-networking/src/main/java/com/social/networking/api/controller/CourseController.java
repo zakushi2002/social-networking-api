@@ -5,21 +5,20 @@ import com.social.networking.api.dto.ApiMessageDto;
 import com.social.networking.api.dto.ErrorCode;
 import com.social.networking.api.dto.ResponseListDto;
 import com.social.networking.api.dto.course.CourseDto;
-import com.social.networking.api.dto.course.CourseNotificationMessage;
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.form.course.CreateCourseForm;
 import com.social.networking.api.form.course.HandleCourseForm;
 import com.social.networking.api.form.course.UpdateCourseForm;
-import com.social.networking.api.form.notification.NotificationService;
 import com.social.networking.api.mapper.CourseMapper;
+import com.social.networking.api.message.course.CourseMessage;
 import com.social.networking.api.model.Category;
 import com.social.networking.api.model.Course;
 import com.social.networking.api.model.ExpertProfile;
-import com.social.networking.api.model.Notification;
 import com.social.networking.api.model.criteria.CourseCriteria;
 import com.social.networking.api.repository.CategoryRepository;
 import com.social.networking.api.repository.CourseRepository;
 import com.social.networking.api.repository.ExpertProfileRepository;
-import com.social.networking.api.repository.NotificationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,8 +29,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/courses")
@@ -47,9 +44,7 @@ public class CourseController extends BaseController {
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
-    NotificationRepository notificationRepository;
-    @Autowired
-    NotificationService notificationService;
+    CourseMessage courseMessage;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -57,10 +52,7 @@ public class CourseController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         ExpertProfile expertProfile = expertProfileRepository.findById(createCourseForm.getExpertId()).orElse(null);
         if (expertProfile == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Expert not found!");
-            apiMessageDto.setCode(ErrorCode.EXPERT_PROFILE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Expert not found!", ErrorCode.EXPERT_PROFILE_ERROR_NOT_FOUND);
         }
         Category topic = categoryRepository.findById(createCourseForm.getTopicId()).orElse(null);
         Course course = courseMapper.fromCreateCourseFormToEntity(createCourseForm);
@@ -78,10 +70,7 @@ public class CourseController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Course course = courseRepository.findById(updateCourseForm.getId()).orElse(null);
         if (course == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course not found!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
         courseMapper.updateCourseFromCreateCourseForm(updateCourseForm, course);
         courseRepository.save(course);
@@ -96,10 +85,7 @@ public class CourseController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Course course = courseRepository.findById(id).orElse(null);
         if (course == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course not found!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
         courseRepository.delete(course);
         apiMessageDto.setMessage("Course deleted successfully!");
@@ -112,10 +98,7 @@ public class CourseController extends BaseController {
         ApiMessageDto<CourseDto> apiMessageDto = new ApiMessageDto<>();
         Course course = courseRepository.findById(id).orElse(null);
         if (course == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course not found!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
         apiMessageDto.setMessage("Get a course successfully!");
         apiMessageDto.setData(courseMapper.fromEntityToCourseDto(course));
@@ -148,20 +131,16 @@ public class CourseController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Course course = courseRepository.findById(handleCourseForm.getId()).orElse(null);
         if (course == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course not found!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
         if (!course.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course is not pending!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_HANDLED);
-            return apiMessageDto;
+            throw new BadRequestException("[Course] Course is not pending!", ErrorCode.COURSE_ERROR_HANDLED);
         }
         course.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
         courseRepository.save(course);
-        createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, course, SocialNetworkingConstant.NOTIFICATION_KIND_COURSE_APPROVED);
+        if (isAdmin()) {
+            courseMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, course, SocialNetworkingConstant.NOTIFICATION_KIND_COURSE_APPROVED);
+        }
         apiMessageDto.setMessage("Course approved successfully!");
         apiMessageDto.setData(course.getId());
         return apiMessageDto;
@@ -173,85 +152,14 @@ public class CourseController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Course course = courseRepository.findById(handleCourseForm.getId()).orElse(null);
         if (course == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course not found!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Course] Course not found!", ErrorCode.COURSE_ERROR_NOT_FOUND);
         }
         if (!course.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setMessage("Course is not pending!");
-            apiMessageDto.setCode(ErrorCode.COURSE_ERROR_HANDLED);
-            return apiMessageDto;
+            throw new BadRequestException("[Course] Course is not pending!", ErrorCode.COURSE_ERROR_HANDLED);
         }
         courseRepository.delete(course);
         apiMessageDto.setMessage("Course rejected successfully!");
         apiMessageDto.setData(handleCourseForm.getId());
         return apiMessageDto;
-    }
-
-    /**
-     * Creates a JSON message for the given course and notification.
-     *
-     * @param course       the course for which to create the message
-     * @param notification the notification for which to create the message
-     * @return the JSON message
-     */
-    private String getJsonMessage(Course course, Notification notification) {
-        CourseNotificationMessage courseNotificationMessage = new CourseNotificationMessage();
-        courseNotificationMessage.setNotificationId(notification.getId());
-        courseNotificationMessage.setExpertId(course.getExpert().getId());
-        courseNotificationMessage.setCourseId(course.getId());
-        courseNotificationMessage.setCourseTitle(course.getTitle());
-        courseNotificationMessage.setExpertName(course.getExpert().getAccount().getFullName());
-        courseNotificationMessage.setStartDate(course.getStartDate());
-        courseNotificationMessage.setEndDate(course.getEndDate());
-        return notificationService.convertObjectToJson(courseNotificationMessage);
-    }
-
-    /**
-     * Creates a notification for the given course and notification kind.
-     *
-     * @param course            the course for which to create the notification
-     * @param notificationState the state of the notification
-     * @param notificationKind  the kind of notification to create
-     * @param accountId         the ID of the account for which to create the notification
-     * @return the created notification
-     */
-    private Notification createNotification(Course course, Integer notificationState, Integer notificationKind, Long accountId) {
-        Notification notification = notificationService.createNotification(notificationState, notificationKind);
-        String jsonMessage = getJsonMessage(course, notification);
-        notification.setIdUser(accountId);
-        notification.setContent(jsonMessage);
-        if (notificationKind.equals(SocialNetworkingConstant.NOTIFICATION_KIND_COURSE_APPROVED)) {
-            notificationRepository.deleteAllByIdUserAndKindAndRefId(accountId, SocialNetworkingConstant.NOTIFICATION_KIND_COURSE_APPROVED, course.getId().toString());
-            notification.setRefId(course.getId().toString());
-        }
-        return notification;
-    }
-
-
-    /**
-     * Creates a notification and sends a message for the given course and notification kind.
-     *
-     * @param notificationState the state of the notification
-     * @param course            the course for which to create the notification
-     * @param notificationKind  the kind of notification to create
-     */
-    private void createNotificationAndSendMessage(Integer notificationState, Course course, Integer notificationKind) {
-        List<Notification> notifications = new ArrayList<>();
-        if (isAdmin()) {
-            if (course.getExpert() != null) {
-                // Creates a notification for the given course and notification kind
-                Notification notification = createNotification(course, notificationState, notificationKind, course.getExpert().getAccount().getId());
-                notifications.add(notification);
-            }
-            // Saves the notifications to the database
-            notificationRepository.saveAll(notifications);
-            // Sends a message for each notification
-            for (Notification notification : notifications) {
-                notificationService.sendMessage(notification.getContent(), notificationKind, notification.getIdUser());
-            }
-        }
     }
 }

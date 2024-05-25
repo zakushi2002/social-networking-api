@@ -32,4 +32,6 @@ public class Course extends Auditable<String> {
     @JoinColumn(name = "topic_id")
     private Category topic;
     private Integer fee = 0;
+    @Column(columnDefinition = "TEXT")
+    private String joinUrl;
 }

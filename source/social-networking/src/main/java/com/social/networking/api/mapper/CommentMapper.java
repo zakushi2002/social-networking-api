@@ -41,11 +41,15 @@ public interface CommentMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "post", target = "post", qualifiedByName = "fromEntityToCreateCommentNotificationDto")
     @Mapping(source = "content", target = "commentContent")
+    @Mapping(source = "depth", target = "commentDepth")
+    @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
+    @Mapping(source = "parent", target = "parentComment", qualifiedByName = "fromEntityToCountComment")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToCreateCommentDto")
     CommentDto fromEntityToCreateCommentDto(Comment comment);
 
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "account", target = "owner", qualifiedByName = "fromAccountToAutoCompleteDto")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToCountComment")
     CommentDto fromEntityToCountComment(Comment comment);

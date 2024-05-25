@@ -5,17 +5,17 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="TOAN (generated)" id="1714065751294-1">
         <addColumn tableName="db_social_networking_notification">
-            <column name="id_user" type="bigint"/>
+            <column name="id_user" type="bigint" afterColumn="kind"/>
         </addColumn>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1714065751294-2">
         <addColumn tableName="db_social_networking_notification">
-            <column name="ref_id" type="varchar(255)"/>
+            <column name="ref_id" type="varchar(255)" afterColumn="id_user"/>
         </addColumn>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1714065751294-3">
         <addColumn tableName="db_social_networking_notification">
-            <column name="state" type="integer"/>
+            <column name="state" type="integer" afterColumn="ref_id"/>
         </addColumn>
     </changeSet>
     <changeSet author="TOAN (generated)" id="1714065751294-4">
@@ -33,6 +33,7 @@
             <column name="end_date" type="datetime"/>
             <column name="slots" type="INT"/>
             <column name="fee" type="INT"/>
+            <column name="join_url" type="TEXT"/>
             <column name="created_by" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -48,16 +49,54 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1714065751294-5">
+        <createTable tableName="db_social_networking_course_request">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_course_requestPK"/>
+            </column>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="full_name" type="VARCHAR(255)"/>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="course_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1714065751294-6">
         <addForeignKeyConstraint baseColumnNames="expert_id" baseTableName="db_social_networking_course"
                                  constraintName="FK_DB_SOCIAL_NETWORKING_COURSE_EXPERT_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="account_id"
-                                 referencedTableName="db_social_networking_expert_profile" validate="true"/>
+                                 referencedTableName="db_social_networking_expert_profile" validate="true"
+                                 onDelete="CASCADE"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1714065751294-6">
+
+    <changeSet author="TOAN (generated)" id="1714065751294-7">
         <addForeignKeyConstraint baseColumnNames="topic_id" baseTableName="db_social_networking_course"
                                  constraintName="FK_DB_SOCIAL_NETWORKING_COURSE_TOPIC_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_category" validate="true"/>
+                                 referencedTableName="db_social_networking_category" validate="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1714065751294-8">
+        <addForeignKeyConstraint baseColumnNames="course_id" baseTableName="db_social_networking_course_request"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COURSE_REQUEST_COURSE_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_course" validate="true" onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

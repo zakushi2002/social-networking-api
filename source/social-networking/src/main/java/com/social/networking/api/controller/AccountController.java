@@ -1,6 +1,8 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.exception.UnauthorizationException;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.ExpertProfile;
@@ -70,17 +72,11 @@ public class AccountController extends BaseController {
         ApiResponse<String> apiMessageDto = new ApiResponse<>();
         Account account = accountRepository.findAccountByEmail(createAdminForm.getEmail());
         if (account != null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
-            apiMessageDto.setMessage("This email is already registered.");
-            return apiMessageDto;
+            throw new BadRequestException("[Account] This email is already registered!", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
         }
         Group group = groupRepository.findById(createAdminForm.getGroupId()).orElse(null);
         if (group == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Group not found.");
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Group not found!", ErrorCode.GROUP_ERROR_NOT_FOUND);
         }
         account = new Account();
         account.setEmail(createAdminForm.getEmail());
@@ -101,18 +97,12 @@ public class AccountController extends BaseController {
         ApiResponse<String> apiMessageDto = new ApiResponse<>();
         Account account = accountRepository.findById(updateAdminForm.getId()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found.");
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         if (updateAdminForm.getPassword() != null && !updateAdminForm.getPassword().trim().isEmpty()) {
             account.setPassword(passwordEncoder.encode(updateAdminForm.getPassword()));
         } else if (updateAdminForm.getPassword() != null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_PASSWORD_INVALID);
-            apiMessageDto.setMessage("Password is invalid.");
-            return apiMessageDto;
+            throw new BadRequestException("[Account] Password is invalid!", ErrorCode.ACCOUNT_ERROR_PASSWORD_INVALID);
         }
         if (updateAdminForm.getAvatarPath() != null
                 && !updateAdminForm.getAvatarPath().trim().isEmpty()
@@ -132,10 +122,7 @@ public class AccountController extends BaseController {
         ApiResponse<Account> apiMessageDto = new ApiResponse<>();
         Account account = accountRepository.findById(id).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found.");
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(account);
         apiMessageDto.setMessage("Get an account success.");
@@ -148,27 +135,18 @@ public class AccountController extends BaseController {
         ApiMessageDto<AccountProfileDto> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findById(id).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found.");
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         if (account.getKind().equals(SocialNetworkingConstant.ACCOUNT_KIND_USER)) {
             UserProfile userProfile = userProfileRepository.findById(id).orElse(null);
             if (userProfile == null) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("User profile not found.");
-                return apiMessageDto;
+                throw new NotFoundException("[Account] User profile not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
             }
             apiMessageDto.setData(accountMapper.fromEntityToProfileDtoForClient(userProfile));
         } else if (account.getKind().equals(SocialNetworkingConstant.ACCOUNT_KIND_EXPERT)) {
             ExpertProfile expertProfile = expertProfileRepository.findById(id).orElse(null);
             if (expertProfile == null) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("Expert profile not found.");
-                return apiMessageDto;
+                throw new NotFoundException("[Account] Expert profile not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
             }
             apiMessageDto.setData(accountMapper.fromEntityToProfileDtoForClient(expertProfile));
         }
@@ -186,12 +164,10 @@ public class AccountController extends BaseController {
         ApiResponse<String> apiMessageDto = new ApiResponse<>();
         Account account = accountRepository.findById(id).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found.");
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         accountRepository.deleteById(id);
+        socialNetworkingApiService.deleteFileS3(account.getAvatarPath());
         apiMessageDto.setMessage("Delete admin success.");
         return apiMessageDto;
     }
@@ -212,10 +188,7 @@ public class AccountController extends BaseController {
         ApiResponse<AccountDto> apiMessageDto = new ApiResponse<>();
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found.");
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(accountMapper.fromAccountToDtoProfile(account));
         apiMessageDto.setMessage("Get profile success.");
@@ -228,21 +201,16 @@ public class AccountController extends BaseController {
         ApiResponse<String> apiMessageDto = new ApiResponse<>();
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account not found.");
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         if (!passwordEncoder.matches(updateAdminProfileForm.getOldPassword(), account.getPassword())) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_WRONG_PASSWORD);
-            apiMessageDto.setMessage("Old password is wrong.");
-            return apiMessageDto;
+            throw new BadRequestException("[Account] Old password is invalid!", ErrorCode.ACCOUNT_ERROR_PASSWORD_INVALID);
         }
         if (StringUtils.isNoneBlank(updateAdminProfileForm.getNewPassword())) {
             account.setPassword(passwordEncoder.encode(updateAdminProfileForm.getNewPassword()));
         }
         if (updateAdminProfileForm.getAvatarPath() != null && !updateAdminProfileForm.getAvatarPath().trim().isEmpty()) {
+            socialNetworkingApiService.deleteFileS3(account.getAvatarPath());
             account.setAvatarPath(updateAdminProfileForm.getAvatarPath());
         }
         account.setFullName(updateAdminProfileForm.getFullName());
@@ -258,21 +226,13 @@ public class AccountController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(getOTPForm.getEmail());
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         if (account.getStatus().equals(SocialNetworkingConstant.STATUS_LOCK)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_LOCKED);
-            apiMessageDto.setMessage("Account was locked.");
-            return apiMessageDto;
+            throw new BadRequestException("[Account] Account was locked!", ErrorCode.ACCOUNT_ERROR_LOCKED);
         }
         if (account.getResetPwdCode() != null && isOTPRequired(account)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_SENT_REQUEST_OTP);
-            apiMessageDto.setMessage("Account was sent request OTP. Please check your email!");
-            return apiMessageDto;
+            throw new BadRequestException("[Account] Account was sent request OTP. Please check your email!", ErrorCode.ACCOUNT_ERROR_SENT_REQUEST_OTP);
         }
         String otpCode = socialNetworkingApiService.getOTPForgetPassword();
         account.setResetPwdCode(otpCode);
@@ -293,29 +253,18 @@ public class AccountController extends BaseController {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(otpForm.getEmail());
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         if (account.getStatus().equals(SocialNetworkingConstant.STATUS_LOCK)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_LOCKED);
-            apiMessageDto.setMessage("Account was locked.");
-            return apiMessageDto;
+            throw new BadRequestException("[Account] Account was locked!", ErrorCode.ACCOUNT_ERROR_LOCKED);
         }
         if (account.getResetPwdCode() == null || account.getResetPwdCode().trim().isEmpty()) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_SEND_REQUEST_OTP);
-            apiMessageDto.setMessage("Account not send request OTP. Please send request OTP again!");
-            return apiMessageDto;
+            throw new BadRequestException("[Account] Account not send request OTP. Please send request OTP again!", ErrorCode.ACCOUNT_ERROR_NOT_SEND_REQUEST_OTP);
         }
         if (account.getAttemptCode() != null && account.getAttemptCode() > SocialNetworkingConstant.ATTEMPT_CODE_MAX) {
             account.setStatus(SocialNetworkingConstant.STATUS_LOCK);
             accountRepository.save(account);
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_LOCKED);
-            apiMessageDto.setMessage("Account is locked.");
-            return apiMessageDto;
+            throw new BadRequestException("[Account] Account was locked!", ErrorCode.ACCOUNT_ERROR_LOCKED);
         }
         if (!otpForm.getOtp().equals(account.getResetPwdCode())) {
             if (account.getAttemptCode() == null) {
@@ -324,17 +273,13 @@ public class AccountController extends BaseController {
                 account.setAttemptCode(account.getAttemptCode() + 1);
             }
             accountRepository.save(account);
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_OTP_INVALID);
-            return apiMessageDto;
+            throw new BadRequestException("[Account] OTP code is invalid!", ErrorCode.ACCOUNT_ERROR_OTP_INVALID);
         }
         if (!isOTPRequired(account)) {
             account.setResetPwdCode(null);
             account.setResetPwdTime(null);
             accountRepository.save(account);
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_OTP_EXPIRED);
-            return apiMessageDto;
+            throw new BadRequestException("[Account] OTP code is expired!", ErrorCode.ACCOUNT_ERROR_OTP_EXPIRED);
         }
         account.setAttemptCode(null);
         account.setResetPwdCode(null);
@@ -351,9 +296,7 @@ public class AccountController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(changePasswordForgotForm.getEmail());
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         account.setPassword(passwordEncoder.encode(changePasswordForgotForm.getNewPassword()));
         accountRepository.save(account);

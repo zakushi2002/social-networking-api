@@ -1,6 +1,8 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.model.Category;
 import com.social.networking.api.model.criteria.CategoryCriteria;
 import com.social.networking.api.repository.CategoryRepository;
@@ -66,10 +68,7 @@ public class CategoryController extends BaseController {
         ApiMessageDto<CategoryDto> apiMessageDto = new ApiMessageDto<>();
         Category category = categoryRepository.findById(id).orElse(null);
         if (category == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Category not found.");
-            return apiMessageDto;
+            throw new NotFoundException("[Category] Category not found!", ErrorCode.CATEGORY_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(categoryMapper.fromEntityToAdminDto(category));
         apiMessageDto.setMessage("Get a category success.");
@@ -83,19 +82,13 @@ public class CategoryController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Category category = categoryRepository.findByNameAndKind(createCategoryForm.getCategoryName(), createCategoryForm.getCategoryKind()).orElse(null);
         if (category != null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NAME_EXIST_IN_KIND);
-            apiMessageDto.setMessage("Category name exist in kind.");
-            return apiMessageDto;
+            throw new BadRequestException("[Category] Category name exist in kind!", ErrorCode.CATEGORY_ERROR_NAME_EXIST_IN_KIND);
         }
         category = categoryMapper.fromCreateCategoryFormToEntity(createCategoryForm);
         if (createCategoryForm.getParentId() != null) {
             Category parentCategory = categoryRepository.findById(createCategoryForm.getParentId()).orElse(null);
             if (parentCategory == null || parentCategory.getParentCategory() != null) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
-                apiMessageDto.setMessage("Not found parent category or parent category is child of other category.");
-                return apiMessageDto;
+                throw new BadRequestException("[Category] Not found parent category or parent category is child of other category!", ErrorCode.CATEGORY_ERROR_NOT_FOUND);
             }
             category.setParentCategory(parentCategory);
         }
@@ -112,10 +105,7 @@ public class CategoryController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Category category = categoryRepository.findById(updateCategoryForm.getId()).orElse(null);
         if (category == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Category not found.");
-            return apiMessageDto;
+            throw new NotFoundException("[Category] Category not found!", ErrorCode.CATEGORY_ERROR_NOT_FOUND);
         }
         Category checkName = categoryRepository.findByNameAndKind(updateCategoryForm.getCategoryName(), category.getKind()).orElse(null);
         if (checkName == null && !Objects.equals(category.getName(), updateCategoryForm.getCategoryName().trim())) {
@@ -145,10 +135,7 @@ public class CategoryController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Category category = categoryRepository.findById(id).orElse(null);
         if (category == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Category not found.");
-            return apiMessageDto;
+            throw new NotFoundException("[Category] Category not found!", ErrorCode.CATEGORY_ERROR_NOT_FOUND);
         }
         socialNetworkingApiService.deleteFileS3(category.getImage());
         categoryRepository.deleteById(id);

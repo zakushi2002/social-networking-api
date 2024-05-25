@@ -1,6 +1,8 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.exception.UnauthorizationException;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Group;
@@ -57,17 +59,11 @@ public class UserProfileController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(createUserAccountForm.getEmail());
         if (account != null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
-            apiMessageDto.setMessage("Email is exist");
-            return apiMessageDto;
+            throw new BadRequestException("[User] Email is exist!", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
         }
         Group group = groupRepository.findFirstByKind(SocialNetworkingConstant.ACCOUNT_KIND_USER);
         if (group == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.GROUP_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Group not found");
-            return apiMessageDto;
+            throw new NotFoundException("[User] Group not found!", ErrorCode.GROUP_ERROR_NOT_FOUND);
         }
         account = accountMapper.fromCreateUserAccountFormToEntity(createUserAccountForm);
         account.setKind(SocialNetworkingConstant.ACCOUNT_KIND_USER);
@@ -89,13 +85,10 @@ public class UserProfileController extends BaseController {
         ApiMessageDto<UserProfileDto> apiMessageDto = new ApiMessageDto<>();
         UserProfile userProfile = userProfileRepository.findById(getCurrentUser()).orElse(null);
         if (userProfile == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.USER_PROFILE_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("User profile not found");
-            return apiMessageDto;
+            throw new NotFoundException("[User] User profile not found!", ErrorCode.USER_PROFILE_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(userProfileMapper.fromEntityToDtoForClient(userProfile));
-        apiMessageDto.setMessage("Get user profile successfully");
+        apiMessageDto.setMessage("Get my profile successfully.");
         return apiMessageDto;
     }
 
@@ -105,13 +98,10 @@ public class UserProfileController extends BaseController {
         ApiMessageDto<UserProfileDto> apiMessageDto = new ApiMessageDto<>();
         UserProfile userProfile = userProfileRepository.findById(id).orElse(null);
         if (userProfile == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.USER_PROFILE_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("User profile not found");
-            return apiMessageDto;
+            throw new NotFoundException("[User] User profile not found!", ErrorCode.USER_PROFILE_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(userProfileMapper.fromEntityToDtoForClient(userProfile));
-        apiMessageDto.setMessage("Get user profile successfully");
+        apiMessageDto.setMessage("Get user profile successfully.");
         return apiMessageDto;
     }
 
@@ -121,16 +111,10 @@ public class UserProfileController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         UserProfile userProfile = userProfileRepository.findById(getCurrentUser()).orElse(null);
         if (userProfile == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.USER_PROFILE_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("User profile not found");
-            return apiMessageDto;
+            throw new NotFoundException("[User] User profile not found!", ErrorCode.USER_PROFILE_ERROR_NOT_FOUND);
         }
         if (updateUserAccountForm.getPhone() != null && updateUserAccountForm.getPhone().trim().isEmpty()) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.USER_PROFILE_ERROR_PHONE_EMPTY);
-            apiMessageDto.setMessage("Phone cannot be empty");
-            return apiMessageDto;
+            throw new BadRequestException("[User] Phone cannot be empty!", ErrorCode.USER_PROFILE_ERROR_PHONE_EMPTY);
         }
         if (updateUserAccountForm.getAvatarPath() != null
                 && !updateUserAccountForm.getAvatarPath().trim().isEmpty()
@@ -142,7 +126,7 @@ public class UserProfileController extends BaseController {
         userProfileMapper.mappingUpdateUserAccountFormToEntity(updateUserAccountForm, userProfile);
         userProfileRepository.save(userProfile);
         apiMessageDto.setData(userProfile.getId());
-        apiMessageDto.setMessage("Update user profile successfully");
+        apiMessageDto.setMessage("Update user profile successfully.");
         return apiMessageDto;
     }
 
@@ -153,7 +137,7 @@ public class UserProfileController extends BaseController {
         Page<UserProfile> page = userProfileRepository.findAll(userProfileCriteria.getSpecification(), pageable);
         ResponseListDto<UserProfileDto> responseListDto = new ResponseListDto(userProfileMapper.fromEntityListToDtoListForServer(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get list user profile success");
+        apiMessageDto.setMessage("List user profile success.");
         return apiMessageDto;
     }
 
@@ -163,19 +147,16 @@ public class UserProfileController extends BaseController {
     public ApiMessageDto<Long> deleteUserAccount(@PathVariable("id") Long id) {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         if (!isSuperAdmin()) {
-            throw new UnauthorizationException("Not allow to delete user account");
+            throw new UnauthorizationException("[User] Not allow to delete user account");
         }
         UserProfile userProfile = userProfileRepository.findById(id).orElse(null);
         if (userProfile == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.USER_PROFILE_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("User account not found");
-            return apiMessageDto;
+            throw new NotFoundException("[User] User profile not found!", ErrorCode.USER_PROFILE_ERROR_NOT_FOUND);
         }
         postRepository.deleteAllByAccountId(id);
         userProfileRepository.deleteById(id);
         accountRepository.deleteById(id);
-        apiMessageDto.setMessage("Delete user account success");
+        apiMessageDto.setMessage("Delete user account success.");
         return apiMessageDto;
     }
 }

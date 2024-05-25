@@ -1,8 +1,10 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
-import com.social.networking.api.dto.reaction.PostReactionNotificationMessage;
-import com.social.networking.api.form.notification.NotificationService;
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
+import com.social.networking.api.message.post.PostMessage;
+import com.social.networking.api.message.reaction.PostReactionMessage;
 import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.BookmarkCriteria;
 import com.social.networking.api.model.criteria.PostCriteria;
@@ -14,9 +16,7 @@ import com.social.networking.api.dto.ResponseListDto;
 import com.social.networking.api.dto.post.PostDto;
 import com.social.networking.api.dto.post.bookmark.BookmarkDto;
 import com.social.networking.api.dto.reaction.PostReactionDto;
-import com.social.networking.api.form.post.HandlePostForm;
-import com.social.networking.api.form.post.CreatePostForm;
-import com.social.networking.api.form.post.UpdatePostForm;
+import com.social.networking.api.form.post.*;
 import com.social.networking.api.form.post.bookmark.CreateBookmarkForm;
 import com.social.networking.api.form.reaction.post.ReactPostForm;
 import com.social.networking.api.mapper.BookmarkMapper;
@@ -66,9 +66,9 @@ public class PostController extends BaseController {
     @Autowired
     CommunityMemberRepository communityMemberRepository;
     @Autowired
-    NotificationService notificationService;
+    PostReactionMessage postReactionMessage;
     @Autowired
-    NotificationRepository notificationRepository;
+    PostMessage postMessage;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('POST_C')")
@@ -77,17 +77,11 @@ public class PostController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account is not logged in.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         Category community = categoryRepository.findById(createPostForm.getCommunityId()).orElse(null);
         if (community == null || !community.getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_COMMUNITY)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CATEGORY_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("This category is not community or not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] This category is not community or not exist!", ErrorCode.CATEGORY_ERROR_NOT_FOUND);
         }
         Post post = postMapper.fromCreatePostFormToEntity(createPostForm);
         post.setCommunity(community);
@@ -118,23 +112,14 @@ public class PostController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Post post = postRepository.findById(updatePostForm.getId()).orElse(null);
         if (post == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] Post not found!", ErrorCode.POST_ERROR_NOT_FOUND);
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         if (!post.getAccount().getId().equals(account.getId())) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_OWNER);
-            apiMessageDto.setMessage("You are not owner of this post.");
-            return apiMessageDto;
+            throw new BadRequestException("[Post] You are not owner of this post!", ErrorCode.POST_ERROR_NOT_OWNER);
         }
         postMapper.mappingUpdatePostFormToEntity(updatePostForm, post);
         postRepository.save(post);
@@ -166,23 +151,14 @@ public class PostController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Post post = postRepository.findById(id).orElse(null);
         if (post == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] Post not found!", ErrorCode.POST_ERROR_NOT_FOUND);
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         if (!post.getAccount().getId().equals(account.getId())) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_OWNER);
-            apiMessageDto.setMessage("You are not owner of this post.");
-            return apiMessageDto;
+            throw new BadRequestException("[Post] You are not owner of this post!", ErrorCode.POST_ERROR_NOT_OWNER);
         }
         postRepository.deleteById(id);
         apiMessageDto.setMessage("Delete post successfully.");
@@ -196,10 +172,7 @@ public class PostController extends BaseController {
         ApiMessageDto<PostDto> apiMessageDto = new ApiMessageDto<>();
         Post post = postRepository.findById(id).orElse(null);
         if (post == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] Post not found!", ErrorCode.POST_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(postMapper.fromEntityToPostDto(post));
         apiMessageDto.setMessage("Get post detail successfully.");
@@ -230,7 +203,7 @@ public class PostController extends BaseController {
         Page<Post> page = postRepository.findAll(postCriteria.getSpecification(mapFollowingList, mapCommunityMemberList), pageable);
         ResponseListDto<PostDto> responseListDto = new ResponseListDto(postMapper.fromEntityToPostDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get list post success.");
+        apiMessageDto.setMessage("List post success.");
         return apiMessageDto;
     }
 
@@ -242,10 +215,7 @@ public class PostController extends BaseController {
         PostReaction postReaction = postReactionRepository.findByPostIdAndAccountIdAndKind(reactPostForm.getPostId(), getCurrentUser(), reactPostForm.getKind()).orElse(null);
         if (postReaction != null) {
             if (!postReaction.getAccount().getId().equals(getCurrentUser())) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.POST_REACTION_ERROR_NOT_OWNER);
-                apiMessageDto.setMessage("Post reaction is not owner.");
-                return apiMessageDto;
+                throw new BadRequestException("[Post Reaction] Post reaction is not owner!", ErrorCode.POST_REACTION_ERROR_NOT_OWNER);
             }
             postReactionRepository.deleteById(postReaction.getId());
             apiMessageDto.setMessage("Un-react post successfully.");
@@ -254,17 +224,11 @@ public class PostController extends BaseController {
         }
         Post post = postRepository.findById(reactPostForm.getPostId()).orElse(null);
         if (post == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] Post not found!", ErrorCode.POST_ERROR_NOT_FOUND);
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         postReaction = reactionMapper.fromCreatePostReactionFormToEntity(reactPostForm);
         postReaction.setPost(post);
@@ -272,8 +236,10 @@ public class PostController extends BaseController {
         postReactionRepository.save(postReaction);
         post.getPostReactions().add(postReaction);
         postRepository.save(post);
-        createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, postReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST);
-        apiMessageDto.setMessage("React post successfully");
+        if (!isAdmin()) {
+            postReactionMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, postReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST);
+        }
+        apiMessageDto.setMessage("React post successfully.");
         apiMessageDto.setData(reactionMapper.fromEntityToPostReactionDto(postReaction));
         return apiMessageDto;
     }
@@ -285,7 +251,7 @@ public class PostController extends BaseController {
         Page<PostReaction> page = postReactionRepository.findAll(postReactionCriteria.getSpecification(), pageable);
         ResponseListDto<PostReactionDto> responseListDto = new ResponseListDto(reactionMapper.fromEntitiesToPostReactionDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get list post reaction success.");
+        apiMessageDto.setMessage("List post reaction success.");
         return apiMessageDto;
     }
 
@@ -296,25 +262,16 @@ public class PostController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Post post = postRepository.findById(createBookmarkForm.getPostId()).orElse(null);
         if (post == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] Post not found!", ErrorCode.POST_ERROR_NOT_FOUND);
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Account is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         Bookmark bookmark = bookmarkRepository.findFirstByAccountIdAndPostId(getCurrentUser(), createBookmarkForm.getPostId()).orElse(null);
         if (bookmark != null) {
             if (!bookmark.getAccount().getId().equals(getCurrentUser())) {
-                apiMessageDto.setResult(false);
-                apiMessageDto.setCode(ErrorCode.BOOKMARK_ERROR_EXIST);
-                apiMessageDto.setMessage("Bookmark is not owner.");
-                return apiMessageDto;
+                throw new BadRequestException("[Bookmark] Bookmark is not owner!", ErrorCode.BOOKMARK_ERROR_EXIST);
             }
             bookmarkRepository.deleteById(bookmark.getId());
             apiMessageDto.setMessage("Remove bookmark successfully.");
@@ -337,7 +294,7 @@ public class PostController extends BaseController {
         Page<Bookmark> page = bookmarkRepository.findAll(bookmarkCriteria.getSpecification(), pageable);
         ResponseListDto<BookmarkDto> responseListDto = new ResponseListDto(bookmarkMapper.fromEntitiesToBookmarkDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get list bookmark success.");
+        apiMessageDto.setMessage("List bookmark success.");
         return apiMessageDto;
     }
 
@@ -348,20 +305,17 @@ public class PostController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Post post = postRepository.findById(handlePostForm.getId()).orElse(null);
         if (post == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] Post not found!", ErrorCode.POST_ERROR_NOT_FOUND);
         }
         if (!post.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_HANDLED);
-            apiMessageDto.setMessage("Post has been handled!");
-            return apiMessageDto;
+            throw new BadRequestException("[Post] Post has been handled!", ErrorCode.POST_ERROR_HANDLED);
         }
         post.setStatus(SocialNetworkingConstant.STATUS_ACTIVE);
         post.setModeratedDate(new Date());
         postRepository.save(post);
+        if (isAdmin()) {
+            postMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, post, SocialNetworkingConstant.NOTIFICATION_KIND_NEW_POST_OF_FOLLOWING);
+        }
         apiMessageDto.setMessage("Approve post successfully.");
         apiMessageDto.setData(post.getId());
         return apiMessageDto;
@@ -374,84 +328,14 @@ public class PostController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Post post = postRepository.findById(handlePostForm.getId()).orElse(null);
         if (post == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Post is not exist.");
-            return apiMessageDto;
+            throw new NotFoundException("[Post] Post not found!", ErrorCode.POST_ERROR_NOT_FOUND);
         }
         if (!post.getStatus().equals(SocialNetworkingConstant.STATUS_PENDING)) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.POST_ERROR_HANDLED);
-            apiMessageDto.setMessage("Post has been handled!");
-            return apiMessageDto;
+            throw new BadRequestException("[Post] Post has been handled!", ErrorCode.POST_ERROR_HANDLED);
         }
         postRepository.deleteById(handlePostForm.getId());
         apiMessageDto.setMessage("Reject post successfully.");
         apiMessageDto.setData(handlePostForm.getId());
         return apiMessageDto;
-    }
-
-    /**
-     * Creates a JSON message for the given reaction and notification.
-     *
-     * @param reaction       the reaction for which to create the message
-     * @param notification the notification for which to create the message
-     * @return the JSON message
-     */
-    private String getJsonMessage(PostReaction reaction, Notification notification) {
-        PostReactionNotificationMessage postReactionNotificationMessage = new PostReactionNotificationMessage();
-        postReactionNotificationMessage.setNotificationId(notification.getId());
-        postReactionNotificationMessage.setPostReactionId(reaction.getId());
-        postReactionNotificationMessage.setReactionKind(reaction.getKind());
-        postReactionNotificationMessage.setPostId(reaction.getPost().getId());
-        postReactionNotificationMessage.setPostTitle(reaction.getPost().getTitle());
-        postReactionNotificationMessage.setAccountId(reaction.getAccount().getId());
-        postReactionNotificationMessage.setAccountName(reaction.getAccount().getFullName());
-        return notificationService.convertObjectToJson(postReactionNotificationMessage);
-    }
-
-    /**
-     * Creates a notification for the given reaction and notification kind.
-     *
-     * @param reaction            the reaction for which to create the notification
-     * @param notificationState the state of the notification
-     * @param notificationKind  the kind of notification to create
-     * @param accountId         the ID of the account for which to create the notification
-     * @return the created notification
-     */
-    private Notification createNotification(PostReaction reaction, Integer notificationState, Integer notificationKind, Long accountId) {
-        Notification notification = notificationService.createNotification(notificationState, notificationKind);
-        String jsonMessage = getJsonMessage(reaction, notification);
-        notification.setIdUser(accountId);
-        notification.setContent(jsonMessage);
-        if (notificationKind.equals(SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST)) {
-            notificationRepository.deleteAllByIdUserAndKindAndRefId(accountId, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_POST, reaction.getPost().getId().toString());
-            notification.setRefId(reaction.getPost().getId().toString());
-        }
-        return notification;
-    }
-
-    /**
-     * Creates a notification and sends a message for the given course and notification kind.
-     *
-     * @param notificationState the state of the notification
-     * @param reaction            the course for which to create the notification
-     * @param notificationKind  the kind of notification to create
-     */
-    private void createNotificationAndSendMessage(Integer notificationState, PostReaction reaction, Integer notificationKind) {
-        List<Notification> notifications = new ArrayList<>();
-        if (!isAdmin()) {
-            if (reaction.getPost().getAccount() != null) {
-                // Creates a notification for the given reaction and notification kind
-                Notification notification = createNotification(reaction, notificationState, notificationKind, reaction.getPost().getAccount().getId());
-                notifications.add(notification);
-            }
-            // Saves the notifications to the database
-            notificationRepository.saveAll(notifications);
-            // Sends a message for each notification
-            for (Notification notification : notifications) {
-                notificationService.sendMessage(notification.getContent(), notificationKind, notification.getIdUser());
-            }
-        }
     }
 }

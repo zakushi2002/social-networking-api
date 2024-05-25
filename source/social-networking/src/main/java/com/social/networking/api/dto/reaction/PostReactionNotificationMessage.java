@@ -11,4 +11,5 @@ public class PostReactionNotificationMessage {
     private String postTitle;
     private Long accountId;
     private String accountName;
+    private String accountAvatar;
 }
