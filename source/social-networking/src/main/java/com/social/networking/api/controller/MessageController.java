@@ -1,5 +1,7 @@
 package com.social.networking.api.controller;
 
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Conversation;
 import com.social.networking.api.model.ConversationAccount;
@@ -9,12 +11,12 @@ import com.social.networking.api.repository.AccountRepository;
 import com.social.networking.api.repository.ConversationAccountRepository;
 import com.social.networking.api.repository.ConversationRepository;
 import com.social.networking.api.repository.MessageRepository;
-import com.social.networking.api.view.dto.ApiMessageDto;
-import com.social.networking.api.view.dto.ErrorCode;
-import com.social.networking.api.view.dto.ResponseListDto;
-import com.social.networking.api.view.dto.message.MessageDto;
-import com.social.networking.api.view.form.message.SendMessageForm;
-import com.social.networking.api.view.mapper.MessageMapper;
+import com.social.networking.api.dto.ApiMessageDto;
+import com.social.networking.api.dto.ErrorCode;
+import com.social.networking.api.dto.ResponseListDto;
+import com.social.networking.api.dto.message.MessageDto;
+import com.social.networking.api.form.message.SendMessageForm;
+import com.social.networking.api.mapper.MessageMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,21 +50,15 @@ public class MessageController extends BaseController {
         ApiMessageDto<MessageDto> apiMessageDto = new ApiMessageDto<>();
         Conversation conversation = conversationRepository.findById(sendMessageForm.getConversationId()).orElse(null);
         if (conversation == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Message] Conversation not found!", ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Message] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         ConversationAccount conversationAccount = conversationAccountRepository.findByConversationIdAndAccountId(conversation.getId(), account.getId()).orElse(null);
         if (conversationAccount == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CONVERSATION_ERROR_NOT_MEMBER);
-            return apiMessageDto;
+            throw new BadRequestException("[Message] Not a member of this conversation!", ErrorCode.CONVERSATION_ERROR_NOT_MEMBER);
         }
         Message message = new Message();
         message.setConversation(conversation);
@@ -81,9 +77,7 @@ public class MessageController extends BaseController {
         ApiMessageDto<MessageDto> apiMessageDto = new ApiMessageDto<>();
         Message message = messageRepository.findById(id).orElse(null);
         if (message == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.MESSAGE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Message] Message not found!", ErrorCode.MESSAGE_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(messageMapper.fromEntityToDto(message));
         return apiMessageDto;
@@ -95,7 +89,7 @@ public class MessageController extends BaseController {
         ApiMessageDto<ResponseListDto<MessageDto>> apiMessageDto = new ApiMessageDto<>();
         Page<Message> messagePage = messageRepository.findAll(messageCriteria.getSpecification(), pageable);
         ResponseListDto<MessageDto> responseListDto = new ResponseListDto(messageMapper.fromEntityToDtoList(messagePage.getContent()), messagePage.getTotalElements(), messagePage.getTotalPages());
-        apiMessageDto.setMessage("List message successfully!");
+        apiMessageDto.setMessage("List message successfully.");
         apiMessageDto.setData(responseListDto);
         return apiMessageDto;
     }
@@ -106,14 +100,10 @@ public class MessageController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Message message = messageRepository.findById(id).orElse(null);
         if (message == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.MESSAGE_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Message] Message not found!", ErrorCode.MESSAGE_ERROR_NOT_FOUND);
         }
         if (!message.getSender().getId().equals(getCurrentUser())) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.MESSAGE_ERROR_NOT_OWNER);
-            return apiMessageDto;
+            throw new BadRequestException("[Message] Not allowed to delete!", ErrorCode.MESSAGE_ERROR_NOT_OWNER);
         }
         Conversation conversation = message.getConversation();
         Message checkLastMessage = messageRepository.findFirstByConversationIdAndContentOrderByCreatedDateDesc(conversation.getId(), conversation.getLastMessage()).orElse(null);
@@ -122,7 +112,7 @@ public class MessageController extends BaseController {
         }
         messageRepository.deleteById(id);
         conversationRepository.save(conversation);
-        apiMessageDto.setMessage("Delete message successfully!");
+        apiMessageDto.setMessage("Delete message successfully.");
         apiMessageDto.setData(id);
         return apiMessageDto;
     }

@@ -1,9 +1,12 @@
 package com.social.networking.api.controller;
 
+import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.jwt.SocialNetworkingJwt;
 import com.social.networking.api.service.impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Objects;
 
 @Slf4j
 public class BaseController {
@@ -28,6 +31,22 @@ public class BaseController {
         SocialNetworkingJwt socialNetworkingJwt = userService.getAdditionalInfo();
         if (socialNetworkingJwt != null) {
             return socialNetworkingJwt.getIsSuperAdmin();
+        }
+        return false;
+    }
+
+    public boolean isExpert(){
+        SocialNetworkingJwt socialNetworkingJwt = userService.getAdditionalInfo();
+        if (socialNetworkingJwt != null){
+            return Objects.equals(socialNetworkingJwt.getUserKind(), SocialNetworkingConstant.ACCOUNT_KIND_EXPERT);
+        }
+        return false;
+    }
+
+    public boolean isAdmin(){
+        SocialNetworkingJwt socialNetworkingJwt = userService.getAdditionalInfo();
+        if (socialNetworkingJwt != null){
+            return Objects.equals(socialNetworkingJwt.getUserKind(), SocialNetworkingConstant.ACCOUNT_KIND_ADMIN);
         }
         return false;
     }

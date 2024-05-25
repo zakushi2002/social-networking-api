@@ -1,6 +1,7 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Announcement;
 import com.social.networking.api.model.Notification;
@@ -8,15 +9,14 @@ import com.social.networking.api.model.criteria.NotificationCriteria;
 import com.social.networking.api.repository.AccountRepository;
 import com.social.networking.api.repository.AnnouncementRepository;
 import com.social.networking.api.repository.NotificationRepository;
-import com.social.networking.api.view.dto.ApiMessageDto;
-import com.social.networking.api.view.dto.ErrorCode;
-import com.social.networking.api.view.dto.ResponseListDto;
-import com.social.networking.api.view.dto.notification.NotificationDto;
-import com.social.networking.api.view.dto.notification.announcement.AnnouncementDto;
-import com.social.networking.api.view.form.notification.CreateNotificationForm;
-import com.social.networking.api.view.form.notification.annoucement.CreateAnnouncementForm;
-import com.social.networking.api.view.mapper.AnnouncementMapper;
-import com.social.networking.api.view.mapper.NotificationMapper;
+import com.social.networking.api.dto.ApiMessageDto;
+import com.social.networking.api.dto.ErrorCode;
+import com.social.networking.api.dto.ResponseListDto;
+import com.social.networking.api.dto.notification.NotificationDto;
+import com.social.networking.api.form.notification.CreateNotificationForm;
+import com.social.networking.api.form.notification.annoucement.CreateAnnouncementForm;
+import com.social.networking.api.mapper.AnnouncementMapper;
+import com.social.networking.api.mapper.NotificationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -62,10 +62,7 @@ public class NotificationController extends BaseController {
         ApiMessageDto<NotificationDto> apiMessageDto = new ApiMessageDto<>();
         Notification notification = notificationRepository.findById(createAnnouncementForm.getNotificationId()).orElse(null);
         if (notification == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
-            apiMessageDto.setMessage("Notification not found!");
-            return apiMessageDto;
+            throw new NotFoundException("[Notification] Notification not found!", ErrorCode.NOTIFICATION_ERROR_NOT_FOUND);
         }
         List<Announcement> receiverList = new ArrayList<>();
         for (Long receiverId : createAnnouncementForm.getReceivers()) {

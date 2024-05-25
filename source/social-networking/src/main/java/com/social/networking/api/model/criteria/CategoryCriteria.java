@@ -1,5 +1,6 @@
 package com.social.networking.api.model.criteria;
 
+import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.model.Category;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
@@ -42,7 +43,9 @@ public class CategoryCriteria implements Serializable {
                     Join<Category, Category> parentCategory = root.join("parentCategory", JoinType.INNER);
                     predicates.add(cb.equal(parentCategory.get("id"), getParentId()));
                 } else {
-                    predicates.add(cb.isNull(root.get("parentCategory")));
+                    if (getKind() != null && !getKind().equals(SocialNetworkingConstant.CATEGORY_KIND_TOPIC)) {
+                        predicates.add(cb.isNull(root.get("parentCategory")));
+                    }
                 }
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }

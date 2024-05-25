@@ -3,8 +3,8 @@ package com.social.networking.api.config.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.service.impl.UserServiceImpl;
-import com.social.networking.api.view.dto.profile.oauth2.OAuth2ProfileDto;
-import com.social.networking.api.view.dto.profile.oauth2.OAuth2ProfileDtoFactory;
+import com.social.networking.api.dto.profile.oauth2.OAuth2ProfileDto;
+import com.social.networking.api.dto.profile.oauth2.OAuth2ProfileDtoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -43,7 +43,7 @@ public class CustomTokenGranter extends AbstractTokenGranter {
             if (SocialNetworkingConstant.GRANT_TYPE_GOOGLE.equalsIgnoreCase(tokenRequest.getGrantType())) {
                 Map<String, Object> attributes = new ObjectMapper().readValue(tokenRequest.getRequestParameters().get("google"), Map.class);
                 OAuth2ProfileDto oAuth2ProfileDto = OAuth2ProfileDtoFactory.getOAuth2UserInfo(SocialNetworkingConstant.GRANT_TYPE_GOOGLE, attributes);
-                return userService.getAccessTokenForGoogle(client, tokenRequest, oAuth2ProfileDto, this.getTokenServices());
+                return userService.getAccessTokenForGoogle(authenticationManager, client, tokenRequest, oAuth2ProfileDto, this.getTokenServices());
             }
             String email = tokenRequest.getRequestParameters().get("email");
             String password = tokenRequest.getRequestParameters().get("password");

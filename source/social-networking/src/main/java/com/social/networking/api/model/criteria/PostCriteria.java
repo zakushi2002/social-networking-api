@@ -2,7 +2,9 @@ package com.social.networking.api.model.criteria;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.model.Account;
+import com.social.networking.api.model.Category;
 import com.social.networking.api.model.Post;
+import com.social.networking.api.model.PostTopic;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
@@ -20,6 +22,8 @@ public class PostCriteria implements Serializable {
     private String accountName;
     private String title;
     private String keyword;
+    private Long communityId;
+    private Long topicId;
     private Integer kind;
     private Integer status;
     private Integer privacy;
@@ -27,7 +31,7 @@ public class PostCriteria implements Serializable {
     private Boolean following;
     private Boolean homeSort;
 
-    public Specification<Post> getSpecification(Map<Long, String> mapFollowingIdList) {
+    public Specification<Post> getSpecification(Map<Long, String> mapFollowingIdList, Map<Long, String> mapCommunityMemberIdList) {
         return new Specification<Post>() {
             private static final long serialVersionUID = 1L;
 
@@ -40,6 +44,16 @@ public class PostCriteria implements Serializable {
                 }
                 if (getKind() != null) {
                     predicates.add(cb.equal(root.get("kind"), getKind()));
+                }
+                if (getCommunityId() != null) {
+                    Join<Category, Post> community = root.join("community", JoinType.INNER);
+                    predicates.add(cb.equal(community.get("kind"), SocialNetworkingConstant.CATEGORY_KIND_COMMUNITY));
+                    predicates.add(cb.equal(community.get("id"), getCommunityId()));
+                }
+                if (getTopicId() != null) {
+                    Root<PostTopic> postTopicRoot = query.from(PostTopic.class);
+                    predicates.add(cb.equal(postTopicRoot.get("post").get("id"), root.get("id")));
+                    predicates.add(cb.equal(postTopicRoot.get("topic").get("id"), getTopicId()));
                 }
                 if (getPrivacy() != null) {
                     predicates.add(cb.equal(root.get("privacy"), getPrivacy()));
@@ -61,14 +75,20 @@ public class PostCriteria implements Serializable {
                     predicates.add(cb.equal(join.get("status"), SocialNetworkingConstant.STATUS_ACTIVE));
                 }
                 if (getFollowing() != null && getFollowing() && getFollowerId() != null) {
-                    if (!mapFollowingIdList.isEmpty()) {
+                    if (!mapFollowingIdList.isEmpty() || !mapCommunityMemberIdList.isEmpty()) {
                         Root<Account> accountRoot = query.from(Account.class);
+
                         List<Predicate> predicatesFollowing = new ArrayList<>();
                         for (Long key : mapFollowingIdList.keySet()) {
                             predicatesFollowing.add(cb.equal(accountRoot.get("id"), key));
                         }
+                        Root<Category> categoryRoot = query.from(Category.class);
+                        for (Long key : mapCommunityMemberIdList.keySet()) {
+                            predicatesFollowing.add(cb.equal(categoryRoot.get("id"), key));
+                        }
                         predicates.add(cb.or(predicatesFollowing.toArray(new Predicate[predicatesFollowing.size()])));
                         predicates.add(cb.equal(accountRoot.get("id"), root.get("account").get("id")));
+                        predicates.add(cb.equal(categoryRoot.get("id"), root.get("community").get("id")));
                     } else {
                         predicates.add(cb.equal(root.get("id"), 0));
                     }

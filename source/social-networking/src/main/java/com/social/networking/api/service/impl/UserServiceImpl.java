@@ -10,10 +10,11 @@ import com.social.networking.api.model.UserProfile;
 import com.social.networking.api.repository.AccountRepository;
 import com.social.networking.api.repository.GroupRepository;
 import com.social.networking.api.repository.UserProfileRepository;
-import com.social.networking.api.view.dto.profile.oauth2.OAuth2ProfileDto;
+import com.social.networking.api.dto.profile.oauth2.OAuth2ProfileDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,23 +56,25 @@ public class UserServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String userId) {
         Account user = accountRepository.findAccountByEmail(userId);
         if (user == null) {
-            log.error("Invalid email or password!");
+            log.error("[Authentication] Invalid email or password!");
             throw new UsernameNotFoundException("Invalid email or password!");
         }
         boolean enabled = true;
-        if (!Objects.equals(user.getStatus(), SocialNetworkingConstant.STATUS_ACTIVE)) {
-            log.error("User had been locked");
+        if (Objects.equals(user.getStatus(), SocialNetworkingConstant.STATUS_LOCK)) {
+            log.error("[Authentication] Account is locked!");
             enabled = false;
         }
-        Collection<GrantedAuthority> grantedAuthorities = getAccountPermission(user);
+        Set<GrantedAuthority> grantedAuthorities = getAccountPermission(user);
         if (user.getPassword() == null) {
+            log.info("[Authentication] User is authenticated by social network.");
             return new User(user.getEmail(), user.getProviderId(), enabled, true, true, true, grantedAuthorities);
         }
+        log.info("[Authentication] User is authenticated by email and password.");
         return new User(user.getEmail(), user.getPassword(), enabled, true, true, true, grantedAuthorities);
     }
 
-    private Collection<GrantedAuthority> getAccountPermission(Account user) {
-        List<String> roles = user.getGroup().getPermissions().stream().map(Permission::getPermissionCode).filter(permissionCode -> permissionCode != null).collect(Collectors.toList());
+    private Set<GrantedAuthority> getAccountPermission(Account user) {
+        List<String> roles = user.getGroup().getPermissions().stream().map(Permission::getPermissionCode).filter(Objects::nonNull).collect(Collectors.toList());
         return roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())).collect(Collectors.toSet());
     }
 
@@ -109,7 +112,7 @@ public class UserServiceImpl implements UserDetailsService {
         return tokenServices.createAccessToken(auth);
     }
 
-    public OAuth2AccessToken getAccessTokenForGoogle(ClientDetails client, TokenRequest tokenRequest, OAuth2ProfileDto oAuth2ProfileDto, AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
+    public OAuth2AccessToken getAccessTokenForGoogle(AuthenticationManager authenticationManager, ClientDetails client, TokenRequest tokenRequest, OAuth2ProfileDto oAuth2ProfileDto, AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
         Map<String, String> requestParameters = new HashMap<>();
         requestParameters.put("grantType", tokenRequest.getGrantType());
 
@@ -153,7 +156,7 @@ public class UserServiceImpl implements UserDetailsService {
         }
         Account account = accountRepository.findAccountByEmail(oAuth2ProfileDto.getEmail());
         if (account != null) {
-            if (account.getProviderId() != null && account.getProvider() != null
+            if (account.getProvider() != null && account.getProviderId() != null
                     && (!account.getProvider().equals(provider) || !account.getProviderId().trim().equals(oAuth2ProfileDto.getId().trim()))) {
                 throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
                         account.getProvider() + " account. Please use your " + account.getProvider() +
@@ -171,7 +174,7 @@ public class UserServiceImpl implements UserDetailsService {
         Account account = new Account();
         Group group = groupRepository.findFirstByKind(SocialNetworkingConstant.ACCOUNT_KIND_USER);
         if (group == null) {
-            throw new OAuth2AuthenticationProcessingException("Group not found");
+            throw new OAuth2AuthenticationProcessingException("Group not found!");
         }
         account.setGroup(group);
         account.setKind(SocialNetworkingConstant.ACCOUNT_KIND_USER);
@@ -184,6 +187,7 @@ public class UserServiceImpl implements UserDetailsService {
         UserProfile userProfile = new UserProfile();
         userProfile.setAccount(account);
         userProfileRepository.save(userProfile);
+        log.info("[OAuth2] User registered successfully!");
         return account;
     }
 

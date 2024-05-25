@@ -1,20 +1,23 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.message.comment.CommentMessage;
+import com.social.networking.api.message.comment.TaggedCommentMessage;
+import com.social.networking.api.message.reaction.CommentReactionMessage;
 import com.social.networking.api.model.*;
 import com.social.networking.api.model.criteria.CommentCriteria;
 import com.social.networking.api.model.criteria.CommentReactionCriteria;
 import com.social.networking.api.repository.*;
-import com.social.networking.api.view.dto.ApiMessageDto;
-import com.social.networking.api.view.dto.ErrorCode;
-import com.social.networking.api.view.dto.ResponseListDto;
-import com.social.networking.api.view.dto.comment.CommentDto;
-import com.social.networking.api.view.dto.reaction.CommentReactionDto;
-import com.social.networking.api.view.form.comment.CreateCommentForm;
-import com.social.networking.api.view.form.comment.UpdateCommentForm;
-import com.social.networking.api.view.form.reaction.comment.ReactCommentForm;
-import com.social.networking.api.view.mapper.CommentMapper;
-import com.social.networking.api.view.mapper.ReactionMapper;
+import com.social.networking.api.dto.ApiMessageDto;
+import com.social.networking.api.dto.ErrorCode;
+import com.social.networking.api.dto.ResponseListDto;
+import com.social.networking.api.dto.comment.CommentDto;
+import com.social.networking.api.dto.reaction.CommentReactionDto;
+import com.social.networking.api.form.comment.CreateCommentForm;
+import com.social.networking.api.form.comment.UpdateCommentForm;
+import com.social.networking.api.form.reaction.comment.ReactCommentForm;
+import com.social.networking.api.mapper.CommentMapper;
+import com.social.networking.api.mapper.ReactionMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +29,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1/comment")
@@ -44,6 +50,12 @@ public class CommentController extends BaseController {
     ReactionMapper reactionMapper;
     @Autowired
     CommentReactionRepository commentReactionRepository;
+    @Autowired
+    CommentReactionMessage commentReactionMessage;
+    @Autowired
+    CommentMessage commentMessage;
+    @Autowired
+    TaggedCommentMessage taggedCommentMessage;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CMT_C')")
@@ -72,18 +84,30 @@ public class CommentController extends BaseController {
             }
             if (parent.getDepth().equals(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2)) {
                 comment.setParent(parent.getParent());
-            }
-            else {
+            } else {
                 comment.setParent(parent);
             }
             comment.setDepth(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2);
         } else {
             comment.setDepth(SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1);
         }
+        List<Long> taggedAccountIds = new ArrayList<>();
+        if (createCommentForm.getTaggedAccountIds() != null) {
+            for (Long taggedAccountId : createCommentForm.getTaggedAccountIds()) {
+                Account taggedAccount = accountRepository.findById(taggedAccountId).orElse(null);
+                if (taggedAccount != null) {
+                    taggedAccountIds.add(taggedAccountId);
+                }
+            }
+        }
+        boolean tagOwnerOfPost = taggedAccountIds.contains(post.getAccount().getId());
         comment.setAccount(account);
         commentRepository.save(comment);
         CommentDto commentDto = commentMapper.fromEntityToCreateCommentDto(comment);
         commentDto.setOwnerIdOfPost(post.getAccount().getId());
+        commentDto.setTaggedAccountIds(taggedAccountIds);
+        commentDto.setParentComment(comment.getParent() == null ? null : commentMapper.fromEntityToCommentDto(comment.getParent()));
+        handleSendMessage(taggedAccountIds, comment, commentDto, tagOwnerOfPost);
         apiMessageDto.setMessage("Create comment successfully");
         apiMessageDto.setData(commentDto);
         return apiMessageDto;
@@ -225,6 +249,9 @@ public class CommentController extends BaseController {
         commentReactionRepository.save(commentReaction);
         comment.getCommentReactions().add(commentReaction);
         commentRepository.save(comment);
+        if (!isAdmin()) {
+            commentReactionMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentReaction, SocialNetworkingConstant.NOTIFICATION_KIND_REACTION_MY_COMMENT);
+        }
         apiMessageDto.setMessage("React comment successfully");
         apiMessageDto.setData(reactionMapper.fromEntityToCommentReactionDto(commentReaction));
         return apiMessageDto;
@@ -240,5 +267,31 @@ public class CommentController extends BaseController {
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("Get list comment reaction success");
         return apiMessageDto;
+    }
+
+    private void handleSendMessage(List<Long> taggedAccountIds, Comment comment, CommentDto commentDto, boolean tagOwnerOfPost) {
+        if (taggedAccountIds.isEmpty()) { // No tagged account
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)) {
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST);
+            } else {
+                commentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
+            }
+        } else if (tagOwnerOfPost) { // Tag owner of post and other account
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_2)
+                    && !taggedAccountIds.contains(comment.getParent().getAccount().getId())) { // Not tag owner of parent comment
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT); // Notify owner of parent comment
+            }
+            taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT); // Notify tagged accounts including owner of post
+        } else { // Only tag other account
+            if (Objects.equals(comment.getDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)) {
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST); // Notify owner of post
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
+            } else {
+                if (!taggedAccountIds.contains(comment.getParent().getAccount().getId())) { // Not tag owner of parent comment
+                    taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_REPLIED_MY_COMMENT);
+                }
+                taggedCommentMessage.createNotificationAndSendMessage(SocialNetworkingConstant.NOTIFICATION_STATE_SENT, commentDto, SocialNetworkingConstant.NOTIFICATION_KIND_TAGGED_IN_COMMENT);
+            }
+        }
     }
 }

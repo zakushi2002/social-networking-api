@@ -19,7 +19,9 @@ import org.springframework.web.client.RestTemplate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Make Http calls to other web applications.
+ */
 @Configuration
 @Slf4j
 public class RestClientConfig {

@@ -1,18 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.social.networking.api.exception;
 
-/**
- * @author cht
- */
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.social.networking.api.view.dto.ApiMessageDto;
-import com.social.networking.api.view.dto.ApiResponse;
-import com.social.networking.api.view.form.ErrorForm;
+import com.social.networking.api.dto.ApiMessageDto;
+import com.social.networking.api.dto.ApiResponse;
+import com.social.networking.api.form.ErrorForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,7 +33,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ApiMessageDto<String>> globalExceptionHandler(NotFoundException ex) {
         log.error("" + ex.getMessage(), ex);
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
-        apiMessageDto.setCode("ERROR");
+        apiMessageDto.setCode(ex.getCode());
         apiMessageDto.setResult(false);
         apiMessageDto.setMessage(ex.getMessage());
         return new ResponseEntity<>(apiMessageDto, HttpStatus.NOT_FOUND);
@@ -53,7 +44,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         apiMessageDto.setCode("ERROR handleNoHandlerFoundException");
         apiMessageDto.setResult(false);
-        apiMessageDto.setMessage("[Ex3]: 404");
+        apiMessageDto.setMessage("[Ex1]: 404");
         return new ResponseEntity<>(apiMessageDto, HttpStatus.NOT_FOUND);
     }
 
@@ -100,13 +91,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ApiMessageDto<String>> badRequest(BadRequestException ex) {
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         apiMessageDto.setResult(false);
+        apiMessageDto.setCode(ex.getCode());
         apiMessageDto.setMessage(ex.getMessage());
         return new ResponseEntity<>(apiMessageDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity handleConstraintViolation(
-            ConstraintViolationException ex, WebRequest request) {
+    public ResponseEntity handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
         ex.printStackTrace();
         Map<String, Object> errors = new HashMap<>();
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
@@ -131,5 +122,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         apiMessageDto.setResult(false);
         apiMessageDto.setMessage(ex.getMessage());
         return new ResponseEntity<>(apiMessageDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({UserLockedException.class})
+    public ResponseEntity<ApiMessageDto<String>> notAllow(UserLockedException ex) {
+        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+        apiMessageDto.setResult(false);
+        apiMessageDto.setCode(String.valueOf(HttpStatus.UNAUTHORIZED.value()));
+        apiMessageDto.setMessage(ex.getMessage());
+        return new ResponseEntity<>(apiMessageDto, HttpStatus.UNAUTHORIZED);
     }
 }

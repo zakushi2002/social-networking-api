@@ -29,15 +29,83 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+
     <changeSet author="TOAN (generated)" id="1696363596746-2">
+        <createTable tableName="db_social_networking_relationship">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_relationshipPK"/>
+            </column>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="follower_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1696363596746-3">
+        <createTable tableName="db_social_networking_report">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_reportPK"/>
+            </column>
+            <column name="content" type="LONGTEXT"/>
+            <column name="kind" type="INT"/>
+            <column name="object_id" type="BIGINT"/>
+            <column name="quantity" type="INT"/>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1696363596746-4">
         <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_bookmark"
-                                 constraintName="FKgpicr4ttfmrin9rej47svv6j4" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_BOOKMARK_POST_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_post" validate="true" onDelete="CASCADE"/>
     </changeSet>
-    <changeSet author="TOAN (generated)" id="1696363596746-3">
+
+    <changeSet author="TOAN (generated)" id="1696363596746-5">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_bookmark"
-                                 constraintName="FKipf4dr9895bnm116akbtirm95" deferrable="false"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_BOOKMARK_ACCOUNT_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1696363596746-6">
+        <addForeignKeyConstraint baseColumnNames="follower_id" baseTableName="db_social_networking_relationship"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_RELATIONSHIP_FOLLOWER_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1696363596746-7">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_relationship"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_RELATIONSHIP_ACCOUNT_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
     </changeSet>

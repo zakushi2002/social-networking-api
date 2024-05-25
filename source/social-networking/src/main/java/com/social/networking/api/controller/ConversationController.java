@@ -1,6 +1,8 @@
 package com.social.networking.api.controller;
 
 import com.social.networking.api.constant.SocialNetworkingConstant;
+import com.social.networking.api.exception.BadRequestException;
+import com.social.networking.api.exception.NotFoundException;
 import com.social.networking.api.model.Account;
 import com.social.networking.api.model.Conversation;
 import com.social.networking.api.model.ConversationAccount;
@@ -9,16 +11,16 @@ import com.social.networking.api.model.criteria.ConversationCriteria;
 import com.social.networking.api.repository.AccountRepository;
 import com.social.networking.api.repository.ConversationAccountRepository;
 import com.social.networking.api.repository.ConversationRepository;
-import com.social.networking.api.view.dto.ApiMessageDto;
-import com.social.networking.api.view.dto.ErrorCode;
-import com.social.networking.api.view.dto.ResponseListDto;
-import com.social.networking.api.view.dto.conversation.ConversationDto;
-import com.social.networking.api.view.dto.conversation.account.ConversationAccountDto;
-import com.social.networking.api.view.form.conversation.ChangeLastMessageForm;
-import com.social.networking.api.view.form.conversation.CreateConversationForm;
-import com.social.networking.api.view.form.conversation.UpdateConversationForm;
-import com.social.networking.api.view.mapper.ConversationAccountMapper;
-import com.social.networking.api.view.mapper.ConversationMapper;
+import com.social.networking.api.dto.ApiMessageDto;
+import com.social.networking.api.dto.ErrorCode;
+import com.social.networking.api.dto.ResponseListDto;
+import com.social.networking.api.dto.conversation.ConversationDto;
+import com.social.networking.api.dto.conversation.account.ConversationAccountDto;
+import com.social.networking.api.form.conversation.ChangeLastMessageForm;
+import com.social.networking.api.form.conversation.CreateConversationForm;
+import com.social.networking.api.form.conversation.UpdateConversationForm;
+import com.social.networking.api.mapper.ConversationAccountMapper;
+import com.social.networking.api.mapper.ConversationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -66,9 +68,7 @@ public class ConversationController extends BaseController {
         ApiMessageDto<ConversationDto> apiMessageDto = new ApiMessageDto<>();
         Conversation conversation = conversationRepository.findById(id).orElse(null);
         if (conversation == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Conversation] Not found conversation!", ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(conversationMapper.fromEntityToConversationDto(conversation));
         apiMessageDto.setMessage("Get conversation success");
@@ -81,9 +81,7 @@ public class ConversationController extends BaseController {
         ApiMessageDto<ConversationDto> apiMessageDto = new ApiMessageDto<>();
         Conversation conversation = conversationRepository.findById(conversationId).orElse(null);
         if (conversation == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Conversation] Not found conversation!", ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
         }
         apiMessageDto.setData(conversationMapper.fromEntityToConversationDtoComplete(conversation));
         apiMessageDto.setMessage("List account in conversation success");
@@ -97,15 +95,11 @@ public class ConversationController extends BaseController {
         ApiMessageDto<ConversationDto> apiMessageDto = new ApiMessageDto<>();
         List<ConversationAccount> conversationAccountList = new ArrayList<>();
         if (createConversationForm.getAccountIds().length == 0) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CONVERSATION_ERROR_ACCOUNT_ID_EMPTY);
-            return apiMessageDto;
+            throw new BadRequestException("[Conversation] Account ids is empty!", ErrorCode.CONVERSATION_ERROR_ACCOUNT_ID_EMPTY);
         }
         Account account = accountRepository.findById(getCurrentUser()).orElse(null);
         if (account == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Conversation] Not found account!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         Conversation conversation = conversationMapper.fromCreateConversationFormToEntity(createConversationForm);
         conversationRepository.save(conversation);
@@ -131,9 +125,7 @@ public class ConversationController extends BaseController {
         }
 
         if (conversationAccountList.isEmpty()) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CONVERSATION_ERROR_ACCOUNT_ID_NOT_FOUND);
-            return apiMessageDto;
+            throw new BadRequestException("[Conversation] Account id not found!", ErrorCode.CONVERSATION_ERROR_ACCOUNT_ID_NOT_FOUND);
         }
         // Add current user to conversation
         ConversationAccount conversationAccount = new ConversationAccount();
@@ -167,9 +159,7 @@ public class ConversationController extends BaseController {
         ApiMessageDto<ConversationDto> apiMessageDto = new ApiMessageDto<>();
         Conversation conversation = conversationRepository.findById(updateConversationForm.getId()).orElse(null);
         if (conversation == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Conversation] Not found conversation!", ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
         }
         conversationMapper.mappingUpdateConversationFormToEntity(updateConversationForm, conversation);
         conversationRepository.save(conversation);
@@ -185,9 +175,7 @@ public class ConversationController extends BaseController {
         ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
         Conversation conversation = conversationRepository.findById(id).orElse(null);
         if (conversation == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Conversation] Not found conversation!", ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
         }
         conversationRepository.deleteById(id);
         apiMessageDto.setData(id);
@@ -202,14 +190,12 @@ public class ConversationController extends BaseController {
         ApiMessageDto<ConversationDto> apiMessageDto = new ApiMessageDto<>();
         Conversation conversation = conversationRepository.findById(changeLastMessageForm.getId()).orElse(null);
         if (conversation == null) {
-            apiMessageDto.setResult(false);
-            apiMessageDto.setCode(ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
-            return apiMessageDto;
+            throw new NotFoundException("[Conversation] Not found conversation!", ErrorCode.CONVERSATION_ERROR_NOT_FOUND);
         }
         conversation.setLastMessage(changeLastMessageForm.getLastMessage());
         conversationRepository.save(conversation);
         apiMessageDto.setData(conversationMapper.fromEntityToConversationDtoShort(conversation));
-        apiMessageDto.setMessage("Change last message success");
+        apiMessageDto.setMessage("Change last message success.");
         return apiMessageDto;
     }
 
@@ -220,7 +206,7 @@ public class ConversationController extends BaseController {
         Page<Conversation> conversationPage = conversationRepository.findAll(conversationCriteria.getSpecification(getCurrentUser()), pageable);
         ResponseListDto<ConversationDto> responseListDto = new ResponseListDto(conversationMapper.fromEntityToConversationDtoCompleteList(conversationPage.getContent()), conversationPage.getTotalElements(), conversationPage.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("List conversation success");
+        apiMessageDto.setMessage("List conversation success.");
         return apiMessageDto;
     }
 }

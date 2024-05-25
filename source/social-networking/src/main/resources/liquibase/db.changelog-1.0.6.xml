@@ -1,0 +1,92 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="TOAN (generated)" id="1710484995942-1">
+        <createTable tableName="db_social_networking_community_member">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="db_social_networking_community_memberPK"/>
+            </column>
+            <column name="kind" type="INT"/>
+            <column name="account_id" type="BIGINT"/>
+            <column name="community_id" type="BIGINT"/>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-2">
+        <createTable tableName="db_social_networking_post_topic">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_social_networking_post_topicPK"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="topic_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-3">
+        <addColumn tableName="db_social_networking_post">
+            <column name="community_id" type="bigint" afterColumn="kind"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-4">
+        <dropColumn columnName="kind" tableName="db_social_networking_post"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-5">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_social_networking_community_member"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMUNITY_MEMBER_ACCOUNT_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-6">
+        <addForeignKeyConstraint baseColumnNames="community_id" baseTableName="db_social_networking_community_member"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_COMMUNITY_MEMBER_COMMUNITY_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_category" validate="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-7">
+        <addForeignKeyConstraint baseColumnNames="community_id" baseTableName="db_social_networking_post"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_COMMUNITY_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_category" validate="true"
+                                 onDelete="SET NULL"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-8">
+        <addForeignKeyConstraint baseColumnNames="topic_id" baseTableName="db_social_networking_post_topic"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_TOPIC_TOPIC_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_category" validate="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="TOAN (generated)" id="1710484995942-9">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="db_social_networking_post_topic"
+                                 constraintName="FK_DB_SOCIAL_NETWORKING_POST_TOPIC_POST_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_social_networking_post" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>

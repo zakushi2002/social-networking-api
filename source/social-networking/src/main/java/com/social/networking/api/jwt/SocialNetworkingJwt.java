@@ -13,10 +13,10 @@ public class SocialNetworkingJwt implements Serializable {
     public static final String EMPTY_STRING = "<>";
     private Long tokenId;
     private Long accountId = -1L;
-    private String kind = EMPTY_STRING;//token kind
+    private String kind = EMPTY_STRING;// token kind
     private String permission = EMPTY_STRING;
-    private Integer userKind = -1; //loại user là admin hay là gì
-    private String email = EMPTY_STRING;// username hoac order code
+    private Integer userKind = -1; // loại user là admin hay là gì
+    private String email = EMPTY_STRING;// username hoặc order code
     private Long orderId = -1L;
     private Boolean isSuperAdmin = false;
 
@@ -45,9 +45,7 @@ public class SocialNetworkingJwt implements Serializable {
                 result.setUserKind(parserInt(items[3]));
                 result.setEmail(checkString(items[4]));
                 result.setOrderId(parserLong(items[5]));
-                if (items.length > 6) {
-                    result.setIsSuperAdmin(checkBoolean(items[6]));
-                }
+                result.setIsSuperAdmin(checkBoolean(items[6]));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

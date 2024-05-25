@@ -1,5 +1,6 @@
 package com.social.networking.api.config.security;
 
+import com.social.networking.api.constant.SocialNetworkingConstant;
 import com.social.networking.api.exception.oauth.CustomOauthException;
 import com.social.networking.api.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,8 +116,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
      */
     private TokenGranter tokenGranter(final AuthorizationServerEndpointsConfigurer endpoints) {
         List<TokenGranter> granters = new ArrayList<TokenGranter>(Arrays.asList(endpoints.getTokenGranter()));
-        granters.add(new CustomTokenGranter(authenticationManager, endpoints.getTokenServices(), endpoints.getClientDetailsService(), endpoints.getOAuth2RequestFactory(), "multi-tenant", userService));
-        granters.add(new CustomTokenGranter(authenticationManager, endpoints.getTokenServices(), endpoints.getClientDetailsService(), endpoints.getOAuth2RequestFactory(), "google", userService));
+        granters.add(new CustomTokenGranter(authenticationManager, endpoints.getTokenServices(), endpoints.getClientDetailsService(), endpoints.getOAuth2RequestFactory(), SocialNetworkingConstant.GRANT_TYPE_PASSWORD, userService));
+        granters.add(new CustomTokenGranter(authenticationManager, endpoints.getTokenServices(), endpoints.getClientDetailsService(), endpoints.getOAuth2RequestFactory(), SocialNetworkingConstant.GRANT_TYPE_GOOGLE, userService));
 
         return new CompositeTokenGranter(granters);
     }

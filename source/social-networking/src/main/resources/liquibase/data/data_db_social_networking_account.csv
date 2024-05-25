@@ -1,0 +1,3 @@
+id,email,password,full_name,kind,group_id,avatar_path,is_super_admin,last_login,provider,provider_id,attempt_forget_pwd,attempt_login,reset_pwd_code,reset_pwd_time,created_by,created_date,modified_by,modified_date,status
+1,toannguyenit239@gmail.com,{bcrypt}$2a$10$1ZzWk9XXnZL9GPiFaVQFCeIbFgB9iUwbJ7I7RFFrtpc2R9CtR7onm,SUPER ADMIN,1,1,,1,,,,,,,,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1
+2,admin@gmail.com,{bcrypt}$2a$10$Peg26afO8TlNRIJ1k0HHJutClBIYxTlMmlnHTK2v7siu/qchjxYti,Admin,1,2,,0,,,,,,,,SYSTEM,2023-11-25 17:05:00,SYSTEM,2023-11-25 17:05:00,1

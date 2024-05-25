@@ -72,6 +72,8 @@ public class SocialNetworkingConstant {
     public static final Integer CATEGORY_KIND_HOSPITAL_ROLE = 2;
     public static final Integer CATEGORY_KIND_DEPARTMENT = 3;
     public static final Integer CATEGORY_KIND_ACADEMIC_DEGREE = 4;
+    public static final Integer CATEGORY_KIND_COMMUNITY = 5;
+    public static final Integer CATEGORY_KIND_TOPIC = 6;
 
     /**
      * Notification kind constant
@@ -81,6 +83,16 @@ public class SocialNetworkingConstant {
     public static final Integer NOTIFICATION_KIND_REACTION_MY_POST = 3;
     public static final Integer NOTIFICATION_KIND_REACTION_MY_COMMENT = 4;
     public static final Integer NOTIFICATION_KIND_NEW_FOLLOWER = 5;
+    public static final Integer NOTIFICATION_KIND_COURSE_APPROVED = 6;
+    public static final Integer NOTIFICATION_KIND_TAGGED_IN_COMMENT = 7;
+    public static final Integer NOTIFICATION_KIND_REPLIED_MY_COMMENT = 8;
+    public static final Integer NOTIFICATION_KIND_NEW_POST_IN_COMMUNITY = 9;
+
+    /**
+     * Notification state constant
+     */
+    public static final Integer NOTIFICATION_STATE_SENT = 0;
+    public static final Integer NOTIFICATION_STATE_READ = 1;
 
     /**
      * Report kind constant
@@ -102,8 +114,10 @@ public class SocialNetworkingConstant {
     public static final Integer CONVERSATION_KIND_GROUP = 2;
 
     /**
-     * Conversation introduction constant
+     * Community Member kind constant
      */
+    public static final Integer COMMUNITY_MEMBER_KIND = 0;
+    public static final Integer COMMUNITY_ADMIN_KIND = 1;
 
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");
