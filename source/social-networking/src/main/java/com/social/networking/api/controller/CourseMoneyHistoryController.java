@@ -95,6 +95,7 @@ public class CourseMoneyHistoryController {
         if (courseMoneyHistory == null) {
             throw new NotFoundException("[CourseMoneyHistory] Course money history not found!", ErrorCode.COURSE_MONEY_HISTORY_ERROR_NOT_FOUND);
         }
+        courseMoneyHistory.setCourseRequest(null);
         courseMoneyHistoryRepository.deleteById(id);
         apiMessageDto.setMessage("Course money history deleted successfully!");
         apiMessageDto.setData(courseMoneyHistory.getId());
