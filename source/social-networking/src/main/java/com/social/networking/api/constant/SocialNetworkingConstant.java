@@ -119,6 +119,14 @@ public class SocialNetworkingConstant {
     public static final Integer COMMUNITY_MEMBER_KIND = 0;
     public static final Integer COMMUNITY_ADMIN_KIND = 1;
 
+    /**
+     * Course Money History state constant
+     */
+    public static final Integer COURSE_MONEY_HISTORY_STATE_PENDING = 0;
+    public static final Integer COURSE_MONEY_HISTORY_STATE_SUCCESS = 1;
+    public static final Integer COURSE_MONEY_HISTORY_STATE_FAILED = -1;
+    public static final Integer COURSE_MONEY_HISTORY_STATE_CANCEL = -2;
+
     private SocialNetworkingConstant() {
         throw new IllegalStateException("Utility class");
     }
