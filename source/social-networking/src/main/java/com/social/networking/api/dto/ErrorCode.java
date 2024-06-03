@@ -132,4 +132,10 @@ public class ErrorCode {
      */
     public static final String COURSE_REQUEST_ERROR_NOT_FOUND = "ERROR-COURSE-REQUEST-000";
     public static final String COURSE_REQUEST_ERROR_DUPLICATE = "ERROR-COURSE-REQUEST-001";
+
+    /**
+     * CourseMoneyHistory error code
+     */
+    public static final String COURSE_MONEY_HISTORY_ERROR_NOT_FOUND = "ERROR-COURSE-MONEY-HISTORY-000";
+    public static final String COURSE_MONEY_HISTORY_ERROR_STATE_NOT_PENDING = "ERROR-COURSE-MONEY-HISTORY-001";
 }
