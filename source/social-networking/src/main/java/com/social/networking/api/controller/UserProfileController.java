@@ -119,7 +119,7 @@ public class UserProfileController extends BaseController {
         if (updateUserAccountForm.getAvatarPath() != null
                 && !updateUserAccountForm.getAvatarPath().trim().isEmpty()
                 && !updateUserAccountForm.getAvatarPath().equals(userProfile.getAccount().getAvatarPath())) {
-            socialNetworkingApiService.deleteFileS3(userProfile.getAccount().getAvatarPath());
+            socialNetworkingApiService.deleteFileS3ByLink(userProfile.getAccount().getAvatarPath());
             userProfile.getAccount().setAvatarPath(updateUserAccountForm.getAvatarPath());
         }
         accountRepository.save(userProfile.getAccount());

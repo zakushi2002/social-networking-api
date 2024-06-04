@@ -118,7 +118,7 @@ public class CategoryController extends BaseController {
         if (updateCategoryForm.getCategoryImage() != null
                 && !updateCategoryForm.getCategoryImage().trim().isEmpty()
                 && !updateCategoryForm.getCategoryImage().equals(category.getImage())) {
-            socialNetworkingApiService.deleteFileS3(updateCategoryForm.getCategoryImage());
+            socialNetworkingApiService.deleteFileS3ByLink(updateCategoryForm.getCategoryImage());
             category.setImage(updateCategoryForm.getCategoryImage());
         }
         categoryMapper.fromUpdateCategoryFormToEntity(updateCategoryForm, category);
@@ -137,7 +137,7 @@ public class CategoryController extends BaseController {
         if (category == null) {
             throw new NotFoundException("[Category] Category not found!", ErrorCode.CATEGORY_ERROR_NOT_FOUND);
         }
-        socialNetworkingApiService.deleteFileS3(category.getImage());
+        socialNetworkingApiService.deleteFileS3ByLink(category.getImage());
         categoryRepository.deleteById(id);
         apiMessageDto.setData(id);
         apiMessageDto.setMessage("Delete a category success.");

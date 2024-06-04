@@ -160,7 +160,7 @@ public class ExpertProfileController extends BaseController {
         if (updateExpertAccountForm.getAvatarPath() != null
                 && !updateExpertAccountForm.getAvatarPath().trim().isEmpty()
                 && !updateExpertAccountForm.getAvatarPath().equals(expertProfile.getAccount().getAvatarPath())) {
-            socialNetworkingApiService.deleteFileS3(expertProfile.getAccount().getAvatarPath());
+            socialNetworkingApiService.deleteFileS3ByLink(expertProfile.getAccount().getAvatarPath());
             expertProfile.getAccount().setAvatarPath(updateExpertAccountForm.getAvatarPath().trim());
         }
         accountRepository.save(expertProfile.getAccount());

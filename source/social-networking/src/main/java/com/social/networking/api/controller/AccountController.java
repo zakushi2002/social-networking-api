@@ -107,7 +107,7 @@ public class AccountController extends BaseController {
         if (updateAdminForm.getAvatarPath() != null
                 && !updateAdminForm.getAvatarPath().trim().isEmpty()
                 && !updateAdminForm.getAvatarPath().equals(account.getAvatarPath())) {
-            socialNetworkingApiService.deleteFileS3(account.getAvatarPath());
+            socialNetworkingApiService.deleteFileS3ByLink(account.getAvatarPath());
             account.setAvatarPath(updateAdminForm.getAvatarPath());
         }
         accountMapper.mappingUpdateAdminFormToAccount(updateAdminForm, account);
@@ -167,7 +167,7 @@ public class AccountController extends BaseController {
             throw new NotFoundException("[Account] Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
         accountRepository.deleteById(id);
-        socialNetworkingApiService.deleteFileS3(account.getAvatarPath());
+        socialNetworkingApiService.deleteFileS3ByLink(account.getAvatarPath());
         apiMessageDto.setMessage("Delete admin success.");
         return apiMessageDto;
     }
@@ -210,7 +210,7 @@ public class AccountController extends BaseController {
             account.setPassword(passwordEncoder.encode(updateAdminProfileForm.getNewPassword()));
         }
         if (updateAdminProfileForm.getAvatarPath() != null && !updateAdminProfileForm.getAvatarPath().trim().isEmpty()) {
-            socialNetworkingApiService.deleteFileS3(account.getAvatarPath());
+            socialNetworkingApiService.deleteFileS3ByLink(account.getAvatarPath());
             account.setAvatarPath(updateAdminProfileForm.getAvatarPath());
         }
         account.setFullName(updateAdminProfileForm.getFullName());

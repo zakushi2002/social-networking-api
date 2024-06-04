@@ -1,9 +1,7 @@
 package com.social.networking.api.service.aws;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.social.networking.api.dto.aws.FileS3Dto;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +25,7 @@ public class S3Service {
 
     public String uploadFile(MultipartFile file, String fileName) {
         File fileObj = convertMultiPartFileToFile(file);
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj).withCannedAcl(CannedAccessControlList.PublicReadWrite));
         boolean delete = fileObj.delete();
         if (!delete) {
             log.error("[AWS S3] Uploaded file failed");
@@ -55,7 +53,9 @@ public class S3Service {
 
     public void deleteFile(String fileName) {
         log.info("[AWS S3] Deleting file: " + fileName + " from bucket: " + bucketName + "...");
-        s3Client.deleteObject(bucketName, fileName);
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, fileName).withKey(fileName);
+        s3Client.deleteObject(deleteObjectRequest);
+        // s3Client.deleteObject(bucketName, fileName);
     }
 
 
