@@ -130,7 +130,6 @@ public class AccountController extends BaseController {
     }
 
     @GetMapping(value = "/get-profile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('PROFILE_V')")
     public ApiMessageDto<AccountProfileDto> getAccountProfile(@PathVariable("id") Long id) {
         ApiMessageDto<AccountProfileDto> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findById(id).orElse(null);
