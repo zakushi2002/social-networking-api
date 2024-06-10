@@ -24,7 +24,6 @@ public class PostCriteria implements Serializable {
     private String keyword;
     private Long communityId;
     private Long topicId;
-    private Integer kind;
     private Integer status;
     private Integer privacy;
     private Long followerId;
@@ -41,9 +40,6 @@ public class PostCriteria implements Serializable {
 
                 if (getId() != null) {
                     predicates.add(cb.equal(root.get("id"), getId()));
-                }
-                if (getKind() != null) {
-                    predicates.add(cb.equal(root.get("kind"), getKind()));
                 }
                 if (getCommunityId() != null) {
                     Join<Category, Post> community = root.join("community", JoinType.INNER);

@@ -22,8 +22,6 @@ import java.util.Objects;
 @Slf4j
 public class SocialNetworkingApiService {
     static final String[] UPLOAD_TYPES = new String[]{"LOGO", "AVATAR", "IMAGE", "DOCUMENT"};
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;
     @Value("${cloud.aws.s3.endpoint.url}")
     private String endpointUrl;
     @Autowired
@@ -45,7 +43,7 @@ public class SocialNetworkingApiService {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(uploadFileForm.getFile().getOriginalFilename()));
         String ext = FilenameUtils.getExtension(fileName);
         String finalFile = uploadFileForm.getType() + "_" + RandomStringUtils.randomAlphanumeric(10) + "." + ext;
-        String fileUrl = endpointUrl + bucketName + "/" + finalFile;
+        String fileUrl = endpointUrl + finalFile;
         UploadFileDto uploadFileDto = new UploadFileDto();
         uploadFileDto.setFilePath(fileUrl);
         apiMessageDto.setData(uploadFileDto);
@@ -57,14 +55,17 @@ public class SocialNetworkingApiService {
         return s3Service.downloadFile(fileName);
     }
 
-    public void deleteFileS3(String avatarPath) {
-        String awsEndpoint = endpointUrl + bucketName + "/";
+    public void deleteFileS3ByLink(String avatarPath) {
+        String awsEndpoint = endpointUrl;
         if (!avatarPath.contains(awsEndpoint)) {
             log.error("[AWS S3] File not found!");
             return;
         }
         String key = avatarPath.replace(awsEndpoint, "");
         s3Service.deleteFile(key);
+    }
+    public void deleteFileS3(String avatarPath) {
+        s3Service.deleteFile(avatarPath);
     }
 
     public String getOTPForgetPassword() {
