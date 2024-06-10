@@ -18,7 +18,7 @@ public class CourseMoneyHistory extends Auditable<String> {
     @GenericGenerator(name = "idGenerator", strategy = "com.social.networking.api.service.id.IdGenerator")
     @GeneratedValue(generator = "idGenerator")
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_request_id")
     private CourseRequest courseRequest;
     private Double money;

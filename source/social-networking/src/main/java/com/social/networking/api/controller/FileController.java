@@ -1,5 +1,6 @@
 package com.social.networking.api.controller;
 
+import com.social.networking.api.form.DeleteFileForm;
 import com.social.networking.api.service.SocialNetworkingApiService;
 import com.social.networking.api.dto.ApiMessageDto;
 import com.social.networking.api.dto.UploadFileDto;
@@ -58,9 +59,11 @@ public class FileController {
                 .body(resource);
     }
 
-    @DeleteMapping(value = "/delete/s3/{fileName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
-        socialNetworkingApiService.deleteFileS3(fileName);
-        return ResponseEntity.ok("File deleted successfully");
+    @PostMapping(value = "/delete/s3")
+    public ApiMessageDto<String> deleteFile(@Valid @RequestBody DeleteFileForm deleteFileForm, BindingResult bindingResult) {
+        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+        socialNetworkingApiService.deleteFileS3(deleteFileForm.getFileName());
+        apiMessageDto.setMessage("File deleted successfully by key - " + deleteFileForm.getFileName());
+        return apiMessageDto;
     }
 }

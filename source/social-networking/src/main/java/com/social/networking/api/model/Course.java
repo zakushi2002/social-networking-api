@@ -22,7 +22,7 @@ public class Course extends Auditable<String> {
     private String title;
     @Column(columnDefinition = "TEXT")
     private String description;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "expert_id")
     private ExpertProfile expert;
     private Integer slots;
