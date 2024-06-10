@@ -25,9 +25,7 @@
             </column>
             <column name="title" type="VARCHAR(255)"/>
             <column name="description" type="TEXT"/>
-            <column name="expert_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
+            <column name="expert_id" type="BIGINT"/>
             <column name="topic_id" type="BIGINT"/>
             <column name="start_date" type="datetime"/>
             <column name="end_date" type="datetime"/>
@@ -58,9 +56,7 @@
             <column name="email" type="VARCHAR(255)"/>
             <column name="full_name" type="VARCHAR(255)"/>
             <column name="phone" type="VARCHAR(255)"/>
-            <column name="course_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
+            <column name="course_id" type="BIGINT"/>
             <column name="created_by" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -82,7 +78,7 @@
                                  constraintName="FK_DB_SOCIAL_NETWORKING_COURSE_EXPERT_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="account_id"
                                  referencedTableName="db_social_networking_expert_profile" validate="true"
-                                 onDelete="CASCADE"/>
+                                 onDelete="SET NULL"/>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1714065751294-7">
@@ -90,13 +86,13 @@
                                  constraintName="FK_DB_SOCIAL_NETWORKING_COURSE_TOPIC_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_social_networking_category" validate="true"
-                                 onDelete="CASCADE"/>
+                                 onDelete="SET NULL"/>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1714065751294-8">
         <addForeignKeyConstraint baseColumnNames="course_id" baseTableName="db_social_networking_course_request"
                                  constraintName="FK_DB_SOCIAL_NETWORKING_COURSE_REQUEST_COURSE_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_social_networking_course" validate="true" onDelete="CASCADE"/>
+                                 referencedTableName="db_social_networking_course" validate="true" onDelete="SET NULL"/>
     </changeSet>
 </databaseChangeLog>

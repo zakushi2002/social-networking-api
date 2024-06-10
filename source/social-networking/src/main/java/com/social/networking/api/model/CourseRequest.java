@@ -18,7 +18,7 @@ public class CourseRequest extends Auditable<String> {
     @GenericGenerator(name = "idGenerator", strategy = "com.social.networking.api.service.id.IdGenerator")
     @GeneratedValue(generator = "idGenerator")
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;
     private String fullName;
