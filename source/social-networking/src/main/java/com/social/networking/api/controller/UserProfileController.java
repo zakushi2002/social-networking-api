@@ -153,6 +153,7 @@ public class UserProfileController extends BaseController {
         if (userProfile == null) {
             throw new NotFoundException("[User] User profile not found!", ErrorCode.USER_PROFILE_ERROR_NOT_FOUND);
         }
+        socialNetworkingApiService.deleteFileS3ByLink(userProfile.getAccount().getAvatarPath());
         postRepository.deleteAllByAccountId(id);
         userProfileRepository.deleteById(id);
         accountRepository.deleteById(id);

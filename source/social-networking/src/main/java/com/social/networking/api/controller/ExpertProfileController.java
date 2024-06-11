@@ -198,6 +198,7 @@ public class ExpertProfileController extends BaseController {
         if (expertProfile == null) {
             throw new NotFoundException("[Expert] Expert profile not found!", ErrorCode.EXPERT_PROFILE_ERROR_NOT_FOUND);
         }
+        socialNetworkingApiService.deleteFileS3ByLink(expertProfile.getAccount().getAvatarPath());
         postRepository.deleteAllByAccountId(id);
         expertProfileRepository.deleteById(id);
         accountRepository.deleteById(id);

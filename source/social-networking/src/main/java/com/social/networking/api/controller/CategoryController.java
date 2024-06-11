@@ -118,8 +118,8 @@ public class CategoryController extends BaseController {
         if (updateCategoryForm.getCategoryImage() != null
                 && !updateCategoryForm.getCategoryImage().trim().isEmpty()
                 && !updateCategoryForm.getCategoryImage().equals(category.getImage())) {
-            socialNetworkingApiService.deleteFileS3ByLink(updateCategoryForm.getCategoryImage());
-            category.setImage(updateCategoryForm.getCategoryImage());
+            socialNetworkingApiService.deleteFileS3ByLink(category.getImage());
+            category.setImage(updateCategoryForm.getCategoryImage().trim());
         }
         categoryMapper.fromUpdateCategoryFormToEntity(updateCategoryForm, category);
         categoryRepository.save(category);

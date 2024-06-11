@@ -210,7 +210,7 @@ public class AccountController extends BaseController {
         }
         if (updateAdminProfileForm.getAvatarPath() != null && !updateAdminProfileForm.getAvatarPath().trim().isEmpty()) {
             socialNetworkingApiService.deleteFileS3ByLink(account.getAvatarPath());
-            account.setAvatarPath(updateAdminProfileForm.getAvatarPath());
+            account.setAvatarPath(updateAdminProfileForm.getAvatarPath().trim());
         }
         account.setFullName(updateAdminProfileForm.getFullName());
         accountRepository.save(account);
