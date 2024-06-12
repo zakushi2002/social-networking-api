@@ -20,6 +20,7 @@ public class PostCriteria implements Serializable {
     private Long id;
     private Long accountId;
     private String accountName;
+    private Integer accountKind;
     private String title;
     private String keyword;
     private Long communityId;
@@ -68,6 +69,11 @@ public class PostCriteria implements Serializable {
                 if (!StringUtils.isEmpty(getAccountName())) {
                     Join<Account, Post> join = root.join("account", JoinType.INNER);
                     predicates.add(cb.like(cb.lower(join.get("fullName")), "%" + getAccountName().toLowerCase() + "%"));
+                    predicates.add(cb.equal(join.get("status"), SocialNetworkingConstant.STATUS_ACTIVE));
+                }
+                if (getAccountKind() != null) {
+                    Join<Account, Post> join = root.join("account", JoinType.INNER);
+                    predicates.add(cb.equal(join.get("kind"), getAccountKind()));
                     predicates.add(cb.equal(join.get("status"), SocialNetworkingConstant.STATUS_ACTIVE));
                 }
                 if (getFollowing() != null && getFollowing() && getFollowerId() != null) {
