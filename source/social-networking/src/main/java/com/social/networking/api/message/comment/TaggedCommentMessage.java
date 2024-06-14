@@ -26,7 +26,8 @@ public class TaggedCommentMessage implements MessageService<CommentDto> {
         List<Notification> notifications = new ArrayList<>();
         if (Objects.equals(data.getCommentDepth(), SocialNetworkingConstant.COMMENT_DEPTH_LEVEL_1)
                 && Objects.equals(notificationKind, SocialNetworkingConstant.NOTIFICATION_KIND_COMMENT_IN_MY_POST)
-                && data.getOwnerIdOfPost() != null) {
+                && data.getOwnerIdOfPost() != null
+                && !Objects.equals(data.getOwnerIdOfPost(), data.getOwner().getId())) {
             // Notify the owner of the post
             Notification notification = createNotification(data, notificationState, notificationKind, data.getOwnerIdOfPost());
             notifications.add(notification);
