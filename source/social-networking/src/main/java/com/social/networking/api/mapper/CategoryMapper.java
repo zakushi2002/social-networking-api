@@ -59,6 +59,7 @@ public interface CategoryMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "categoryName")
+    @Mapping(source = "description", target = "categoryDescription")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToShortDto")
     CategoryDto fromEntityToShortDto(Category category);
