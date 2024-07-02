@@ -7,15 +7,15 @@ pipeline {
 
     environment {
         MYSQL_ROOT_LOGIN = credentials('mysql-root-login')
-        AWS_ACCESS_KEY=credentials('AWS_ACCESS_KEY')
-        AWS_ENDPOINT_URL=credentials('AWS_ENDPOINT_URL')
-        AWS_SECRET_KEY=credentials('AWS_SECRET_KEY')
-        MAIL_PASSWORD=credentials('MAIL_PASSWORD')
-        MAIL_USERNAME=credentials('MAIL_USERNAME')
-        RABBITMQ_HOST=credentials('RABBITMQ_HOST')
-        RABBITMQ_USERNAME=credentials('RABBITMQ_USERNAME')
-        RABBITMQ_PASSWORD=credentials('RABBITMQ_PASSWORD')
-        RABBITMQ_PORT=credentials('RABBITMQ_PORT')
+        AWS_ACCESS_KEY=secret('AWS_ACCESS_KEY')
+        AWS_ENDPOINT_URL=secret('AWS_ENDPOINT_URL')
+        AWS_SECRET_KEY=secret('AWS_SECRET_KEY')
+        MAIL_PASSWORD=secret('MAIL_PASSWORD')
+        MAIL_USERNAME=secret('MAIL_USERNAME')
+        RABBITMQ_HOST=secret('RABBITMQ_HOST')
+        RABBITMQ_USERNAME=secret('RABBITMQ_USERNAME')
+        RABBITMQ_PASSWORD=secret('RABBITMQ_PASSWORD')
+        RABBITMQ_PORT=secret('RABBITMQ_PORT')
     }
 
     stages {
