@@ -19,25 +19,6 @@ pipeline {
     }
 
     stages {
-        stage('Build with Maven') {
-            steps {
-                sh 'mvn --version'
-                sh 'java -version'
-                sh 'cp -r source/social-networking/* dev-ops/'
-                sh 'cd dev-ops'
-                sh 'mvn clean package -Dmaven.test.failure.ignore=true'
-            }
-        }
-
-        stage('Packing/Pushing Docker Image') {
-            steps {
-                withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                    sh 'docker build -t zakushi2002/family-circle .'
-                    sh 'docker push zakushi2002/family-circle'
-                }
-            }
-        }
-
         stage('Deploy MySQL to DEV') {
             steps {
                 echo 'Deploying and cleaning'
@@ -50,6 +31,26 @@ pipeline {
                 sh "docker run --name mysql-dev --rm --network dev -v mysql-dev-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=2002 -e MYSQL_DATABASE=family_circle  -d mysql:8.0 "
                 sh 'sleep 15'
                 sh "docker exec -i mysql-dev mysql --user=root --password=2002 < script"
+            }
+        }
+
+        stage('Build with Maven') {
+            steps {
+                sh 'mvn --version'
+                sh 'java -version'
+                sh 'cp -r source/social-networking/* dev-ops/'
+                sh 'cd dev-ops'
+                sh 'cp config/* src/main/resources/'
+                sh 'mvn clean package -Dmaven.test.failure.ignore=true'
+            }
+        }
+
+        stage('Packing/Pushing Docker Image') {
+            steps {
+                withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
+                    sh 'docker build -t zakushi2002/family-circle .'
+                    sh 'docker push zakushi2002/family-circle'
+                }
             }
         }
 
