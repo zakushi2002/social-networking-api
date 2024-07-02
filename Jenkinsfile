@@ -40,14 +40,14 @@ pipeline {
         stage('Deploy MySQL to DEV') {
             steps {
                 echo 'Deploying and cleaning'
-                sh 'docker pull mysql:8.0.31'
+                sh 'docker pull mysql:8.0'
                 sh 'docker network create dev || echo "Network already exists"'
-                sh 'docker container stop mysql-dev || echo "Container does not exist"'
-                sh 'echo y | docker container prune'
+                sh 'docker container stop mysql-dev || echo "Container does not exist" '
+                sh 'echo y | docker container prune '
                 sh 'docker volume rm mysql-dev-data || echo "Volume does not exist"'
 
-                sh "docker run --name mysql-dev --rm --network dev -v mysql-dev-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_LOGIN_PSW} -e MYSQL_DATABASE=family_circle -d mysql:8.0.31 "
-                sh 'sleep 20'
+                sh "docker run --name mysql-dev --rm --network dev -v mysql-dev-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_LOGIN_PSW} -e MYSQL_DATABASE=family_circle  -d mysql:8.0 "
+                sh 'sleep 15'
                 sh "docker exec -i mysql-dev mysql --user=root --password=${MYSQL_ROOT_LOGIN_PSW} < script"
             }
         }
