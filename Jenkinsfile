@@ -23,8 +23,8 @@ pipeline {
             steps {
                 sh 'mvn --version'
                 sh 'java -version'
-                sh 'cp -r source/* '
-                sh 'cd source/social-networking' 
+                sh 'cd source'
+                sh 'cd social-networking'
                 sh 'mvn clean package -Dmaven.test.failure.ignore=true'
             }
         }
