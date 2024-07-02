@@ -6,7 +6,8 @@ pipeline {
     }
 
     environment {
-        MYSQL_ROOT_LOGIN = credentials('mysql-root-login')
+        MYSQL_ROOT_LOGIN=credentials('mysql-root-login')
+        MYSQL_ROOT_LOGIN_PSW=2002
         AWS_ACCESS_KEY=secret('AWS_ACCESS_KEY')
         AWS_ENDPOINT_URL=secret('AWS_ENDPOINT_URL')
         AWS_SECRET_KEY=secret('AWS_SECRET_KEY')
@@ -28,9 +29,9 @@ pipeline {
                 sh 'echo y | docker container prune '
                 sh 'docker volume rm mysql-dev-data || echo "Volume does not exist"'
 
-                sh "docker run --name mysql-dev --rm --network dev -v mysql-dev-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=2002 -e MYSQL_DATABASE=family_circle  -d mysql:8.0 "
+                sh "docker run --name mysql-dev --rm --network dev -v mysql-dev-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_LOGIN_PSW} -e MYSQL_DATABASE=family_circle  -d mysql:8.0 "
                 sh 'sleep 15'
-                sh "docker exec -i mysql-dev mysql --user=root --password=2002 < script"
+                sh "docker exec -i mysql-dev mysql --user=root --password=${MYSQL_ROOT_LOGIN_PSW} < script"
             }
         }
 
