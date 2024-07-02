@@ -10,10 +10,12 @@ pipeline {
         AWS_ACCESS_KEY=secret('AWS_ACCESS_KEY')
         AWS_ENDPOINT_URL=secret('AWS_ENDPOINT_URL')
         AWS_SECRET_KEY=secret('AWS_SECRET_KEY')
-        GOOGLE_CLIENT_ID=secret('GOOGLE_CLIENT_ID')
-        GOOGLE_CLIENT_SECRET=secret('GOOGLE_CLIENT_SECRET')
         MAIL_PASSWORD=secret('MAIL_PASSWORD')
         MAIL_USERNAME=secret('MAIL_USERNAME')
+        RABBITMQ_HOST=secret('RABBITMQ_HOST')
+        RABBITMQ_USERNAME=secret('RABBITMQ_USERNAME')
+        RABBITMQ_PASSWORD=secret('RABBITMQ_PASSWORD')
+        RABBITMQ_PORT=secret('RABBITMQ_PORT')
     }
 
     stages {
@@ -44,9 +46,9 @@ pipeline {
                 sh 'echo y | docker container prune'
                 sh 'docker volume rm mysql-dev-data || echo "Volume does not exist"'
 
-                sh 'docker run --name mysql-dev --rm --network dev -v mysql-dev-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=2002 -e MYSQL_DATABASE=family_circle -d mysql:8.0.31'
+                sh "docker run --name mysql-dev --rm --network dev -v mysql-dev-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=2002 -e MYSQL_DATABASE=family_circle -d mysql:8.0.31 "
                 sh 'sleep 20'
-                sh "docker exec -i mysql-dev mysql --user=root --p=2002 family_circle < script"
+                sh "docker exec -i mysql-dev mysql --user=root --password=${MYSQL_ROOT_PASSWORD} < script"
             }
         }
 
@@ -54,11 +56,11 @@ pipeline {
             steps {
                 echo 'Deploying and cleaning'
                 sh 'docker image pull zakushi2002/family-circle'
-                sh 'docker container stop family-circle || echo "Container does not exist"'
+                sh 'docker container stop family-circle || echo "Container does not exist" '
                 sh 'docker network create dev || echo "Network already exists"'
                 sh 'echo y | docker container prune '
 
-                sh 'docker container run -d --rm --name family-circle -p 8888:8888 --network dev zakushi2002/family-circle'
+                sh 'docker container run -d --rm --name family-circle -p 8888:8080 --network dev zakushi2002/family-circle'
             }
         }
     }
