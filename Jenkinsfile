@@ -7,15 +7,15 @@ pipeline {
 
     environment {
         MYSQL_ROOT_LOGIN = credentials('mysql-root-login')
-        AWS_ACCESS_KEY=secret('AWS_ACCESS_KEY')
-        AWS_ENDPOINT_URL=secret('AWS_ENDPOINT_URL')
-        AWS_SECRET_KEY=secret('AWS_SECRET_KEY')
-        MAIL_PASSWORD=secret('MAIL_PASSWORD')
-        MAIL_USERNAME=secret('MAIL_USERNAME')
-        RABBITMQ_HOST=secret('RABBITMQ_HOST')
-        RABBITMQ_USERNAME=secret('RABBITMQ_USERNAME')
-        RABBITMQ_PASSWORD=secret('RABBITMQ_PASSWORD')
-        RABBITMQ_PORT=secret('RABBITMQ_PORT')
+        AWS_ACCESS_KEY=credentials('AWS_ACCESS_KEY')
+        AWS_ENDPOINT_URL=credentials('AWS_ENDPOINT_URL')
+        AWS_SECRET_KEY=credentials('AWS_SECRET_KEY')
+        MAIL_PASSWORD=credentials('MAIL_PASSWORD')
+        MAIL_USERNAME=credentials('MAIL_USERNAME')
+        RABBITMQ_HOST=credentials('RABBITMQ_HOST')
+        RABBITMQ_USERNAME=credentials('RABBITMQ_USERNAME')
+        RABBITMQ_PASSWORD=credentials('RABBITMQ_PASSWORD')
+        RABBITMQ_PORT=credentials('RABBITMQ_PORT')
     }
 
     stages {
@@ -46,9 +46,9 @@ pipeline {
                 sh 'echo y | docker container prune '
                 sh 'docker volume rm mysql-dev-data || echo "Volume does not exist"'
 
-                sh "docker run --name mysql-dev --rm --network dev -v mysql-dev-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_LOGIN_PSW} -e MYSQL_DATABASE=family_circle  -d mysql:8.0 "
+                sh "docker run --name mysql-dev --rm --network dev -v mysql-dev-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=2002 -e MYSQL_DATABASE=family_circle  -d mysql:8.0 "
                 sh 'sleep 15'
-                sh "docker exec -i mysql-dev mysql --user=root --password=${MYSQL_ROOT_LOGIN_PSW} < script"
+                sh "docker exec -i mysql-dev mysql --user=root --password=2002 < script"
             }
         }
 
