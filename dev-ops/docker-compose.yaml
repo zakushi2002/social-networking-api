@@ -9,7 +9,7 @@ services:
         container_name: mysql-family-circle
         environment:
             MYSQL_ROOT_PASSWORD: 2002
-            restart: always
+        restart: always
         ports:
             - "1808:3306"
         # command: --bind-address=0.0.0.0
@@ -24,8 +24,8 @@ services:
         environment:
             RABBITMQ_DEFAULT_USER: admin
             RABBITMQ_DEFAULT_PASS: admin@2o23.hcm
-            restart: always
             RABBITMQ_DEFAULT_VHOST: /
+        restart: always
         ports:
             - "1809:15672"
             - "1810:5672"
