@@ -14,6 +14,7 @@
     <artifactId>social-networking</artifactId>
     <version>0.0.1</version>
     <name>social-networking</name>
+    <packaging>jar</packaging>
     <description>Social Networking API</description>
 
     <properties>
