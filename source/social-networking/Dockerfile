@@ -3,7 +3,7 @@ FROM openjdk:11
 
 VOLUME /tmp
 #WORKDIR /opt
-COPY ./{JAR_FILE} app.jar
+COPY ./target/social-networking.jar app.jar
 #COPY ./config.properties config.properties
 
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]

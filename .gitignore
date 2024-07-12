@@ -33,3 +33,6 @@ source/social-networking-api/target
 source/social-networking-api/logs
 source/social-networking-api/.idea
 source/social-networking-api/*.iml
+
+# .env file
+*.env

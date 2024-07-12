@@ -1,0 +1,50 @@
+networks:
+    family-circle-network:
+        external: true
+        name: family-circle-network
+
+services:
+    mysql-family-circle:
+        image: mysql:8.0.35
+        container_name: mysql-family-circle
+        environment:
+            MYSQL_ROOT_PASSWORD: 2002
+            restart: always
+        ports:
+            - "1808:3306"
+        # command: --bind-address=0.0.0.0
+        volumes:
+            - ./mysql-data:/var/lib/mysql
+        networks:
+            - family-circle-network
+        tty: true
+    rabbitmq-family-circle:
+        image: rabbitmq:3.13.1-management
+        container_name: rabbitmq-family-circle
+        environment:
+            RABBITMQ_DEFAULT_USER: admin
+            RABBITMQ_DEFAULT_PASS: admin@2o23.hcm
+            restart: always
+            RABBITMQ_DEFAULT_VHOST: /
+        ports:
+            - "1809:15672"
+            - "1810:5672"
+        volumes:
+            - ./rabbitmq-data:/var/lib/rabbitmq
+        networks:
+            - family-circle-network
+        tty: true
+    social-networking-api:
+        image: social-networking-api:latest
+        container_name: social-networking-api
+        env_file: social-networking-api.env
+        environment:
+            MYSQL_PASSWORD: 2002
+            RABBITMQ_PORT: 1810
+        restart: always
+        mem_limit: 1500m
+        networks:
+            - family-circle-network
+        ports:
+            - "8888:8888"
+        tty: true
