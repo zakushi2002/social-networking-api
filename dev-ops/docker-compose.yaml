@@ -5,7 +5,7 @@ networks:
 
 services:
     mysql-family-circle:
-        image: mysql:8.0.35
+        image: mysql:8.0.31
         container_name: mysql-family-circle
         environment:
             MYSQL_ROOT_PASSWORD: 2002
@@ -35,7 +35,7 @@ services:
             - family-circle-network
         tty: true
     social-networking-api:
-        image: social-networking-api:latest
+        image: zakushi2002/social-networking-api:latest
         container_name: social-networking-api
         env_file: social-networking-api.env
         environment:
