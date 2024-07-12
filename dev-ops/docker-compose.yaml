@@ -5,7 +5,7 @@ networks:
 
 services:
     mysql-family-circle:
-        image: mysql:8.0.31
+        image: mysql:8.0.35
         container_name: mysql-family-circle
         environment:
             MYSQL_ROOT_PASSWORD: 2002
