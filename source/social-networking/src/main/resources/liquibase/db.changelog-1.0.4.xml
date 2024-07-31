@@ -5,13 +5,13 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="TOAN (generated)" id="1697530097194-1">
         <addColumn tableName="db_social_networking_account">
-            <column name="provider" type="varchar(255)" afterColumn="last_login"/>
+            <column name="provider" type="varchar(255)"/>
         </addColumn>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1697530097194-2">
         <addColumn tableName="db_social_networking_account">
-            <column name="provider_id" type="varchar(255)" afterColumn="provider"/>
+            <column name="provider_id" type="varchar(255)"/>
         </addColumn>
     </changeSet>
 
@@ -40,13 +40,13 @@
 
     <changeSet author="TOAN (generated)" id="1697530097194-4">
         <addColumn tableName="db_social_networking_post">
-            <column name="moderated_date" type="datetime" afterColumn="account_id"/>
+            <column name="moderated_date" type="datetime"/>
         </addColumn>
     </changeSet>
 
     <changeSet author="TOAN (generated)" id="1697530097194-5">
         <addColumn tableName="db_social_networking_post">
-            <column name="title" type="varchar(255)" afterColumn="id"/>
+            <column name="title" type="varchar(255)"/>
         </addColumn>
     </changeSet>
 
@@ -209,7 +209,7 @@
 
     <changeSet author="TOAN (generated)" id="1697530097194-16">
         <addColumn tableName="db_social_networking_notification">
-            <column name="object_id" type="bigint" afterColumn="kind"/>
+            <column name="object_id" type="bigint"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>

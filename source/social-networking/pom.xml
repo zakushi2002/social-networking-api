@@ -105,8 +105,8 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
 
         <dependency>
@@ -284,10 +284,15 @@
                 <version>${spring-boot-version}</version>
                 <optional>true</optional>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>8.0.31</version>
+            </dependency>-->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.5.2</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -390,11 +395,11 @@
                     </diffChangeLogFile>
                     <outputChangeLogFile>${basedir}/src/main/resources/liquibase/db.changelog-1.0.0.xml
                     </outputChangeLogFile>
-                    <driver>com.mysql.cj.jdbc.Driver</driver>
-                    <url>jdbc:mysql://localhost:3306/family_circle</url>
+                    <driver>org.postgresql.Driver</driver>
+                    <url>jdbc:postgresql://family-circle-9640.8nk.gcp-asia-southeast1.cockroachlabs.cloud:26257/defaultdb</url>
                     <defaultSchemaName/>
-                    <username>root</username>
-                    <password>2002</password>
+                    <username>toannguyen</username>
+                    <password>XFacHe_3RWBp8OaThJYCQA</password>
                     <referenceUrl>
                         hibernate:spring:com.social.networking.api.model,com.social.networking.api.repository?dialect=org.hibernate.dialect.MySQL5InnoDBDialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
                     </referenceUrl>
@@ -471,9 +476,9 @@
                     </dependency>
 
                     <dependency>
-                        <groupId>mysql</groupId>
-                        <artifactId>mysql-connector-java</artifactId>
-                        <version>8.0.31</version>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>42.5.2</version>
                     </dependency>
                 </dependencies>
             </plugin>

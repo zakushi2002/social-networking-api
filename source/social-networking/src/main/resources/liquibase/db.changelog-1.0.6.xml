@@ -44,7 +44,7 @@
 
     <changeSet author="TOAN (generated)" id="1710484995942-3">
         <addColumn tableName="db_social_networking_post">
-            <column name="community_id" type="bigint" afterColumn="kind"/>
+            <column name="community_id" type="bigint"/>
         </addColumn>
     </changeSet>
 

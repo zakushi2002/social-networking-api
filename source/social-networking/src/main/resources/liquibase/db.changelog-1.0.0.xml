@@ -14,7 +14,7 @@
             <column name="kind" type="INT"/>
             <column name="group_id" type="BIGINT"/>
             <column name="avatar_path" type="LONGTEXT"/>
-            <column name="is_super_admin" type="BIT"/>
+            <column name="is_super_admin" type="BOOLEAN"/>
             <column name="last_login" type="datetime"/>
             <column name="attempt_forget_pwd" type="INT"/>
             <column name="attempt_login" type="INT"/>
@@ -44,7 +44,7 @@
             <column name="name" type="VARCHAR(255)"/>
             <column name="kind" type="INT"/>
             <column name="description" type="VARCHAR(1000)"/>
-            <column name="is_system_role" type="BIT"/>
+            <column name="is_system_role" type="BOOLEAN"/>
             <column name="created_by" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -71,7 +71,7 @@
             <column name="name_group" type="VARCHAR(255)"/>
             <column name="permission_code" type="VARCHAR(255)"/>
             <column name="description" type="VARCHAR(255)"/>
-            <column name="show_menu" type="BIT"/>
+            <column name="show_menu" type="BOOLEAN"/>
             <column name="created_by" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
